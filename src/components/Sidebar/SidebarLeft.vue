@@ -23,6 +23,7 @@
           </template>
         </sidebar-left-tab>
         <sidebar-left-tab
+          v-click-outside="handleSearchClickOutside"
           :isDiv="true"
           :title="'Tìm kiếm'"
           :tooltip="'Tìm kiếm'"
@@ -34,6 +35,15 @@
           <template #icon="slotProps">
             <search-icon :active="slotProps.active" />
           </template>
+          <template #child>
+            <!-- Modals sidebar -->
+            <div
+              ref="searchModal"
+              :class="['search-modal', { active: searchActive }]"
+            >
+              <search></search>
+            </div>
+          </template>
         </sidebar-left-tab>
         <sidebar-left-tab
           :link="'/explore'"
@@ -41,7 +51,7 @@
           :tooltip="'Khám phá'"
           :tab="'Explore'"
           :currentTab="currentTab"
-          @changeTab="handleChangeTab"
+          @changeTab="handleChangeTab($event)"
         >
           <template #icon="slotProps">
             <compass-icon :active="slotProps.active" />
@@ -123,11 +133,6 @@
         </sidebar-left-tab>
       </div>
     </div>
-
-    <!-- Modals sidebar -->
-    <div :class="['search-modal', { active: searchActive }]">
-      <search></search>
-    </div>
   </div>
 </template>
 
@@ -156,9 +161,20 @@ export default {
     handleChangeTab(tab) {
       this.currentTab = tab;
     },
-    handleSearchClick() {
-      this.isNarrow = !this.isNarrow;
-      this.searchActive = !this.searchActive;
+    handleSearchClick(event) {
+      if (
+        !(
+          event.target == this.$refs.searchModal ||
+          event.target.contains(this.$refs.searchModal)
+        )
+      ) {
+        this.isNarrow = !this.isNarrow;
+        this.searchActive = !this.searchActive;
+      }
+    },
+    handleSearchClickOutside() {
+      this.isNarrow = false;
+      this.searchActive = false;
     },
   },
   watch: {

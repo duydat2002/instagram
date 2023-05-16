@@ -1,23 +1,26 @@
 <template>
-  <component
-    :is="currentComponent"
-    :to="link"
-    :class="['tab__wrapper', { actived: activeTab }]"
-    @click="$emit('changeTab', tab)"
-    ref="tabRef"
-  >
-    <div class="tab flex">
-      <div class="tab__icon">
-        <slot name="icon" :active="activeTab" />
+  <div>
+    <component
+      :is="currentComponent"
+      :to="link"
+      :class="['tab__wrapper', { actived: activeTab }]"
+      @click="$emit('changeTab', tab)"
+      ref="tabRef"
+    >
+      <div class="tab flex">
+        <div class="tab__icon">
+          <slot name="icon" :active="activeTab" />
+        </div>
+        <div class="tab__title">
+          <span>{{ title }}</span>
+        </div>
       </div>
-      <div class="tab__title">
-        <span>{{ title }}</span>
+      <div class="tab__tooltip">
+        <div class="tab__tooltip-content">{{ tooltip }}</div>
       </div>
-    </div>
-    <div class="tab__tooltip">
-      <div class="tab__tooltip-content">{{ tooltip }}</div>
-    </div>
-  </component>
+    </component>
+    <slot name="child" />
+  </div>
 </template>
 
 <script>
