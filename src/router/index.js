@@ -3,6 +3,7 @@ import Home from "../views/Home.vue";
 import Explore from "../views/Explore.vue";
 import Reels from "../views/Reels.vue";
 import Inbox from "../views/Inbox.vue";
+import Stories from "../views/Stories.vue";
 import Profile from "../views/Profile.vue";
 
 const routes = [
@@ -25,6 +26,11 @@ const routes = [
     path: "/message",
     name: "Inbox",
     component: Inbox,
+  },
+  {
+    path: "/stories/:id",
+    name: "Stories",
+    component: Stories,
   },
   {
     path: "/:id",

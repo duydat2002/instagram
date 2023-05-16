@@ -18,12 +18,12 @@ export default {
 
 <style scoped>
 #dashboard {
-  /* background: var(--bg-color); */
+  background: var(--bg-color);
+  color: #ffffff;
 }
 
 .main {
   flex: 1;
   margin: 0 46px;
-  background: #5af4ff;
 }
 </style>

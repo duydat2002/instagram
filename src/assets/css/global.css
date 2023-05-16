@@ -12,6 +12,9 @@
   --bg-color: #000;
   --separator-color: #262626;
 
+  /* Width */
+  --feed-sidebar-width: 319px;
+
   /* Nav width */
   --nav-narrow-width: 72px;
   --nav-medium-width: 244px;

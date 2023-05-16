@@ -1,5 +1,5 @@
 <template>
-  <div id="sidebar-left" :class="{ narrow: isNarrow }">
+  <div :class="['sidebar-left', { narrow: isNarrow }]">
     <div class="sidebar-nav">
       <router-link to="/" class="logo">
         <div class="logo-text">
@@ -200,7 +200,7 @@ export default {
 </script>
 
 <style scoped>
-#sidebar-left {
+.sidebar-left {
   position: relative;
   width: var(--nav-medium-width);
   height: 100vh;
@@ -210,7 +210,7 @@ export default {
   z-index: 100;
 }
 
-#sidebar-left.narrow {
+.sidebar-left.narrow {
   width: var(--nav-narrow-width);
 }
 
@@ -221,11 +221,11 @@ export default {
   z-index: 100;
 }
 
-#sidebar-left.narrow >>> .tab__title {
+.sidebar-left.narrow >>> .tab__title {
   display: none;
 }
 
-#sidebar-left >>> .tab__tooltip {
+.sidebar-left >>> .tab__tooltip {
   opacity: 0;
   transform: scale(0.3);
   visibility: hidden;
@@ -233,7 +233,7 @@ export default {
   pointer-events: none;
 }
 
-#sidebar-left.narrow >>> .tab__wrapper:hover .tab__tooltip {
+.sidebar-left.narrow >>> .tab__wrapper:hover .tab__tooltip {
   opacity: 1;
   transform: scale(1);
   visibility: visible;
@@ -252,7 +252,7 @@ export default {
   align-items: center;
 }
 
-#sidebar-left.narrow .logo-text {
+.sidebar-left.narrow .logo-text {
   display: none;
 }
 
@@ -267,7 +267,7 @@ export default {
   background: rgba(255, 255, 255, 0.1);
 }
 
-#sidebar-left.narrow .logo-icon {
+.sidebar-left.narrow .logo-icon {
   display: flex;
   align-items: center;
 }
@@ -309,11 +309,11 @@ export default {
 }
 
 @media screen and (max-width: 1264px) {
-  #sidebar-left {
+  .sidebar-left {
     width: var(--nav-narrow-width);
   }
 
-  #sidebar-left >>> .tab__title {
+  .sidebar-left >>> .tab__title {
     display: none;
   }
 

@@ -1,9 +1,13 @@
 <template>
-  <h1>Sidebar right</h1>
+  <div class="sidebar-right">Sidebar right</div>
 </template>
 
 <script>
 export default {};
 </script>
 
-<style></style>
+<style scoped>
+.sidebar-right {
+  width: var(--feed-sidebar-width);
+}
+</style>
