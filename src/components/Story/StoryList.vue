@@ -2,15 +2,18 @@
   <div class="stories-slide">
     <swiper v-bind="swiperOptions">
       <swiper-slide v-for="n in 20" :key="n">
-        <story-item :username="'username' + n" />
+        <story-item
+          :username="'username' + n"
+          :image="'https://loremflickr.com/320/320?random=' + n"
+        />
       </swiper-slide>
     </swiper>
     <div class="stories-navigation">
-      <div class="navigation-prev">
-        <fa :icon="['fas', 'angle-right']" />
+      <div class="navigation-button navigation-prev">
+        <fa :icon="['fas', 'circle-chevron-left']" class="navigation-icon" />
       </div>
-      <div class="navigation-next">
-        <fa :icon="['fas', 'angle-left']" />
+      <div class="navigation-button navigation-next">
+        <fa :icon="['fas', 'circle-chevron-right']" class="navigation-icon" />
       </div>
     </div>
   </div>
@@ -51,5 +54,26 @@ export default {
 .stories-slide {
   position: relative;
   width: 100%;
+}
+
+.navigation-button {
+  padding: 15px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(calc(-50% - 6px));
+  z-index: 1;
+  cursor: pointer;
+}
+
+.navigation-button.swiper-button-disabled {
+  display: none;
+}
+
+.navigation-next {
+  right: 0;
+}
+
+.navigation-icon {
+  font-size: 23px;
 }
 </style>

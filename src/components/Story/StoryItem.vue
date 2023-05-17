@@ -3,7 +3,7 @@
     <div class="story-item flex flex-col">
       <div class="img-container">
         <div class="img-wrapper">
-          <img src="@/assets/images/defaultAvatar.jpg" alt="" />
+          <img :src="image" alt="" />
         </div>
       </div>
       <span class="story-username">{{ username }}</span>
@@ -15,6 +15,10 @@
 export default {
   props: {
     username: String,
+    image: {
+      type: String,
+      default: "@/assets/images/defaultAvatar.jpg",
+    },
   },
 };
 </script>
