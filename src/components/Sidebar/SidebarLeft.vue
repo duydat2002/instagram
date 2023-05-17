@@ -210,15 +210,16 @@ export default {
   z-index: 100;
 }
 
-.sidebar-left.narrow {
-  width: var(--nav-narrow-width);
-}
-
 .sidebar-nav {
+  width: var(--nav-medium-width);
   position: relative;
   padding: 8px 12px 20px;
   background: var(--bg-color);
   z-index: 100;
+}
+
+.sidebar-left.narrow .sidebar-nav {
+  width: var(--nav-narrow-width);
 }
 
 .sidebar-left.narrow >>> .tab__title {
@@ -231,6 +232,7 @@ export default {
   visibility: hidden;
   transition: all 0.1s 0s;
   pointer-events: none;
+  z-index: 100;
 }
 
 .sidebar-left.narrow >>> .tab__wrapper:hover .tab__tooltip {

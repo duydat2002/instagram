@@ -37,6 +37,11 @@ const routes = [
     name: "Profile",
     component: Profile,
   },
+  // {
+  //   path: "/accounts/login",
+  //   name: "Login",
+  //   component: Login,
+  // },
 ];
 
 const router = createRouter({
