@@ -1,9 +1,13 @@
 <template>
-  <h1>Auth</h1>
+  <router-view></router-view>
+  <Footer />
 </template>
 
 <script>
-export default {};
+import Footer from "@/components/Footer.vue";
+export default {
+  components: { Footer },
+};
 </script>
 
 <style></style>

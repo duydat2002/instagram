@@ -39,7 +39,7 @@ const routes = [
     path: "/stories/:id",
     name: "Stories",
     component: Stories,
-    meta: { layout: DashboardLayout },
+    meta: { layout: DefaultLayout },
   },
   {
     path: "/:id",

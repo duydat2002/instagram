@@ -9,8 +9,12 @@
 :root {
   /* Color */
   --primary-text-color: #fff;
+  --secondary-text-color: #737373;
   --bg-color: #000;
+  --secondary-bg-color: #fafafa;
   --separator-color: #262626;
+  --border-color: #dbdbdb;
+  --button-color: #262626;
 
   /* Width */
   --feed-sidebar-width: 319px;

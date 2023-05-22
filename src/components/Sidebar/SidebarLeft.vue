@@ -152,14 +152,17 @@ import Search from "../Search.vue";
 export default {
   data() {
     return {
-      currentTab: "",
+      previousTab: "",
+      currentTab: "Home",
       isNarrow: false,
       searchActive: false,
     };
   },
   methods: {
     handleChangeTab(tab) {
+      // this.previousTab = this.currentTab;
       this.currentTab = tab;
+      // console.log(this.previousTab, this.currentTab);
     },
     handleSearchClick(event) {
       if (
@@ -173,8 +176,11 @@ export default {
       }
     },
     handleSearchClickOutside() {
-      this.isNarrow = false;
-      this.searchActive = false;
+      if (this.searchActive == true) {
+        this.isNarrow = false;
+        this.searchActive = false;
+        // this.currentTab = this.previousTab;
+      }
     },
   },
   watch: {
@@ -211,7 +217,6 @@ export default {
 }
 
 .sidebar-nav {
-  width: var(--nav-medium-width);
   position: relative;
   padding: 8px 12px 20px;
   background: var(--bg-color);
@@ -252,6 +257,8 @@ export default {
   padding: 12px;
   display: flex;
   align-items: center;
+  width: 103px;
+  box-sizing: content-box;
 }
 
 .sidebar-left.narrow .logo-text {

@@ -2,12 +2,11 @@
   <svg
     aria-label="Instagram"
     class="_ab6-"
-    color="rgb(245, 245, 245)"
-    fill="rgb(245, 245, 245)"
-    height="29"
+    :color="colorLogo"
+    :fill="colorLogo"
     role="img"
     viewBox="32 4 113 32"
-    width="103"
+    width="100%"
   >
     <path
       clip-rule="evenodd"
@@ -17,3 +16,13 @@
     ></path>
   </svg>
 </template>
+<script>
+export default {
+  props: {
+    colorLogo: {
+      type: String,
+      default: "rgb(245, 245, 245)",
+    },
+  },
+};
+</script>
