@@ -32,14 +32,24 @@ export default {
       type: String,
       required: true,
     },
+    propValue: [String, Number],
     placeholder: String,
   },
   data() {
     return {
-      inputValue: "",
       inputType: this.type,
       showPassword: false,
     };
+  },
+  computed: {
+    inputValue: {
+      get() {
+        return this.propValue;
+      },
+      set(value) {
+        this.$emit("update:propValue", value);
+      },
+    },
   },
   methods: {
     togglePasswordVisibility() {
@@ -58,7 +68,7 @@ export default {
   height: 36px;
   background: var(--secondary-bg-color);
   border: 1px solid var(--border-color);
-  border-radius: 1px;
+  border-radius: 3px;
 }
 
 .input-main {
@@ -103,6 +113,7 @@ export default {
   line-height: 18px;
   font-weight: 600;
   color: var(--button-color);
+  user-select: none;
   cursor: pointer;
 }
 

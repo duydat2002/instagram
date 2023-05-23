@@ -11,10 +11,10 @@
       </router-link>
       <div class="sidebar-left__tabs flex flex-col">
         <sidebar-left-tab
-          :link="'/'"
-          :title="'Trang chủ'"
-          :tooltip="'Trang chủ'"
-          :tab="'Home'"
+          link="/"
+          title="Trang chủ"
+          tooltip="Trang chủ"
+          tab="Home"
           :currentTab="currentTab"
           @changeTab="handleChangeTab"
         >
@@ -25,9 +25,9 @@
         <sidebar-left-tab
           v-click-outside="handleSearchClickOutside"
           :isDiv="true"
-          :title="'Tìm kiếm'"
-          :tooltip="'Tìm kiếm'"
-          :tab="'Search'"
+          title="Tìm kiếm"
+          tooltip="Tìm kiếm"
+          tab="Search"
           :currentTab="currentTab"
           @changeTab="handleChangeTab"
           @click="handleSearchClick"
@@ -46,10 +46,10 @@
           </template>
         </sidebar-left-tab>
         <sidebar-left-tab
-          :link="'/explore'"
-          :title="'Khám phá'"
-          :tooltip="'Khám phá'"
-          :tab="'Explore'"
+          link="/explore"
+          title="Khám phá"
+          tooltip="Khám phá"
+          tab="Explore"
           :currentTab="currentTab"
           @changeTab="handleChangeTab($event)"
         >
@@ -58,10 +58,10 @@
           </template>
         </sidebar-left-tab>
         <sidebar-left-tab
-          :link="'/reels'"
-          :title="'Reels'"
-          :tooltip="'Reels'"
-          :tab="'Reels'"
+          link="/reels"
+          title="Reels"
+          tooltip="Reels"
+          tab="Reels"
           :currentTab="currentTab"
           @changeTab="handleChangeTab"
         >
@@ -70,10 +70,10 @@
           </template>
         </sidebar-left-tab>
         <sidebar-left-tab
-          :link="'/message'"
-          :title="'Tin nhắn'"
-          :tooltip="'Tin nhắn'"
-          :tab="'Inbox'"
+          link="/message"
+          title="Tin nhắn"
+          tooltip="Tin nhắn"
+          tab="Inbox"
           :currentTab="currentTab"
           @changeTab="handleChangeTab"
         >
@@ -83,9 +83,9 @@
         </sidebar-left-tab>
         <sidebar-left-tab
           :isDiv="true"
-          :title="'Thông báo'"
-          :tooltip="'Thông báo'"
-          :tab="'Notification'"
+          title="Thông báo"
+          tooltip="Thông báo"
+          tab="Notification"
           :currentTab="currentTab"
           @changeTab="handleChangeTab"
         >
@@ -95,9 +95,9 @@
         </sidebar-left-tab>
         <sidebar-left-tab
           :isDiv="true"
-          :title="'Tạo'"
-          :tooltip="'Tạo'"
-          :tab="'Create'"
+          title="Tạo"
+          tooltip="Tạo"
+          tab="Create"
           :currentTab="currentTab"
           @changeTab="handleChangeTab"
         >
@@ -106,10 +106,10 @@
           </template>
         </sidebar-left-tab>
         <sidebar-left-tab
-          :link="'/cac'"
-          :title="'Trang cá nhân'"
-          :tooltip="'Trang cá nhân'"
-          :tab="'Profile'"
+          link="/cac"
+          title="Trang cá nhân"
+          tooltip="Trang cá nhân"
+          tab="Profile"
           :currentTab="currentTab"
           @changeTab="handleChangeTab"
         >
@@ -121,9 +121,9 @@
         </sidebar-left-tab>
         <sidebar-left-tab
           :isDiv="true"
-          :title="'Xem thêm'"
-          :tooltip="'Xem thêm'"
-          :tab="'More'"
+          title="Xem thêm"
+          tooltip="Xem thêm"
+          tab="More"
           :currentTab="currentTab"
           @changeTab="handleChangeTab"
         >

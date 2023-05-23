@@ -10,11 +10,19 @@
   /* Color */
   --primary-text-color: #fff;
   --secondary-text-color: #737373;
+
+  --link-color: #00376b;
+
   --bg-color: #000;
+
   --secondary-bg-color: #fafafa;
-  --separator-color: #262626;
+  --separator-color: #dbdbdb;
+
   --border-color: #dbdbdb;
+
   --button-color: #262626;
+  --primary-button-color: #0095f6;
+  --primary-button-hover-color: #1877f2;
 
   /* Width */
   --feed-sidebar-width: 319px;
@@ -50,7 +58,7 @@ a {
 img {
   max-width: 100%;
   height: auto;
-  vertical-align: middle;
+  /* vertical-align: middle; */
 }
 
 input,
