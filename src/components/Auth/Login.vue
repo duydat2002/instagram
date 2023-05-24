@@ -48,7 +48,9 @@
     </div>
     <div class="auth-switch">
       <span class="auth-switch__text">Bạn chưa có tài khoản ư? </span>
-      <router-link to="/" class="auth-switch__link">Đăng ký</router-link>
+      <router-link to="/accounts/signup" class="auth-switch__link"
+        >Đăng ký</router-link
+      >
     </div>
     <div class="app-download">
       <p>Tải ứng dụng.</p>

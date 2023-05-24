@@ -38,6 +38,7 @@
             placeholder="Tên đầy đủ"
             v-model:propValue="fullname"
             :checkValue="fullname"
+            @change="isShowError = false"
           />
           <ui-input
             name="username"
@@ -84,12 +85,20 @@
           :isLoading="loading"
           >Đăng ký</ui-button
         >
-        <p v-if="authError" class="auth-error">{{ authError }}</p>
+        <p v-if="isShowError" class="auth-error">
+          {{
+            authError.emailOrPhoneError ||
+            authError.usernameError ||
+            authError.signupError
+          }}
+        </p>
       </form>
     </div>
     <div class="auth-switch">
       <span class="auth-switch__text">Bạn có tài khoản? </span>
-      <router-link to="/" class="auth-switch__link">Đăng nhập</router-link>
+      <router-link to="/accounts/login" class="auth-switch__link"
+        >Đăng nhập</router-link
+      >
     </div>
     <div class="app-download">
       <p>Tải ứng dụng.</p>
@@ -127,7 +136,12 @@ export default {
       password: "",
       fullname: "",
       emailOrPhone: "",
-      authError: null,
+      isShowError: false,
+      authError: {
+        emailOrPhoneError: null,
+        usernameError: null,
+        signupError: null,
+      },
       loading: false,
       checkContact: null,
       checkUsername: null,
@@ -142,28 +156,49 @@ export default {
         this.password.length >= 8
       );
     },
+    // isShowError() {
+    //   return (
+    //     this.authError.emailOrPhoneError ||
+    //     this.authError.usernameError ||
+    //     this.authError.signupError
+    //   );
+    // },
   },
   methods: {
     async submitSignupForm() {
       const { authError, signUp } = useAuth();
 
       this.loading = true;
-      await signUp(
-        this.emailOrPhone,
-        this.password,
-        this.fullname,
-        this.username
-      );
 
-      this.authError = authError;
+      if (this.authError.emailOrPhoneError || this.authError.usernameError) {
+        this.isShowError = true;
+      } else {
+        await signUp(
+          this.emailOrPhone,
+          this.password,
+          this.fullname,
+          this.username
+        );
+
+        if (authError) {
+          this.authError.signupError = authError;
+          this.isShowError = true;
+        } else {
+          this.isShowError = false;
+        }
+      }
+
       this.loading = false;
     },
     async handleCheckContact() {
       const { checkError, checkPhoneNumber, checkEmail } = useCheck();
 
+      this.isShowError = false;
+
       this.checkContact = null;
       const regex = /^\+?\d+$/;
       const isPhoneNumber = regex.test(this.emailOrPhone);
+
       if (isPhoneNumber) {
         const checkValue = await checkPhoneNumber(this.emailOrPhone);
         this.checkContact = checkValue;
@@ -171,30 +206,28 @@ export default {
         const checkValue = await checkEmail(this.emailOrPhone);
         this.checkContact = checkValue;
       }
-      this.authError = checkError;
+
+      this.authError.emailOrPhoneError = checkError;
     },
     async handleCheckUsername() {
       const { user, getUserWithQuery } = useUser();
+
+      this.isShowError = false;
 
       await getUserWithQuery("username", "==", this.username);
 
       if (user.value == null) {
         this.checkUsername = true;
-        this.authError = null;
+        this.authError.usernameError = null;
       } else {
         this.checkUsername = false;
-        this.authError =
+        this.authError.usernameError =
           "Tên người dùng này đã được sử dụng. Vui lòng thử tên khác.";
       }
     },
     handleCheckPassword() {
-      if (this.password.length >= 8) {
-        this.checkPassword = true;
-        this.authError = null;
-      } else {
-        this.checkPassword = false;
-        this.authError = "Mật khẩu phải từ 8 ký tự trở lên";
-      }
+      this.isShowError = false;
+      this.checkPassword = this.password.length >= 8 ? true : false;
     },
   },
   components: { Logo, UiInput, UiButton },
