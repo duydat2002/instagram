@@ -29,24 +29,30 @@
           <ui-input
             name="email"
             placeholder="Số di động hoặc email"
-            v-model:propValue="email"
-            :checkValue="true"
+            v-model:propValue="emailOrPhone"
+            :checkValue="checkContact"
+            @change="handleCheckContact"
           />
           <ui-input
             name="fullname"
             placeholder="Tên đầy đủ"
             v-model:propValue="fullname"
+            :checkValue="fullname"
           />
           <ui-input
             name="username"
             placeholder="Tên người dùng"
             v-model:propValue="username"
+            :checkValue="checkUsername"
+            @change="handleCheckUsername"
           />
           <ui-input
             name="password"
             placeholder="Mật khẩu"
             type="password"
             v-model:propValue="password"
+            :checkValue="checkPassword"
+            @change="handleCheckPassword"
           />
         </div>
         <p class="moreinfo">
@@ -109,7 +115,10 @@
 import Logo from "@/components/SVG/Logo";
 import UiInput from "@/components/UI/UiInput";
 import UiButton from "../UI/UiButton";
+
 import { useAuth } from "@/composables/useAuth";
+import { useCheck } from "@/composables/useCheck";
+import { useUser } from "@/composables/useUser";
 
 export default {
   data() {
@@ -117,17 +126,19 @@ export default {
       username: "",
       password: "",
       fullname: "",
-      email: "",
+      emailOrPhone: "",
       authError: null,
       loading: false,
+      checkContact: null,
+      checkUsername: null,
+      checkPassword: null,
     };
   },
   computed: {
     isDisable() {
       return !(
         this.username != "" &&
-        this.fullname != "" &&
-        this.email != "" &&
+        this.emailOrPhone != "" &&
         this.password.length >= 8
       );
     },
@@ -137,10 +148,53 @@ export default {
       const { authError, signUp } = useAuth();
 
       this.loading = true;
-      await signUp(this.email, this.password, this.fullname, this.username);
+      await signUp(
+        this.emailOrPhone,
+        this.password,
+        this.fullname,
+        this.username
+      );
 
       this.authError = authError;
       this.loading = false;
+    },
+    async handleCheckContact() {
+      const { checkError, checkPhoneNumber, checkEmail } = useCheck();
+
+      this.checkContact = null;
+      const regex = /^\+?\d+$/;
+      const isPhoneNumber = regex.test(this.emailOrPhone);
+      if (isPhoneNumber) {
+        const checkValue = await checkPhoneNumber(this.emailOrPhone);
+        this.checkContact = checkValue;
+      } else {
+        const checkValue = await checkEmail(this.emailOrPhone);
+        this.checkContact = checkValue;
+      }
+      this.authError = checkError;
+    },
+    async handleCheckUsername() {
+      const { user, getUserWithQuery } = useUser();
+
+      await getUserWithQuery("username", "==", this.username);
+
+      if (user.value == null) {
+        this.checkUsername = true;
+        this.authError = null;
+      } else {
+        this.checkUsername = false;
+        this.authError =
+          "Tên người dùng này đã được sử dụng. Vui lòng thử tên khác.";
+      }
+    },
+    handleCheckPassword() {
+      if (this.password.length >= 8) {
+        this.checkPassword = true;
+        this.authError = null;
+      } else {
+        this.checkPassword = false;
+        this.authError = "Mật khẩu phải từ 8 ký tự trở lên";
+      }
     },
   },
   components: { Logo, UiInput, UiButton },

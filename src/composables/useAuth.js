@@ -27,16 +27,16 @@ export const useAuth = () => {
       let message = "";
       switch (error.code) {
         case "auth/invalid-email":
-          message = "Invalid Email";
+          message = "Email không hợp lệ.";
           break;
         case "auth/missing-password":
-          message = "Missing Password";
+          message = "Bạn chưa nhập mật khẩu.";
           break;
         case "auth/weak-password":
-          message = "Weak Password";
+          message = "Mật khẩu yếu, hãy đổi sang mật khẩu khác mạnh hơn.";
           break;
         case "auth/email-already-in-use":
-          message = "Email Already In Use";
+          message = "Một tài khoản khác đang dùng chung email.";
           break;
       }
       authError.value = message;
