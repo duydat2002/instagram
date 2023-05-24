@@ -6,8 +6,13 @@
     :disabled="isDisabled"
     @click="handleClick"
   >
-    <slot name="icon" />
-    <slot />
+    <div v-if="isLoading" class="loading">
+      <fa :icon="['fas', 'spinner']" />
+    </div>
+    <template v-else>
+      <slot name="icon" />
+      <slot />
+    </template>
   </button>
 </template>
 
@@ -19,6 +24,10 @@ export default {
       default: "button",
     },
     isDisabled: {
+      type: Boolean,
+      default: false,
+    },
+    isLoading: {
       type: Boolean,
       default: false,
     },
@@ -49,9 +58,6 @@ export default {
     },
   },
   computed: {
-    style() {
-      return {};
-    },
     classes() {
       return [`button--size-${this.size}`, `button--variant-${this.variant}`];
     },
@@ -112,5 +118,18 @@ button:disabled {
   line-height: 19px;
   padding: 8px 22px;
   border-radius: 10px;
+}
+
+.loading {
+  animation: spinner 1s infinite linear;
+}
+
+@keyframes spinner {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

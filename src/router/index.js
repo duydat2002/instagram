@@ -6,6 +6,7 @@ import Inbox from "../views/Inbox.vue";
 import Stories from "../views/Stories.vue";
 import Profile from "../views/Profile.vue";
 import Login from "../components/Auth/Login.vue";
+import SignUp from "../components/Auth/SignUp.vue";
 import DefaultLayout from "../layouts/DefaultLayout.vue";
 import DashboardLayout from "../layouts/DashboardLayout.vue";
 import AuthLayout from "../layouts/AuthLayout.vue";
@@ -51,6 +52,12 @@ const routes = [
     path: "/accounts/login",
     name: "Login",
     component: Login,
+    meta: { layout: AuthLayout },
+  },
+  {
+    path: "/accounts/signup",
+    name: "SignUp",
+    component: SignUp,
     meta: { layout: AuthLayout },
   },
 ];

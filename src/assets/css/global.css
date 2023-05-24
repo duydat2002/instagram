@@ -12,6 +12,7 @@
   --secondary-text-color: #737373;
 
   --link-color: #00376b;
+  --error-color: #ed4956;
 
   --bg-color: #000;
 
@@ -19,6 +20,7 @@
   --separator-color: #dbdbdb;
 
   --border-color: #dbdbdb;
+  --border-dark-color: #a8a8a8;
 
   --button-color: #262626;
   --primary-button-color: #0095f6;

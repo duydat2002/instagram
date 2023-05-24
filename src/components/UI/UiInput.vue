@@ -1,5 +1,11 @@
 <template>
-  <div :class="['input-wrapper flex', { 'active-label': inputValue != '' }]">
+  <div
+    :class="[
+      'input-wrapper flex',
+      { 'active-label': inputValue != '' },
+      { focus: isFocus },
+    ]"
+  >
     <div class="input-main">
       <input
         class="input"
@@ -7,8 +13,22 @@
         :type="inputType"
         :name="name"
         v-model="inputValue"
+        @focus="focusInput"
+        @blur="blurInput"
       />
       <span class="placeholder">{{ placeholder }}</span>
+    </div>
+    <div v-if="checkValue != null && inputValue != ''" class="check">
+      <fa
+        v-if="checkValue"
+        :icon="['far', 'circle-check']"
+        style="color: #b4b4b4; height: 22px"
+      />
+      <fa
+        v-else
+        :icon="['far', 'circle-xmark']"
+        style="color: #ee2d3e; height: 22px"
+      />
     </div>
     <div
       v-if="type == 'password' && inputValue != ''"
@@ -34,11 +54,16 @@ export default {
     },
     propValue: [String, Number],
     placeholder: String,
+    checkValue: {
+      type: [Boolean, null],
+      default: null,
+    },
   },
   data() {
     return {
       inputType: this.type,
       showPassword: false,
+      isFocus: false,
     };
   },
   computed: {
@@ -56,6 +81,12 @@ export default {
       this.inputType = this.showPassword ? "password" : "text";
       this.showPassword = !this.showPassword;
     },
+    focusInput() {
+      this.isFocus = true;
+    },
+    blurInput() {
+      this.isFocus = false;
+    },
   },
 };
 </script>
@@ -69,6 +100,10 @@ export default {
   background: var(--secondary-bg-color);
   border: 1px solid var(--border-color);
   border-radius: 3px;
+}
+
+.input-wrapper.focus {
+  border-color: var(--border-dark-color);
 }
 
 .input-main {
@@ -119,5 +154,13 @@ export default {
 
 .switch-password:hover {
   opacity: 0.5;
+}
+
+.check {
+  margin-right: 8px;
+}
+
+.input-wrapper.focus .check {
+  display: none;
 }
 </style>
