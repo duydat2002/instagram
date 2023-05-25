@@ -52,6 +52,8 @@ export default {
 .tab__wrapper {
   position: relative;
   cursor: pointer;
+  width: 100%;
+  user-select: none;
 }
 
 .tab {
@@ -63,7 +65,7 @@ export default {
 }
 
 .tab:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--hover-color);
 }
 
 .tab__icon {

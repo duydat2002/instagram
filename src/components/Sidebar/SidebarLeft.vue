@@ -120,15 +120,27 @@
           </template>
         </sidebar-left-tab>
         <sidebar-left-tab
+          style="position: relative"
           :isDiv="true"
           title="Xem thêm"
           tooltip="Xem thêm"
           tab="More"
           :currentTab="currentTab"
           @changeTab="handleChangeTab"
+          @click="handleMoreClick"
         >
           <template #icon="slotProps">
             <bar-icon :active="slotProps.active" />
+          </template>
+          <template #child>
+            <!-- Modals sidebar -->
+            <div
+              v-if="moreActive"
+              ref="moreModal"
+              :class="['more-modal', { active: moreActive }]"
+            >
+              <more></more>
+            </div>
           </template>
         </sidebar-left-tab>
       </div>
@@ -149,6 +161,7 @@ import InstagramIcon from "../SVG/InstagramIcon.vue";
 import logo from "../SVG/Logo.vue";
 import SidebarLeftTab from "./SidebarLeftTab.vue";
 import Search from "../Search.vue";
+import More from "../More.vue";
 export default {
   data() {
     return {
@@ -156,6 +169,7 @@ export default {
       currentTab: "Home",
       isNarrow: false,
       searchActive: false,
+      moreActive: false,
     };
   },
   methods: {
@@ -182,6 +196,16 @@ export default {
         // this.currentTab = this.previousTab;
       }
     },
+    handleMoreClick(event) {
+      if (
+        !(
+          event.target == this.$refs.moreModal ||
+          event.target.contains(this.$refs.moreModal)
+        )
+      ) {
+        this.moreActive = !this.moreActive;
+      }
+    },
   },
   watch: {
     $route() {
@@ -201,17 +225,20 @@ export default {
     PlusIcon,
     BarIcon,
     Search,
+    More,
   },
 };
 </script>
 
 <style scoped>
 .sidebar-left {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: var(--nav-medium-width);
   height: 100vh;
   background: var(--bg-color);
-  border-right: 1px solid var(--separator-color);
+  border-right: 1px solid var(--border-super-dark-color);
   transition: all 0.3s;
   z-index: 100;
 }

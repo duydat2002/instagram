@@ -1,0 +1,23 @@
+Users(id, username, email, fullname, avatar, bio, insightId)
+
+Highlights(id, userId, title, stories[id])
+
+Insights(id, userId, followersCount, followingCount, postsCount)
+
+Stories(id, userId, content, created_at)
+
+Posts(id, userId, caption, content, likesCount, comments[id], created_at)
+
+Comments(id, postId, isStory, content, replies{replyId, userId, content, created_at}, created_at)
+
+Likes(id, userId, postId, created_at)
+
+Messages(id, senderId, receiverId, content, created_at)
+
+Followers(id, followerId(Người theo dõi), followingId(Người được theo dõi), created_at)
+
+Notifications(id, userId, type[like, comment, follow], postId, senderId, read, created_at)
+
+Saved(id, userID, postId[], created_at)
+
+Explores(id, userId, postId[])

@@ -31,7 +31,7 @@ export default {
   border-radius: 1px;
 }
 
-.logo {
+.auth__container .logo {
   width: 175px;
   margin-top: 25px;
 }
@@ -48,19 +48,19 @@ export default {
   margin-top: 15px;
 }
 
-.separator {
+.auth__container .separator {
   width: 100%;
   margin: 24px 0;
   align-items: center;
 }
 
-.separator-line {
+.auth__container .separator-line {
   flex: 1 0;
   height: 1px;
   background: var(--separator-color);
 }
 
-.separator-text {
+.auth__container .separator-text {
   padding: 0 18px;
   position: absolute;
   left: 50%;
@@ -72,7 +72,7 @@ export default {
   transform: translateX(-50%);
 }
 
-.facebook-logo {
+.auth__container .facebook-logo {
   width: 16px;
   height: 16px;
   margin-right: 8px;

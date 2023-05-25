@@ -1,8 +1,8 @@
 <template>
   <div id="dashboard">
-    <div class="flex">
+    <div>
       <sidebar-left></sidebar-left>
-      <div class="main">
+      <div id="main">
         <router-view></router-view>
       </div>
     </div>
@@ -22,8 +22,18 @@ export default {
   color: #ffffff;
 }
 
-.main {
-  flex: 1;
-  margin: 0 46px;
+#main {
+  margin-left: auto;
+  padding: 0 46px;
+  background: var(--bg-color);
+  height: 1000px;
+  width: calc(100% - var(--nav-medium-width));
+}
+
+@media (min-width: 768px) and (max-width: 1263px) {
+  #main {
+    transition: all 0.3s;
+    width: calc(100% - var(--nav-narrow-width));
+  }
 }
 </style>

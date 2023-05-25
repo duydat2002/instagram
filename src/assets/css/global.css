@@ -15,12 +15,16 @@
   --error-color: #ed4956;
 
   --bg-color: #000;
+  --hover-color: rgba(255, 255, 255, 0.1);
+
+  --more-modal-color: #262626;
 
   --secondary-bg-color: #fafafa;
   --separator-color: #dbdbdb;
 
   --border-color: #dbdbdb;
   --border-dark-color: #a8a8a8;
+  --border-super-dark-color: #262626;
 
   --button-color: #262626;
   --primary-button-color: #0095f6;
@@ -32,6 +36,9 @@
   /* Nav width */
   --nav-narrow-width: 72px;
   --nav-medium-width: 244px;
+
+  /* More modal width */
+  --more-modal-width: 266px;
 }
 
 /* ===== BASE ===== */
