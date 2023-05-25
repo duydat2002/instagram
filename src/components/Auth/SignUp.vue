@@ -156,13 +156,6 @@ export default {
         this.password.length >= 8
       );
     },
-    // isShowError() {
-    //   return (
-    //     this.authError.emailOrPhoneError ||
-    //     this.authError.usernameError ||
-    //     this.authError.signupError
-    //   );
-    // },
   },
   methods: {
     async submitSignupForm() {
@@ -180,7 +173,7 @@ export default {
           this.username
         );
 
-        if (authError) {
+        if (authError.value) {
           this.authError.signupError = authError;
           this.isShowError = true;
         } else {
@@ -191,7 +184,10 @@ export default {
       this.loading = false;
     },
     async handleCheckContact() {
+      const { getUserWithQuery } = useUser();
       const { checkError, checkPhoneNumber, checkEmail } = useCheck();
+
+      let user = null;
 
       this.isShowError = false;
 
@@ -207,16 +203,25 @@ export default {
         this.checkContact = checkValue;
       }
 
-      this.authError.emailOrPhoneError = checkError;
+      if (this.checkContact) {
+        user = await getUserWithQuery("email", "==", this.emailOrPhone);
+        if (user) {
+          this.authError.emailOrPhoneError =
+            "Một tài khoản khác đang dùng chung email.";
+          this.checkContact = false;
+        }
+      } else {
+        this.authError.emailOrPhoneError = checkError;
+      }
     },
     async handleCheckUsername() {
-      const { user, getUserWithQuery } = useUser();
+      const { getUserWithQuery } = useUser();
 
       this.isShowError = false;
 
-      await getUserWithQuery("username", "==", this.username);
+      const user = await getUserWithQuery("username", "==", this.username);
 
-      if (user.value == null) {
+      if (user == null) {
         this.checkUsername = true;
         this.authError.usernameError = null;
       } else {

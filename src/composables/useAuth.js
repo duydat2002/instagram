@@ -8,6 +8,8 @@ export const useAuth = () => {
   const authError = ref(null);
 
   const signUp = async (email, password, fullname, username) => {
+    authError.value = null;
+
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,

@@ -25,7 +25,11 @@
             v-model:propValue="password"
           />
         </div>
-        <ui-button type="submit" class="auth-button" :disabled="isDisable"
+        <ui-button
+          type="submit"
+          class="auth-button"
+          :disabled="isDisable"
+          :isLoading="loading"
           >Đăng nhập</ui-button
         >
         <div class="separator flex">
@@ -41,6 +45,7 @@
           </template>
           <span>Đăng nhập bằng Facebook</span>
         </ui-button>
+        <p v-if="authError" class="auth-error">{{ authError }}</p>
       </form>
       <router-link to="/" class="auth-link">
         <span>Quên mật khẩu?</span>
@@ -77,11 +82,15 @@ import Logo from "@/components/SVG/Logo";
 import UiInput from "@/components/UI/UiInput";
 import UiButton from "../UI/UiButton";
 
+import { useUser } from "@/composables/useUser";
+
 export default {
   data() {
     return {
       username: "",
       password: "",
+      authError: null,
+      loading: false,
     };
   },
   computed: {
@@ -90,7 +99,23 @@ export default {
     },
   },
   methods: {
-    submitLoginForm() {},
+    async submitLoginForm() {
+      const { getUserInLogin } = useUser();
+
+      this.loading = true;
+
+      const user = await getUserInLogin(this.username, this.password);
+
+      if (user != null) {
+        this.authError = null;
+        alert("Đăng nhập thành công");
+      } else {
+        this.authError =
+          "Rất tiếc, mật khẩu của bạn không đúng. Vui lòng kiểm tra lại mật khẩu.";
+      }
+
+      this.loading = false;
+    },
   },
   components: { Logo, UiInput, UiButton },
 };

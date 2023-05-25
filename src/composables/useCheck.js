@@ -26,7 +26,7 @@ export const useCheck = () => {
     checkError.value = null;
     try {
       const response = await fetch(
-        `http://apilayer.net/api/check?access_key=8813f94640e80400147342db28f69de4&email=${email}&smtp=1`
+        `http://apilayer.net/api/check?access_key=2ffe8cc37bd46c9d62c238c07b715c7b&email=${email}&smtp=1`
       );
       if (!response.ok) {
         throw new Error("Request failed");
