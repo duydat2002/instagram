@@ -106,7 +106,7 @@
           </template>
         </sidebar-left-tab>
         <sidebar-left-tab
-          link="/cac"
+          :link="`/${user?.username}`"
           title="Trang cá nhân"
           tooltip="Trang cá nhân"
           tab="Profile"
@@ -162,6 +162,9 @@ import logo from "../SVG/Logo.vue";
 import SidebarLeftTab from "./SidebarLeftTab.vue";
 import Search from "../Search.vue";
 import More from "../More.vue";
+
+import { mapGetters } from "vuex";
+
 export default {
   data() {
     return {
@@ -171,6 +174,9 @@ export default {
       searchActive: false,
       moreActive: false,
     };
+  },
+  computed: {
+    ...mapGetters(["user"]),
   },
   methods: {
     handleChangeTab(tab) {

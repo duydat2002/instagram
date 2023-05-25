@@ -178,6 +178,7 @@ export default {
           this.isShowError = true;
         } else {
           this.isShowError = false;
+          this.$router.push("/");
         }
       }
 

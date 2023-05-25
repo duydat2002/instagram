@@ -3,10 +3,17 @@
 </template>
 
 <script>
-import DashBoard from "./components/DashBoard.vue";
+import { mapGetters, mapActions } from "vuex";
+
 export default {
-  components: { DashBoard },
+  computed: {
+    ...mapGetters(["user"]),
+  },
+  methods: {
+    ...mapActions(["initUser"]),
+  },
+  async created() {
+    await this.initUser();
+  },
 };
 </script>
-
-<style></style>

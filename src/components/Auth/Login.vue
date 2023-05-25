@@ -106,9 +106,10 @@ export default {
 
       const user = await getUserInLogin(this.username, this.password);
 
-      if (user != null) {
+      if (user) {
+        console.log(user);
         this.authError = null;
-        alert("Đăng nhập thành công");
+        this.$router.push("/");
       } else {
         this.authError =
           "Rất tiếc, mật khẩu của bạn không đúng. Vui lòng kiểm tra lại mật khẩu.";

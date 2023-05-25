@@ -63,14 +63,12 @@
       </router-link>
     </div>
     <div class="separator separator-small"></div>
-    <div class="logout-tab">
-      <router-link to="/">
-        <div class="tab flex">
-          <div class="tab-title">
-            <span>Đăng xuất</span>
-          </div>
+    <div class="logout-tab" @click="handleLogout">
+      <div class="tab flex">
+        <div class="tab-title">
+          <span>Đăng xuất</span>
         </div>
-      </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -82,7 +80,18 @@ import BookmarkIcon from "@/components/SVG/BookmarkIcon.vue";
 import MoonIcon from "@/components/SVG/MoonIcon.vue";
 import ReportIcon from "@/components/SVG/BookmarkIcon.vue";
 
+import { auth } from "@/firebase/init";
+import { signOut } from "firebase/auth";
+
 export default {
+  methods: {
+    async handleLogout() {
+      await signOut(auth);
+      setTimeout(() => {
+        this.$router.push("/accounts/login");
+      }, 3000);
+    },
+  },
   components: { SettingIcon, ClockIcon, BookmarkIcon, MoonIcon, ReportIcon },
 };
 </script>
@@ -113,6 +122,7 @@ a {
   align-items: center;
   transition: all 0.2s;
   border-radius: 8px;
+  cursor: pointer;
 }
 
 .tab:hover {
