@@ -1,5 +1,24 @@
 <template>
-  <component :is="$route.meta.layout" />
+  <Suspense>
+    <keep-alive>
+      <component :is="$route.meta.layout" />
+    </keep-alive>
+
+    <template #fallback>
+      <h1
+        style="
+          font-size: 30px;
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 1000;
+        "
+      >
+        Loading...
+      </h1>
+    </template>
+  </Suspense>
 </template>
 
 <script>
@@ -12,7 +31,7 @@ export default {
   methods: {
     ...mapActions(["initUser"]),
   },
-  async created() {
+  async mounted() {
     await this.initUser();
   },
 };

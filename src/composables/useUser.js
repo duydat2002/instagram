@@ -46,9 +46,8 @@ export const useUser = () => {
   };
 
   const getUserInLogin = async (username, password) => {
-    let user = null;
-
     try {
+      let user = null;
       const querySnapshot = await getDocs(
         query(
           collection(db, "users"),

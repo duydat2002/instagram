@@ -82,6 +82,7 @@ import Logo from "@/components/SVG/Logo";
 import UiInput from "@/components/UI/UiInput";
 import UiButton from "../UI/UiButton";
 
+import { mapMutations } from "vuex";
 import { useUser } from "@/composables/useUser";
 
 export default {
@@ -99,6 +100,7 @@ export default {
     },
   },
   methods: {
+    ...mapMutations(["setUser"]),
     async submitLoginForm() {
       const { getUserInLogin } = useUser();
 
@@ -108,6 +110,7 @@ export default {
 
       if (user) {
         console.log(user);
+        this.setUser(user);
         this.authError = null;
         this.$router.push("/");
       } else {

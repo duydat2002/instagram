@@ -18,19 +18,24 @@ const store = createStore({
     },
   },
   actions: {
-    initUser({ commit }) {
+    initUser({ state, commit }) {
+      console.log("Init User");
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           const docSnap = await getDoc(doc(db, "users", user.uid));
 
           if (docSnap.exists()) {
+            console.log("Has user");
             commit("setUser", docSnap.data());
           } else {
+            console.log("No user");
             commit("setUser", null);
           }
         } else {
+          console.log("No user");
           commit("setUser", null);
         }
+        console.log(state.user);
       });
     },
   },

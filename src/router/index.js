@@ -71,11 +71,11 @@ const router = createRouter({
   linkExactActiveClass: "active",
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.meta.requiresAuth;
   const user = auth.currentUser;
 
-  if (requiresAuth && user == null) {
+  if (requiresAuth && !user) {
     next("/accounts/login");
   } else {
     next();
