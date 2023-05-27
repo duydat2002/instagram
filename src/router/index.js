@@ -1,5 +1,5 @@
 import Home from "../views/Home.vue";
-import Explore from "../views/Explore.vue";
+// import Explore from "../views/Explore.vue";
 import Reels from "../views/Reels.vue";
 import Inbox from "../views/Inbox.vue";
 import Stories from "../views/Stories.vue";
@@ -12,6 +12,7 @@ import AuthLayout from "../layouts/AuthLayout.vue";
 
 import { createRouter, createWebHistory } from "vue-router";
 import { auth } from "@/firebase/init";
+import store from "@/store/index";
 
 const routes = [
   {
@@ -23,7 +24,7 @@ const routes = [
   {
     path: "/explore",
     name: "Explore",
-    component: Explore,
+    component: () => import("../views/Explore.vue"),
     meta: { layout: DashboardLayout, requiresAuth: true },
   },
   {
@@ -72,6 +73,9 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+  store.commit("setIsLoading", true);
+  store.commit("setProgress", 0);
+
   const requiresAuth = to.meta.requiresAuth;
   const user = auth.currentUser;
 
@@ -80,6 +84,13 @@ router.beforeEach(async (to, from, next) => {
   } else {
     next();
   }
+});
+
+router.afterEach(() => {
+  store.commit("setProgress", 100);
+  setTimeout(() => {
+    store.commit("setIsLoading", false);
+  }, 3000);
 });
 
 export default router;

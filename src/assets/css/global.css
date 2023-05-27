@@ -33,6 +33,13 @@
   --primary-button-color: #0095f6;
   --primary-button-hover-color: #1877f2;
 
+  --gradient-lavender: 211, 0, 197;
+  --gradient-orange: 255, 122, 0;
+  --gradient-pink: 255, 1, 105;
+  --gradient-purple: 118, 56, 250;
+  --gradient-red: 255, 48, 64;
+  --gradient-yellow: 255, 214, 0;
+
   /* Width */
   --feed-sidebar-width: 319px;
 

@@ -5,8 +5,8 @@ import {
   collection,
   query,
   where,
-  // doc,
-  // getDoc,
+  doc,
+  getDoc,
   getDocs,
   or,
 } from "firebase/firestore";
@@ -17,14 +17,14 @@ export const useUser = () => {
   currentUser.value = auth.currentUser;
 
   const getUser = async () => {
-    console.log(auth.currentUser);
-    // const docSnap = await getDoc(doc(db, "users", auth.currentUser.uid));
+    // console.log(auth.currentUser);
+    const docSnap = await getDoc(doc(db, "users", auth.currentUser.uid));
 
-    // if (docSnap.exists()) {
-    //   return docSnap.data();
-    // } else {
-    //   return null;
-    // }
+    if (docSnap.exists()) {
+      return docSnap.data();
+    } else {
+      return null;
+    }
   };
 
   const getUserWithQuery = async (field, condition, value) => {

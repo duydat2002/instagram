@@ -120,6 +120,7 @@
           </template>
         </sidebar-left-tab>
         <sidebar-left-tab
+          v-click-outside="handleMoreClickOutside"
           style="position: relative"
           :isDiv="true"
           title="Xem thêm"
@@ -210,6 +211,12 @@ export default {
         )
       ) {
         this.moreActive = !this.moreActive;
+      }
+    },
+    handleMoreClickOutside() {
+      if (this.moreActive == true) {
+        this.moreActive = false;
+        // this.currentTab = this.previousTab;
       }
     },
   },

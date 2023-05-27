@@ -3,7 +3,15 @@
 </template>
 
 <script>
-export default {};
+import { useUser } from "@/composables/useUser";
+
+export default {
+  async created() {
+    const { getUser } = useUser();
+    const user = await getUser();
+    console.log(user);
+  },
+};
 </script>
 
 <style></style>
