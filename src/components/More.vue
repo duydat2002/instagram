@@ -69,6 +69,9 @@
           <span>Đăng xuất</span>
         </div>
       </div>
+      <modal :isShow="logoutModalShow">
+        <modal-logout />
+      </modal>
     </div>
   </div>
 </template>
@@ -79,20 +82,40 @@ import ClockIcon from "@/components/SVG/ClockIcon.vue";
 import BookmarkIcon from "@/components/SVG/BookmarkIcon.vue";
 import MoonIcon from "@/components/SVG/MoonIcon.vue";
 import ReportIcon from "@/components/SVG/BookmarkIcon.vue";
+import Modal from "@/components/Modal/Modal.vue";
+import ModalLogout from "@/components/Modal/ModalLogout.vue";
 
 import { auth } from "@/firebase/init";
 import { signOut } from "firebase/auth";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
+  data() {
+    return {};
+  },
+  computed: {
+    ...mapGetters("modal", ["logoutModalShow"]),
+  },
   methods: {
+    ...mapMutations("modal", ["setLogoutModalShow"]),
     async handleLogout() {
+      this.setLogoutModalShow(true);
       await signOut(auth);
       setTimeout(() => {
+        this.setLogoutModalShow(false);
         this.$router.push("/accounts/login");
       }, 3000);
     },
   },
-  components: { SettingIcon, ClockIcon, BookmarkIcon, MoonIcon, ReportIcon },
+  components: {
+    SettingIcon,
+    ClockIcon,
+    BookmarkIcon,
+    MoonIcon,
+    ReportIcon,
+    Modal,
+    ModalLogout,
+  },
 };
 </script>
 
@@ -106,7 +129,7 @@ a {
   bottom: 100%;
   left: 0;
   width: var(--more-modal-width);
-  background: var(--more-modal-color);
+  background: var(--modal-color);
   border-radius: 15px;
   z-index: 1000;
 }
@@ -143,26 +166,13 @@ a {
   line-height: 18px;
 }
 
-.separator {
-  width: 100%;
-  background: #5555554d;
-}
-
-.separator-big {
-  height: 6px;
-}
-
-.separator-small {
-  height: 1px;
-}
-
 .switch-account-tab,
 .logout-tab {
   padding: 8px;
   width: 100%;
 }
 
-@media (min-width: 768px) and (max-width: 1263px) {
+@media (max-width: 1263px) {
   .more-container {
     left: 100%;
   }

@@ -136,7 +136,6 @@
           <template #child>
             <!-- Modals sidebar -->
             <div
-              v-if="moreActive"
               ref="moreModal"
               :class="['more-modal', { active: moreActive }]"
             >
@@ -177,7 +176,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["user"]),
+    ...mapGetters("user", ["user"]),
   },
   methods: {
     handleChangeTab(tab) {
@@ -189,7 +188,7 @@ export default {
       if (
         !(
           event.target == this.$refs.searchModal ||
-          event.target.contains(this.$refs.searchModal)
+          this.$refs.searchModal.contains(event.target)
         )
       ) {
         this.isNarrow = !this.isNarrow;
@@ -205,10 +204,8 @@ export default {
     },
     handleMoreClick(event) {
       if (
-        !(
-          event.target == this.$refs.moreModal ||
-          event.target.contains(this.$refs.moreModal)
-        )
+        event.target != this.$refs.moreModal &&
+        !this.$refs.moreModal.contains(event.target)
       ) {
         this.moreActive = !this.moreActive;
       }
@@ -355,6 +352,14 @@ export default {
   opacity: 1;
   visibility: visible;
   transform: translateX(var(--nav-narrow-width));
+}
+
+.more-modal {
+  display: none;
+}
+
+.more-modal.active {
+  display: block;
 }
 
 @media screen and (max-width: 1264px) {

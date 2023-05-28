@@ -20,7 +20,7 @@
   --bg-color: #000;
   --hover-color: rgba(255, 255, 255, 0.1);
 
-  --more-modal-color: #262626;
+  --modal-color: #262626;
 
   --secondary-bg-color: #fafafa;
   --separator-color: #dbdbdb;
@@ -156,4 +156,17 @@ button {
   max-width: 1140px;
   width: 100%;
   margin: 0 auto;
+}
+
+.separator {
+  width: 100%;
+  background: #5555554d;
+}
+
+.separator-big {
+  height: 6px;
+}
+
+.separator-small {
+  height: 1px;
 }

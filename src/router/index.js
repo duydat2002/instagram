@@ -73,11 +73,13 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  store.commit("setIsLoading", true);
-  store.commit("setProgress", 0);
+  store.commit("splash/setIsLoading", true);
+  store.commit("splash/setProgress", 0);
 
   const requiresAuth = to.meta.requiresAuth;
   const user = auth.currentUser;
+
+  console.log(user);
 
   if (requiresAuth && !user) {
     next("/accounts/login");
@@ -87,9 +89,9 @@ router.beforeEach(async (to, from, next) => {
 });
 
 router.afterEach(() => {
-  store.commit("setProgress", 100);
+  store.commit("splash/setProgress", 100);
   setTimeout(() => {
-    store.commit("setIsLoading", false);
+    store.commit("splash/setIsLoading", false);
   }, 3000);
 });
 

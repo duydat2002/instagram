@@ -20,6 +20,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import Loading from "./components/Loading.vue";
+import { auth } from "@/firebase/init";
 
 export default {
   data() {
@@ -28,10 +29,11 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["user", "isLoading", "progress"]),
+    ...mapGetters("user", ["user"]),
+    ...mapGetters("splash", ["isLoading", "progress"]),
   },
   methods: {
-    ...mapActions(["initUser"]),
+    ...mapActions("user", ["initUser"]),
     handleBeforeUnload(event) {
       this.isLoadingReload = true;
       event.preventDefault();
@@ -41,6 +43,8 @@ export default {
     window.addEventListener("beforeunload", this.handleBeforeUnload);
     await this.initUser();
     this.isLoadingReload = false;
+    console.log(auth.currentUser);
+    console.log(this.user);
   },
   beforeUnmount() {
     window.removeEventListener("beforeunload", this.handleBeforeUnload);

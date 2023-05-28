@@ -100,7 +100,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["setUser"]),
+    ...mapMutations("user", ["setUser"]),
     async submitLoginForm() {
       const { getUserInLogin } = useUser();
 
