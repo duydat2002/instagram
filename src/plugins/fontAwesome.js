@@ -5,6 +5,7 @@ import {
   faChevronCircleLeft,
   faChevronCircleRight,
   faSpinner,
+  faChevronLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { faSquareFacebook } from "@fortawesome/free-brands-svg-icons";
@@ -20,7 +21,8 @@ library.add(
   faSquareFacebook,
   faCircleCheck,
   faCircleXmark,
-  faSpinner
+  faSpinner,
+  faChevronLeft
 );
 
 export { FontAwesomeIcon };

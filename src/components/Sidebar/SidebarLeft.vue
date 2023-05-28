@@ -139,7 +139,10 @@
               ref="moreModal"
               :class="['more-modal', { active: moreActive }]"
             >
-              <more></more>
+              <more
+                :themeTabActive="themeTabActive"
+                @changeTabActive="changeTabActive"
+              ></more>
             </div>
           </template>
         </sidebar-left-tab>
@@ -173,6 +176,7 @@ export default {
       isNarrow: false,
       searchActive: false,
       moreActive: false,
+      themeTabActive: false,
     };
   },
   computed: {
@@ -213,8 +217,12 @@ export default {
     handleMoreClickOutside() {
       if (this.moreActive == true) {
         this.moreActive = false;
+        this.themeTabActive = false;
         // this.currentTab = this.previousTab;
       }
+    },
+    changeTabActive(value) {
+      this.themeTabActive = value;
     },
   },
   watch: {
@@ -247,7 +255,7 @@ export default {
   left: 0;
   width: var(--nav-medium-width);
   height: 100vh;
-  background: var(--bg-color);
+  background: var(--primary-background);
   border-right: 1px solid var(--border-super-dark-color);
   transition: all 0.3s;
   z-index: 100;
@@ -256,7 +264,7 @@ export default {
 .sidebar-nav {
   position: relative;
   padding: 8px 12px 20px;
-  background: var(--bg-color);
+  background: var(--primary-background);
   z-index: 100;
 }
 
@@ -340,7 +348,7 @@ export default {
   top: 0;
   bottom: 0;
   width: 400px;
-  background: var(--bg-color);
+  background: var(--primary-background);
   opacity: 0;
   visibility: hidden;
   transform: translateX(-100px);

@@ -9,29 +9,31 @@
   src: local("Segoe UI"), url("@/assets/fonts/Segoe UI.woff") format("woff");
 }
 
+/* ===== Light ===== */
 :root {
   /* Color */
-  --primary-text-color: #fff;
-  --secondary-text-color: #737373;
+  --primary-background: rgb(255, 255, 255);
 
-  --link-color: #00376b;
-  --error-color: #ed4956;
+  --primary-text-color: rgb(0, 0, 0);
+  --secondary-text-color: rgb(115, 115, 115);
 
-  --bg-color: #000;
+  --link-color: rgb(0, 55, 107);
+  --error-color: rgb(237, 73, 86);
+
   --hover-color: rgba(255, 255, 255, 0.1);
 
-  --modal-color: #262626;
+  --modal-color: rgb(38, 38, 38);
 
-  --secondary-bg-color: #fafafa;
-  --separator-color: #dbdbdb;
+  --secondary-bg-color: rgb(250, 250, 250);
+  --separator-color: rgb(219, 219, 219);
 
-  --border-color: #dbdbdb;
-  --border-dark-color: #a8a8a8;
-  --border-super-dark-color: #262626;
+  --border-color: rgb(219, 219, 219);
+  --border-dark-color: rgb(168, 168, 168);
+  --border-super-dark-color: rgb(38, 38, 38);
 
-  --button-color: #262626;
-  --primary-button-color: #0095f6;
-  --primary-button-hover-color: #1877f2;
+  --button-color: rgb(38, 38, 38);
+  --primary-button-color: rgb(0, 149, 246);
+  --primary-button-hover-color: rgb(24, 119, 242);
 
   --gradient-lavender: 211, 0, 197;
   --gradient-orange: 255, 122, 0;
@@ -49,6 +51,57 @@
 
   /* More modal width */
   --more-modal-width: 266px;
+}
+
+:root svg {
+  color: #000;
+  fill: #000;
+}
+
+/* ===== Dark ===== */
+:root.dark {
+  --primary-text-color: #fff;
+  --secondary-text-color: #737373;
+
+  --link-color: rgb(0, 55, 107);
+  --error-color: rgb(237, 73, 86);
+
+  --hover-color: rgba(255, 255, 255, 0.1);
+
+  --modal-color: rgb(38, 38, 38);
+
+  --secondary-bg-color: rgb(250, 250, 250);
+  --separator-color: rgb(219, 219, 219);
+
+  --border-color: rgb(219, 219, 219);
+  --border-dark-color: rgb(168, 168, 168);
+  --border-super-dark-color: rgb(38, 38, 38);
+
+  --button-color: rgb(38, 38, 38);
+  --primary-button-color: rgb(0, 149, 246);
+  --primary-button-hover-color: rgb(24, 119, 242);
+
+  --gradient-lavender: 211, 0, 197;
+  --gradient-orange: 255, 122, 0;
+  --gradient-pink: 255, 1, 105;
+  --gradient-purple: 118, 56, 250;
+  --gradient-red: 255, 48, 64;
+  --gradient-yellow: 255, 214, 0;
+
+  /* Width */
+  --feed-sidebar-width: 319px;
+
+  /* Nav width */
+  --nav-narrow-width: 72px;
+  --nav-medium-width: 244px;
+
+  /* More modal width */
+  --more-modal-width: 266px;
+}
+
+:root.dark svg {
+  color: #fff;
+  fill: #fff;
 }
 
 /* ===== BASE ===== */

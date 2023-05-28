@@ -18,14 +18,14 @@ export default {
 
 <style scoped>
 #dashboard {
-  background: var(--bg-color);
+  background: var(--primary-background);
   color: #ffffff;
 }
 
 #main {
   margin-left: auto;
   padding: 0 46px;
-  background: var(--bg-color);
+  background: var(--primary-background);
   height: 1000px;
   width: calc(100% - var(--nav-medium-width));
 }

@@ -44,7 +44,7 @@ export default {
 }
 
 .img-wrapper {
-  border: 2px solid var(--bg-color);
+  border: 2px solid var(--primary-background);
   border-radius: 50%;
   overflow: hidden;
 }

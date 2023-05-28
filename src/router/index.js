@@ -6,9 +6,13 @@ import Stories from "../views/Stories.vue";
 import Profile from "../views/Profile.vue";
 import Login from "../components/Auth/Login.vue";
 import SignUp from "../components/Auth/SignUp.vue";
+import Posts from "../views/PostTabs/Posts.vue";
+import SavedPosts from "../views/PostTabs/SavedPosts.vue";
+import TaggedPosts from "../views/PostTabs/TaggedPosts.vue";
 import DefaultLayout from "../layouts/DefaultLayout.vue";
 import DashboardLayout from "../layouts/DashboardLayout.vue";
 import AuthLayout from "../layouts/AuthLayout.vue";
+import PostTabsLayout from "../layouts/PostTabsLayout.vue";
 
 import { createRouter, createWebHistory } from "vue-router";
 import { auth } from "@/firebase/init";
@@ -49,7 +53,27 @@ const routes = [
     path: "/:id",
     name: "Profile",
     component: Profile,
-    meta: { layout: DashboardLayout, requiresAuth: true },
+    meta: { layout: DashboardLayout },
+    children: [
+      {
+        path: "",
+        name: "Posts",
+        component: Posts,
+        meta: { nestedLayout: PostTabsLayout },
+      },
+      {
+        path: "saved",
+        name: "SavedPosts",
+        component: SavedPosts,
+        meta: { nestedLayout: PostTabsLayout },
+      },
+      {
+        path: "tagged",
+        name: "TaggedPosts",
+        component: TaggedPosts,
+        meta: { nestedLayout: PostTabsLayout },
+      },
+    ],
   },
   {
     path: "/accounts/login",

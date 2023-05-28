@@ -1,9 +1,24 @@
 <template>
-  <h1>Profile {{ this.$route.params.id }}</h1>
+  <div class="profile-container">
+    <div class="general">
+      <general />
+    </div>
+    <div class="highlight">
+      <story-list />
+    </div>
+    <div class="user-posts">
+      <component :is="$route.meta.nestedLayout" />
+    </div>
+  </div>
 </template>
 
 <script>
-export default {};
+import General from "@/components/Profile/General.vue";
+import StoryList from "@/components/Story/StoryList.vue";
+
+export default {
+  components: { General, StoryList },
+};
 </script>
 
-<style></style>
+<style scoped></style>
