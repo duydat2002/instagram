@@ -127,6 +127,8 @@ export default {
   width: 150px;
   height: 150px;
   margin: 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
 }
 
 .general-info {
