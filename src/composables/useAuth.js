@@ -1,30 +1,47 @@
 import { ref } from "vue";
 import { auth, db } from "@/firebase/init";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import {
+  collection,
+  doc,
+  getDocs,
+  or,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 
 export const useAuth = () => {
-  const authUser = ref(null);
   const authError = ref(null);
 
   const signUp = async (email, password, fullname, username) => {
     authError.value = null;
 
     try {
+      let user = null;
+
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
-      const user = userCredential.user;
+      user = userCredential.user;
 
-      await setDoc(doc(db, "users", user.uid), {
+      const userData = {
         email,
         fullname,
         username,
-      });
+        avatar: "",
+        bio: "",
+        insight: { followersCount: 0, followingCount: 0, postsCount: 0 },
+      };
 
-      authUser.value = user;
+      await setDoc(doc(db, "users", user.uid), userData);
+
+      return user;
     } catch (error) {
       let message = "";
       switch (error.code) {
@@ -45,5 +62,41 @@ export const useAuth = () => {
     }
   };
 
-  return { authUser, authError, signUp };
+  const getUserInLogin = async (username, password) => {
+    try {
+      let user = null;
+      const querySnapshot = await getDocs(
+        query(
+          collection(db, "users"),
+          or(
+            where("username", "==", username),
+            where("phoneNumber", "==", username),
+            where("email", "==", username)
+          )
+        )
+      );
+
+      if (querySnapshot.empty) {
+        user = null;
+      } else {
+        querySnapshot.forEach((doc) => {
+          user = doc.data();
+        });
+      }
+
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        user.email,
+        password
+      );
+
+      user = userCredential.user;
+
+      return user;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return { authError, signUp, getUserInLogin };
 };

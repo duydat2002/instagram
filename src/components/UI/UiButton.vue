@@ -82,6 +82,24 @@ button:disabled {
   pointer-events: none;
 }
 
+button[primary] {
+  color: #fff;
+  background: var(--primary-button-color);
+}
+
+button[primary]:hover {
+  background: var(--primary-button-hover-color);
+}
+
+button[secondary] {
+  color: #000;
+  background: var(--secondary-button-color);
+}
+
+button[secondary]:hover {
+  background: var(--secondary-button-hover-color);
+}
+
 .button--variant-text {
   color: #385185;
   background: transparent;
@@ -91,11 +109,8 @@ button:disabled {
 }
 
 .button--variant-contained {
-  color: #fff;
-  background: var(--primary-button-color);
 }
 .button--variant-contained:hover {
-  background: var(--primary-button-hover-color) !important;
 }
 
 .button--variant-outlined {

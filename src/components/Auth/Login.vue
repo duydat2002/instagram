@@ -27,6 +27,7 @@
         </div>
         <ui-button
           type="submit"
+          primary
           class="auth-button"
           :disabled="isDisable"
           :isLoading="loading"
@@ -83,7 +84,7 @@ import UiInput from "@/components/UI/UiInput";
 import UiButton from "../UI/UiButton";
 
 import { mapMutations } from "vuex";
-import { useUser } from "@/composables/useUser";
+import { useAuth } from "@/composables/useAuth";
 
 export default {
   data() {
@@ -100,9 +101,9 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("user", ["setUser"]),
+    ...mapMutations("user", ["setCurrentUser"]),
     async submitLoginForm() {
-      const { getUserInLogin } = useUser();
+      const { getUserInLogin } = useAuth();
 
       this.loading = true;
 
@@ -110,7 +111,7 @@ export default {
 
       if (user) {
         console.log(user);
-        this.setUser(user);
+        this.setCurrentUser(user);
         this.authError = null;
         this.$router.push("/");
       } else {

@@ -1,8 +1,8 @@
-Users(id, username, email, fullname, avatar, bio, insightId)
+Users(id, username, email, fullname, avatar, bio, insight{followersCount, followingCount, postsCount})
 
 Highlights(id, userId, title, stories[id])
 
-Insights(id, userId, followersCount, followingCount, postsCount)
+  x  Insights(id, userId, followersCount, followingCount, postsCount)
 
 Stories(id, userId, content, created_at)
 

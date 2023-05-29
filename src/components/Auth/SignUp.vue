@@ -12,7 +12,7 @@
         class="auth-form__container"
         @submit.prevent="submitSignupForm"
       >
-        <ui-button variant="contained" class="signup-button">
+        <ui-button variant="contained" primary class="signup-button">
           <template #icon>
             <div class="facebook-logo">
               <fa :icon="['fab', 'square-facebook']" style="color: #ffffff" />
@@ -80,6 +80,7 @@
         </p>
         <ui-button
           type="submit"
+          primary
           class="auth-button"
           :disabled="isDisable"
           :isLoading="loading"

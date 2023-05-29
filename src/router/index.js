@@ -1,28 +1,18 @@
-import Home from "../views/Home.vue";
-// import Explore from "../views/Explore.vue";
-import Reels from "../views/Reels.vue";
-import Inbox from "../views/Inbox.vue";
-import Stories from "../views/Stories.vue";
-import Profile from "../views/Profile.vue";
-import Login from "../components/Auth/Login.vue";
-import SignUp from "../components/Auth/SignUp.vue";
-import Posts from "../views/PostTabs/Posts.vue";
-import SavedPosts from "../views/PostTabs/SavedPosts.vue";
-import TaggedPosts from "../views/PostTabs/TaggedPosts.vue";
 import DefaultLayout from "../layouts/DefaultLayout.vue";
 import DashboardLayout from "../layouts/DashboardLayout.vue";
 import AuthLayout from "../layouts/AuthLayout.vue";
 import PostTabsLayout from "../layouts/PostTabsLayout.vue";
 
 import { createRouter, createWebHistory } from "vue-router";
-import { auth } from "@/firebase/init";
 import store from "@/store/index";
+import { auth } from "@/firebase/init";
+import { useUser } from "@/composables/useUser";
 
 const routes = [
   {
     path: "/",
     name: "Home",
-    component: Home,
+    component: () => import("../views/Home.vue"),
     meta: { layout: DashboardLayout, requiresAuth: true },
   },
   {
@@ -34,43 +24,59 @@ const routes = [
   {
     path: "/reels",
     name: "Reels",
-    component: Reels,
+    component: () => import("../views/Reels.vue"),
     meta: { layout: DefaultLayout, requiresAuth: true },
   },
   {
     path: "/message",
     name: "Inbox",
-    component: Inbox,
+    component: () => import("../views/Inbox.vue"),
     meta: { layout: DashboardLayout, requiresAuth: true },
   },
   {
     path: "/stories/:id",
     name: "Stories",
-    component: Stories,
+    component: () => import("../views/Stories.vue"),
     meta: { layout: DefaultLayout, requiresAuth: true },
   },
   {
-    path: "/:id",
+    path: "/:username",
     name: "Profile",
-    component: Profile,
+    component: () => import("../views/Profile.vue"),
     meta: { layout: DashboardLayout },
+    beforeEnter: (to, from, next) => {
+      const { getUserWithUsername } = useUser();
+      getUserWithUsername(to.params.username).then((user) => {
+        if (!user) {
+          next({
+            name: "NotFound",
+            params: { pathMatch: to.path.substring(1).split("/") },
+            query: to.query,
+            hash: to.hash,
+          });
+        } else {
+          store.commit("user/setUser", user);
+          next();
+        }
+      });
+    },
     children: [
       {
         path: "",
         name: "Posts",
-        component: Posts,
+        component: () => import("../views/PostTabs/Posts.vue"),
         meta: { nestedLayout: PostTabsLayout },
       },
       {
         path: "saved",
         name: "SavedPosts",
-        component: SavedPosts,
+        component: () => import("../views/PostTabs/SavedPosts.vue"),
         meta: { nestedLayout: PostTabsLayout },
       },
       {
         path: "tagged",
         name: "TaggedPosts",
-        component: TaggedPosts,
+        component: () => import("../views/PostTabs/TaggedPosts.vue"),
         meta: { nestedLayout: PostTabsLayout },
       },
     ],
@@ -78,14 +84,20 @@ const routes = [
   {
     path: "/accounts/login",
     name: "Login",
-    component: Login,
+    component: () => import("../components/Auth/Login.vue"),
     meta: { layout: AuthLayout },
   },
   {
     path: "/accounts/signup",
     name: "SignUp",
-    component: SignUp,
+    component: () => import("../components/Auth/SignUp.vue"),
     meta: { layout: AuthLayout },
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: () => import("../views/NotFound.vue"),
+    meta: { layout: DashboardLayout },
   },
 ];
 
@@ -94,6 +106,13 @@ const router = createRouter({
   routes,
   linkActiveClass: "active",
   linkExactActiveClass: "active",
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      return { top: 0 };
+    }
+  },
 });
 
 const authPath = ["/accounts/login", "/accounts/signup"];
@@ -104,8 +123,6 @@ router.beforeEach(async (to, from, next) => {
 
   const requiresAuth = to.meta.requiresAuth;
   const user = auth.currentUser;
-
-  console.log(user);
 
   if (requiresAuth && !user) {
     next("/accounts/login");

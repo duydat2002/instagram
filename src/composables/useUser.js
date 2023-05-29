@@ -1,6 +1,5 @@
 import { ref } from "vue";
 import { auth, db } from "@/firebase/init";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import {
   collection,
   query,
@@ -8,7 +7,6 @@ import {
   doc,
   getDoc,
   getDocs,
-  or,
 } from "firebase/firestore";
 
 export const useUser = () => {
@@ -45,41 +43,14 @@ export const useUser = () => {
     return user;
   };
 
-  const getUserInLogin = async (username, password) => {
-    try {
-      let user = null;
-      const querySnapshot = await getDocs(
-        query(
-          collection(db, "users"),
-          or(
-            where("username", "==", username),
-            where("phoneNumber", "==", username),
-            where("email", "==", username)
-          )
-        )
-      );
-
-      if (querySnapshot.empty) {
-        user = null;
-      } else {
-        querySnapshot.forEach((doc) => {
-          user = doc.data();
-        });
-      }
-
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        user.email,
-        password
-      );
-
-      user = userCredential.user;
-
-      return user;
-    } catch (error) {
-      console.log(error);
-    }
+  const getUserWithUsername = async (username) => {
+    return await getUserWithQuery("username", "==", username);
   };
 
-  return { user, getUser, getUserWithQuery, getUserInLogin };
+  return {
+    user,
+    getUser,
+    getUserWithQuery,
+    getUserWithUsername,
+  };
 };

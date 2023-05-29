@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="background: var(--primary-bg-color)">
     <loading v-if="isLoading" :progress="progress" />
 
     <div v-if="isLoadingReload" id="splash-screen">
@@ -29,11 +29,11 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("user", ["user"]),
+    ...mapGetters("user", ["currentUser"]),
     ...mapGetters("splash", ["isLoading", "progress"]),
   },
   methods: {
-    ...mapActions("user", ["initUser"]),
+    ...mapActions("user", ["initCurrentUser"]),
     handleBeforeUnload(event) {
       this.isLoadingReload = true;
       event.preventDefault();
@@ -41,10 +41,10 @@ export default {
   },
   async mounted() {
     window.addEventListener("beforeunload", this.handleBeforeUnload);
-    await this.initUser();
+    await this.initCurrentUser();
     this.isLoadingReload = false;
     console.log(auth.currentUser);
-    console.log(this.user);
+    console.log(this.currentUser);
   },
   beforeUnmount() {
     window.removeEventListener("beforeunload", this.handleBeforeUnload);

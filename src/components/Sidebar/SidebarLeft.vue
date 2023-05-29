@@ -106,7 +106,7 @@
           </template>
         </sidebar-left-tab>
         <sidebar-left-tab
-          :link="`/${user?.username}`"
+          :link="`/${currentUser?.username}`"
           title="Trang cá nhân"
           tooltip="Trang cá nhân"
           tab="Profile"
@@ -180,7 +180,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("user", ["user"]),
+    ...mapGetters("user", ["currentUser"]),
   },
   methods: {
     handleChangeTab(tab) {

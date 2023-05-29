@@ -12,25 +12,26 @@
 /* ===== Light ===== */
 :root {
   /* Color */
-  --primary-bg-color: rgb(255, 255, 255);
-  --secondary-bg-color: rgb(250, 250, 250);
+  --primary-bg-color: #ffffff;
+  --secondary-bg-color: #fafafa;
 
-  --primary-text-color: rgb(0, 0, 0);
-  --secondary-text-color: rgb(115, 115, 115);
+  --primary-text-color: #000000;
+  --secondary-text-color: #737373;
 
-  --link-color: rgb(0, 55, 107);
-  --error-color: rgb(237, 73, 86);
-  --separator-color: rgb(244, 244, 244);
-  --hover-color: rgb(242, 242, 242);
-  --modal-color: rgb(255, 255, 255);
+  --link-color: #00376b;
+  --error-color: #ed4956;
+  --separator-color: #f4f4f4;
+  --hover-color: #f2f2f2;
+  --modal-color: #ffffff;
 
-  --border-color: rgb(219, 219, 219);
-  --border-dark-color: rgb(168, 168, 168);
-  --border-super-dark-color: rgb(38, 38, 38);
+  --border-color: #dbdbdb;
+  --border-dark-color: #a8a8a8;
+  --border-super-dark-color: #262626;
 
-  --button-color: rgb(38, 38, 38);
-  --primary-button-color: rgb(0, 149, 246);
-  --primary-button-hover-color: rgb(24, 119, 242);
+  --primary-button-color: #0095f6;
+  --primary-button-hover-color: #1877f2;
+  --secondary-button-color: #efefef;
+  --secondary-button-hover-color: #dbdbdb;
 
   --gradient-lavender: 211, 0, 197;
   --gradient-orange: 255, 122, 0;
@@ -63,7 +64,7 @@
   --primary-text-color: #fff;
   --secondary-text-color: #737373;
 
-  --link-color: #00376b;
+  --link-color: #e0f1ff;
   --error-color: #ed4956;
   --separator-color: #5555554d;
   --hover-color: #ffffff1a;
@@ -72,27 +73,6 @@
   --border-color: #262626;
   --border-dark-color: #a8a8a8;
   --border-super-dark-color: #262626;
-
-  --button-color: #262626;
-  --primary-button-color: #0095f6;
-  --primary-button-hover-color: #1877f2;
-
-  --gradient-lavender: 211, 0, 197;
-  --gradient-orange: 255, 122, 0;
-  --gradient-pink: 255, 1, 105;
-  --gradient-purple: 118, 56, 250;
-  --gradient-red: 255, 48, 64;
-  --gradient-yellow: 255, 214, 0;
-
-  /* Width */
-  --feed-sidebar-width: 319px;
-
-  /* Nav width */
-  --nav-narrow-width: 72px;
-  --nav-medium-width: 244px;
-
-  /* More modal width */
-  --more-modal-width: 266px;
 }
 
 :root.dark svg {
@@ -132,7 +112,7 @@ a {
 img {
   max-width: 100%;
   height: auto;
-  /* vertical-align: middle; */
+  vertical-align: middle;
 }
 
 input,

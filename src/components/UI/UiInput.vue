@@ -147,7 +147,7 @@ export default {
   font-size: 14px;
   line-height: 18px;
   font-weight: 600;
-  color: var(--button-color);
+  color: #262626;
   user-select: none;
   cursor: pointer;
 }

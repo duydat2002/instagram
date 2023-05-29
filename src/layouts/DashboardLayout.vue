@@ -19,7 +19,6 @@ export default {
 <style scoped>
 #main {
   margin-left: auto;
-  padding: 0 46px;
   background: var(--primary-bg-color);
   height: 1000px;
   width: calc(100% - var(--nav-medium-width));
