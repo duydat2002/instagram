@@ -255,8 +255,8 @@ export default {
   left: 0;
   width: var(--nav-medium-width);
   height: 100vh;
-  background: var(--primary-background);
-  border-right: 1px solid var(--border-super-dark-color);
+  background: var(--primary-bg-color);
+  border-right: 1px solid var(--border-color);
   transition: all 0.3s;
   z-index: 100;
 }
@@ -264,7 +264,7 @@ export default {
 .sidebar-nav {
   position: relative;
   padding: 8px 12px 20px;
-  background: var(--primary-background);
+  background: var(--primary-bg-color);
   z-index: 100;
 }
 
@@ -348,7 +348,7 @@ export default {
   top: 0;
   bottom: 0;
   width: 400px;
-  background: var(--primary-background);
+  background: var(--primary-bg-color);
   opacity: 0;
   visibility: hidden;
   transform: translateX(-100px);

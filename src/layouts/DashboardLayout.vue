@@ -17,15 +17,10 @@ export default {
 </script>
 
 <style scoped>
-#dashboard {
-  background: var(--primary-background);
-  color: #ffffff;
-}
-
 #main {
   margin-left: auto;
   padding: 0 46px;
-  background: var(--primary-background);
+  background: var(--primary-bg-color);
   height: 1000px;
   width: calc(100% - var(--nav-medium-width));
 }

@@ -136,10 +136,12 @@ export default {
   },
   methods: {
     ...mapMutations("modal", ["setLogoutModalShow"]),
+    ...mapMutations("theme", ["setTheme"]),
     async handleLogout() {
       this.setLogoutModalShow(true);
       await signOut(auth);
       setTimeout(() => {
+        this.setTheme("light");
         this.setLogoutModalShow(false);
         this.$router.push("/accounts/login");
       }, 3000);
@@ -181,6 +183,7 @@ a {
   z-index: 1000;
   overflow: hidden;
   transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .action-tabs {
@@ -190,7 +193,7 @@ a {
 .tab {
   width: 100%;
   padding: 16px;
-  color: #fff;
+  color: var(--primary-text-color);
   align-items: center;
   transition: all 0.2s;
   border-radius: 8px;

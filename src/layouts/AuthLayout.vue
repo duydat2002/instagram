@@ -57,7 +57,7 @@ export default {
 .auth__container .separator-line {
   flex: 1 0;
   height: 1px;
-  background: var(--separator-color);
+  background: var(--border-color);
 }
 
 .auth__container .separator-text {

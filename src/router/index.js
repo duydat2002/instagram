@@ -96,6 +96,8 @@ const router = createRouter({
   linkExactActiveClass: "active",
 });
 
+const authPath = ["/accounts/login", "/accounts/signup"];
+
 router.beforeEach(async (to, from, next) => {
   store.commit("splash/setIsLoading", true);
   store.commit("splash/setProgress", 0);
@@ -108,7 +110,11 @@ router.beforeEach(async (to, from, next) => {
   if (requiresAuth && !user) {
     next("/accounts/login");
   } else {
-    next();
+    if (authPath.includes(to.path) && user) {
+      next("/");
+    } else {
+      next();
+    }
   }
 });
 

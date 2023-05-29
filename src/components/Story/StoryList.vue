@@ -65,6 +65,11 @@ export default {
   cursor: pointer;
 }
 
+.navigation-button svg {
+  color: #fff;
+  fill: #fff;
+}
+
 .navigation-button.swiper-button-disabled {
   display: none;
 }

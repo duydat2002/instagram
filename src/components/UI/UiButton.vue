@@ -124,6 +124,11 @@ button:disabled {
   animation: spinner 1s infinite linear;
 }
 
+.loading svg {
+  color: #fff;
+  fill: #fff;
+}
+
 @keyframes spinner {
   from {
     transform: rotate(0deg);
