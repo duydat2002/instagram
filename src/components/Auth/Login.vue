@@ -110,7 +110,6 @@ export default {
       const user = await getUserInLogin(this.username, this.password);
 
       if (user) {
-        console.log(user);
         this.setCurrentUser(user);
         this.authError = null;
         this.$router.push("/");

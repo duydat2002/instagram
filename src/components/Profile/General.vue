@@ -17,12 +17,17 @@
               >Chỉnh sửa trang cá nhân</ui-button
             >
             <div v-else class="general-more flex">
-              <div class="general-follow" @click="$router.push('/123')">
-                <ui-button class="following" secondary v-if="true">
+              <div class="general-follow">
+                <ui-button
+                  class="following"
+                  secondary
+                  v-if="isFollowing"
+                  @click="unfollow"
+                >
                   <span>Đang theo dõi</span>
                   <fa :icon="['fas', 'chevron-down']" />
                 </ui-button>
-                <ui-button primary v-else>
+                <ui-button primary v-else @click="follow">
                   <span>Theo dõi</span>
                 </ui-button>
               </div>
@@ -90,10 +95,12 @@ import UiButton from "../UI/UiButton.vue";
 
 import { mapGetters } from "vuex";
 import { formatNumberToSuffix } from "@/untils";
+import { useFollow } from "@/composables/useFollow";
+const { setFollow, deleteFollow } = useFollow();
 
 export default {
-  data() {
-    return {};
+  props: {
+    isFollowing: Boolean,
   },
   computed: {
     ...mapGetters("user", ["user", "currentUser"]),
@@ -107,6 +114,12 @@ export default {
   methods: {
     formatNumber(number) {
       return formatNumberToSuffix(number);
+    },
+    async follow() {
+      await setFollow(this.currentUser.id, this.user.id);
+    },
+    async unfollow() {
+      await deleteFollow(this.currentUser.id, this.user.id);
     },
   },
   components: { UiButton, SettingIcon, SuggestIcon },

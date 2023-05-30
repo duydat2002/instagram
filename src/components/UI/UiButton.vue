@@ -4,7 +4,6 @@
     :style="{ color, backgroundColor }"
     :type="type"
     :disabled="isDisabled"
-    @click="handleClick"
   >
     <div v-if="isLoading" class="loading">
       <fa :icon="['fas', 'spinner']" />
@@ -50,11 +49,6 @@ export default {
       validator: (value) => {
         return ["small", "medium", "large"].includes(value);
       },
-    },
-  },
-  methods: {
-    handleClick() {
-      this.$emit("click");
     },
   },
   computed: {

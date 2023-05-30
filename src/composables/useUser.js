@@ -19,7 +19,10 @@ export const useUser = () => {
     const docSnap = await getDoc(doc(db, "users", auth.currentUser.uid));
 
     if (docSnap.exists()) {
-      return docSnap.data();
+      return {
+        id: docSnap.id,
+        ...docSnap.data(),
+      };
     } else {
       return null;
     }
@@ -36,7 +39,10 @@ export const useUser = () => {
       user = null;
     } else {
       querySnapshot.forEach((doc) => {
-        user = doc.data();
+        user = {
+          id: doc.id,
+          ...doc.data(),
+        };
       });
     }
 

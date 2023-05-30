@@ -91,6 +91,7 @@ export const useAuth = () => {
       );
 
       user = userCredential.user;
+      console.log(user);
 
       return user;
     } catch (error) {

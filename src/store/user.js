@@ -29,7 +29,10 @@ const user = {
           const docSnap = await getDoc(doc(db, "users", user.uid));
 
           if (docSnap.exists()) {
-            commit("setCurrentUser", docSnap.data());
+            commit("setCurrentUser", {
+              id: docSnap.id,
+              ...docSnap.data(),
+            });
           } else {
             commit("setCurrentUser", null);
           }
