@@ -23,8 +23,8 @@ const user = {
     },
   },
   actions: {
-    initCurrentUser({ commit }) {
-      onAuthStateChanged(auth, async (user) => {
+    async initCurrentUser({ commit }) {
+      await onAuthStateChanged(auth, async (user) => {
         if (user) {
           const docSnap = await getDoc(doc(db, "users", user.uid));
 

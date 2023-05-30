@@ -54,6 +54,7 @@ export default {
     this.isFollowing = await getFollowing(this.currentUser.id, this.user.id);
   },
   async beforeMount() {
+    console.log(this.currentUser.id, this.user.id);
     this.isFollowing = await watchFollowChange(
       this.currentUser.id,
       this.user.id
