@@ -3,18 +3,17 @@ import {
   doc,
   getDoc,
   setDoc,
-  // updateDoc,
   deleteDoc,
-  // runTransaction,
   onSnapshot,
   serverTimestamp,
 } from "firebase/firestore";
 import { ref, onBeforeUnmount } from "vue";
 import { updateWithTransaction } from "@/untils";
+import store from "@/store/index";
 
 export const useFollow = () => {
   const isFollowing = ref(null);
-  const watchFollowChange = (followerId, followingId) => {
+  const watchFollowChange = async (followerId, followingId) => {
     const unsubscribe = onSnapshot(
       doc(db, "followers", `${followerId}-${followingId}`),
       (doc) => {
@@ -71,40 +70,50 @@ export const useFollow = () => {
     }
   };
 
+  //Update currentUser, user when follow user
   const updateFollowCount = async (followerId, followingId) => {
     // Update followingCount of currentUser(followerId)
     const followerDocRef = doc(db, "users", followerId);
-    await updateWithTransaction(
+    const updatedCurrentUserData = await updateWithTransaction(
       followerDocRef,
       "insight.followingCount",
       (oldValue) => oldValue + 1
     );
+    // Update currentUser data in store
+    store.commit("user/setCurrentUser", updatedCurrentUserData);
 
     // Update followersCount of user(followingId)
     const followingDocRef = doc(db, "users", followingId);
-    await updateWithTransaction(
+    const updatedUserData = await updateWithTransaction(
       followingDocRef,
       "insight.followersCount",
       (oldValue) => oldValue + 1
     );
+    // Update currentUser data in store
+    store.commit("user/setUser", updatedUserData);
   };
 
+  //Update currentUser, user when unfollow user
   const updateUnfollowCount = async (followerId, followingId) => {
     // Update followingCount of currentUser(followerId)
     const followerDocRef = doc(db, "users", followerId);
-    await updateWithTransaction(
+    const updatedCurrentUserData = await updateWithTransaction(
       followerDocRef,
       "insight.followingCount",
       (oldValue) => oldValue - 1
     );
+    // Update currentUser data in store
+    store.commit("user/setCurrentUser", updatedCurrentUserData);
 
     // Update followersCount of user(followingId)
     const followingDocRef = doc(db, "users", followingId);
-    await updateWithTransaction(
+    const updatedUserData = await updateWithTransaction(
       followingDocRef,
       "insight.followersCount",
-      (oldValue) => oldValue + 1
+      (oldValue) => oldValue - 1
     );
+    // Update currentUser data in store
+    store.commit("user/setUser", updatedUserData);
   };
 
   return { setFollow, deleteFollow, getFollowing, watchFollowChange };

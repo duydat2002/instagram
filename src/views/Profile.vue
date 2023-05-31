@@ -1,7 +1,10 @@
 <template>
   <div v-if="user && isFollowing != null" class="profile-container">
     <div class="general">
-      <general :isFollowing="isFollowing" />
+      <general
+        :isFollowing="isFollowing"
+        @updateIsFollowing="handleUpdateIsFollowing"
+      />
     </div>
     <div class="highlight">
       <story-list />
@@ -19,7 +22,7 @@ import StoryList from "@/components/Story/StoryList.vue";
 import { mapGetters, mapMutations } from "vuex";
 import { useUser } from "@/composables/useUser";
 import { useFollow } from "@/composables/useFollow";
-const { getFollowing, watchFollowChange } = useFollow();
+const { getFollowing } = useFollow();
 
 export default {
   data() {
@@ -38,6 +41,9 @@ export default {
       console.log(user);
       this.setUser(user);
     },
+    handleUpdateIsFollowing(value) {
+      this.isFollowing = value;
+    },
   },
   async beforeRouteUpdate(to) {
     const { getUserWithUsername } = useUser();
@@ -54,11 +60,7 @@ export default {
     this.isFollowing = await getFollowing(this.currentUser.id, this.user.id);
   },
   async beforeMount() {
-    console.log(this.currentUser.id, this.user.id);
-    this.isFollowing = await watchFollowChange(
-      this.currentUser.id,
-      this.user.id
-    );
+    this.isFollowing = await getFollowing(this.currentUser.id, this.user.id);
   },
   components: { General, StoryList },
 };

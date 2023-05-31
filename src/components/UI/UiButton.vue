@@ -5,13 +5,13 @@
     :type="type"
     :disabled="isDisabled"
   >
-    <div v-if="isLoading" class="loading">
+    <div v-if="isLoading" class="loading flex">
       <fa :icon="['fas', 'spinner']" />
     </div>
-    <template v-else>
+    <div class="content flex" :style="{ opacity: isLoading ? 0 : 1 }">
       <slot name="icon" />
       <slot />
-    </template>
+    </div>
   </button>
 </template>
 
@@ -61,8 +61,7 @@ export default {
 
 <style scoped>
 button {
-  align-items: center;
-  justify-content: center;
+  position: relative;
   width: 100%;
   font-weight: 600;
   border: none;
@@ -129,7 +128,20 @@ button[secondary]:hover {
   border-radius: 10px;
 }
 
+.content {
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
 .loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
   animation: spinner 1s infinite linear;
 }
 

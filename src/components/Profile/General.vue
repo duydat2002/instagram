@@ -22,12 +22,18 @@
                   class="following"
                   secondary
                   v-if="isFollowing"
+                  :isLoading="isLoadingFollow"
                   @click="unfollow"
                 >
                   <span>Đang theo dõi</span>
                   <fa :icon="['fas', 'chevron-down']" />
                 </ui-button>
-                <ui-button primary v-else @click="follow">
+                <ui-button
+                  primary
+                  v-else
+                  :isLoading="isLoadingFollow"
+                  @click="follow"
+                >
                   <span>Theo dõi</span>
                 </ui-button>
               </div>
@@ -102,6 +108,11 @@ export default {
   props: {
     isFollowing: Boolean,
   },
+  data() {
+    return {
+      isLoadingFollow: false,
+    };
+  },
   computed: {
     ...mapGetters("user", ["user", "currentUser"]),
     isCurrentUser() {
@@ -116,10 +127,16 @@ export default {
       return formatNumberToSuffix(number);
     },
     async follow() {
+      this.isLoadingFollow = true;
       await setFollow(this.currentUser.id, this.user.id);
+      this.isLoadingFollow = false;
+      this.$emit("updateIsFollowing", true);
     },
     async unfollow() {
+      this.isLoadingFollow = true;
       await deleteFollow(this.currentUser.id, this.user.id);
+      this.isLoadingFollow = false;
+      this.$emit("updateIsFollowing", false);
     },
   },
   components: { UiButton, SettingIcon, SuggestIcon },
