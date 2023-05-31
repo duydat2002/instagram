@@ -12,6 +12,7 @@
     <div class="user-posts">
       <component :is="$route.meta.nestedLayout" />
     </div>
+    <component v-if="true" :is="$route.meta.isPopup" />
   </div>
 </template>
 

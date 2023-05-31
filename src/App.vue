@@ -1,5 +1,11 @@
 <template>
-  <div style="background: var(--primary-bg-color)">
+  <div
+    :class="{ 'active-overlay': activeOverlay }"
+    :style="{
+      background: 'var(--primary-bg-color)',
+      top: `${-scrollPosition}px`,
+    }"
+  >
     <loading v-if="isLoading" :progress="progress" />
 
     <div v-if="isLoadingReload" id="splash-screen">
@@ -29,6 +35,7 @@ export default {
   },
   computed: {
     ...mapGetters("user", ["currentUser"]),
+    ...mapGetters("modal", ["activeOverlay", "scrollPosition"]),
     ...mapGetters("splash", ["isLoading", "progress"]),
   },
   methods: {
@@ -49,3 +56,12 @@ export default {
   components: { Loading },
 };
 </script>
+
+<style scoped>
+.active-overlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  overflow-y: scroll;
+}
+</style>

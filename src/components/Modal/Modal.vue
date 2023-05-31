@@ -1,20 +1,37 @@
 <template>
   <Teleport to="#modal">
-    <div v-if="isShow" class="modal-container flex">
-      <div class="content">
-        <slot />
-      </div>
+    <div
+      v-if="isShow"
+      class="modal-container flex"
+      @click.self="handleChildClick"
+    >
+      <slot />
     </div>
   </Teleport>
 </template>
 
 <script>
+import { mapMutations } from "vuex";
+
 export default {
   props: {
     isShow: {
       type: Boolean,
       default: false,
     },
+    handleClick: {
+      type: Function,
+      default: () => {},
+    },
+  },
+  methods: {
+    ...mapMutations("modal", ["setScrollPosition"]),
+    handleChildClick() {
+      this.handleClick();
+    },
+  },
+  mounted() {
+    this.setScrollPosition(document.scrollingElement.scrollTop);
   },
 };
 </script>

@@ -21,8 +21,11 @@
   --link-color: #00376b;
   --error-color: #ed4956;
   --separator-color: #f4f4f4;
+  --separator-modal-color: #dbdbdb;
   --hover-color: #f2f2f2;
   --modal-color: #ffffff;
+
+  --skeleton-bg-color: #efefef;
 
   --border-color: #dbdbdb;
   --border-dark-color: #a8a8a8;
@@ -70,6 +73,8 @@
   --hover-color: #ffffff1a;
   --modal-color: #262626;
 
+  --separator-modal-color: #363636;
+
   --border-color: #262626;
   --border-dark-color: #a8a8a8;
   --border-super-dark-color: #262626;
@@ -107,6 +112,7 @@ ul {
 a {
   display: inline-block;
   text-decoration: none;
+  color: inherit;
 }
 
 img {
@@ -204,4 +210,30 @@ button {
 
 .separator-small {
   height: 1px;
+}
+
+.loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: spinner 1s infinite linear;
+}
+
+.loading svg {
+  color: var(--primary-text-color);
+  fill: var(--primary-text-color);
+}
+
+@keyframes spinner {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

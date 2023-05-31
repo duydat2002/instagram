@@ -1,5 +1,5 @@
 <template>
-  <h1>Tagged Posts</h1>
+  <h1>Following</h1>
 </template>
 
 <script>

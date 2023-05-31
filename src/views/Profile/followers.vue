@@ -1,5 +1,5 @@
 <template>
-  <h1>Saved Posts</h1>
+  <div>Followers</div>
 </template>
 
 <script>

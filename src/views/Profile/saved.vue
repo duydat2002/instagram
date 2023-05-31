@@ -1,5 +1,5 @@
 <template>
-  <h1>User Posts</h1>
+  <h1>Saved</h1>
 </template>
 
 <script>

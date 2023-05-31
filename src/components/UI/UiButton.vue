@@ -5,7 +5,7 @@
     :type="type"
     :disabled="isDisabled"
   >
-    <div v-if="isLoading" class="loading flex">
+    <div v-if="isLoading" class="loading">
       <fa :icon="['fas', 'spinner']" />
     </div>
     <div class="content flex" :style="{ opacity: isLoading ? 0 : 1 }">
@@ -132,30 +132,5 @@ button[secondary]:hover {
   width: 100%;
   align-items: center;
   justify-content: center;
-}
-
-.loading {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  align-items: center;
-  justify-content: center;
-  animation: spinner 1s infinite linear;
-}
-
-.loading svg {
-  color: #fff;
-  fill: #fff;
-}
-
-@keyframes spinner {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>

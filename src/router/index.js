@@ -2,6 +2,7 @@ import DefaultLayout from "../layouts/DefaultLayout.vue";
 import DashboardLayout from "../layouts/DashboardLayout.vue";
 import AuthLayout from "../layouts/AuthLayout.vue";
 import PostTabsLayout from "../layouts/PostTabsLayout.vue";
+import PopupLayout from "../layouts/PopupLayout.vue";
 
 import { createRouter, createWebHistory } from "vue-router";
 import store from "@/store/index";
@@ -42,7 +43,7 @@ const routes = [
   {
     path: "/:username",
     name: "Profile",
-    component: () => import("../views/Profile.vue"),
+    component: () => import("../views/Profile/index.vue"),
     meta: { layout: DashboardLayout },
     beforeEnter: (to, from, next) => {
       const { getUserWithUsername } = useUser();
@@ -62,22 +63,32 @@ const routes = [
     },
     children: [
       {
-        path: "",
-        name: "Posts",
-        component: () => import("../views/PostTabs/Posts.vue"),
-        meta: { nestedLayout: PostTabsLayout },
+        path: "followers",
+        name: "Followers",
+        component: () => import("../views/Profile/followers.vue"),
+        meta: { isPopup: PopupLayout },
+        props: true,
+      },
+      {
+        path: "following",
+        name: "Following",
+        component: () => import("../views/Profile/following.vue"),
+        meta: { isPopup: PopupLayout },
+        props: true,
       },
       {
         path: "saved",
-        name: "SavedPosts",
-        component: () => import("../views/PostTabs/SavedPosts.vue"),
+        name: "Saved",
+        component: () => import("../views/Profile/saved.vue"),
         meta: { nestedLayout: PostTabsLayout },
+        props: true,
       },
       {
         path: "tagged",
-        name: "TaggedPosts",
-        component: () => import("../views/PostTabs/TaggedPosts.vue"),
+        name: "Tagged",
+        component: () => import("../views/Profile/tagged.vue"),
         meta: { nestedLayout: PostTabsLayout },
+        props: true,
       },
     ],
   },

@@ -1,4 +1,4 @@
-Users(id, username, email, fullname, avatar, bio, insight{followersCount, followingCount, postsCount}, isPrivate)
+Users(id, username, email, fullname, avatar, bio, insight{followersCount, followingCount, postsCount}, isPrivate*, newsPosts*)
 
 Highlights(id, userId, title, stories[id])
 

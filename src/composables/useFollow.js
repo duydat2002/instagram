@@ -2,14 +2,19 @@ import { db } from "@/firebase/init";
 import {
   doc,
   getDoc,
+  getDocs,
   setDoc,
   deleteDoc,
   onSnapshot,
   serverTimestamp,
+  query,
+  where,
+  collection,
 } from "firebase/firestore";
 import { ref, onBeforeUnmount } from "vue";
 import { updateWithTransaction } from "@/untils";
 import store from "@/store/index";
+import { get as lodashGet } from "lodash";
 
 export const useFollow = () => {
   const isFollowing = ref(null);
@@ -32,6 +37,27 @@ export const useFollow = () => {
     });
 
     return isFollowing;
+  };
+
+  const getFollows = async (fieldNameFind, fieldNameGet, value) => {
+    //Get followers => followingId = userId => get all user - followedId
+    const users = ref([]);
+    const querySnap = await getDocs(
+      query(collection(db, "followers"), where(fieldNameFind, "==", value))
+    );
+    querySnap.forEach(async (followDoc) => {
+      const docSnap = await getDoc(
+        doc(db, "users", lodashGet(followDoc.data(), fieldNameGet))
+      );
+      if (docSnap.exists()) {
+        users.value.push({
+          id: docSnap.id,
+          ...docSnap.data(),
+        });
+      }
+    });
+
+    return users;
   };
 
   const getFollowing = async (followerId, followingId) => {
@@ -116,5 +142,11 @@ export const useFollow = () => {
     store.commit("user/setUser", updatedUserData);
   };
 
-  return { setFollow, deleteFollow, getFollowing, watchFollowChange };
+  return {
+    setFollow,
+    deleteFollow,
+    getFollowing,
+    getFollows,
+    watchFollowChange,
+  };
 };

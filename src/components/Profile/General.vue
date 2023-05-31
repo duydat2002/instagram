@@ -2,7 +2,7 @@
   <div v-if="!true">Loading...</div>
   <template v-else>
     <div class="general-container flex">
-      <div class="general-avatar" @click="$router.push('/admin')">
+      <div class="general-avatar">
         <div class="avatar-wrapper">
           <img src="@/assets/images/defaultAvatar.jpg" alt="Avatar" />
         </div>
@@ -22,6 +22,7 @@
                   class="following"
                   secondary
                   v-if="isFollowing"
+                  :isDisabled="isLoadingFollow"
                   :isLoading="isLoadingFollow"
                   @click="unfollow"
                 >
@@ -31,6 +32,7 @@
                 <ui-button
                   primary
                   v-else
+                  :isDisabled="isLoadingFollow"
                   :isLoading="isLoadingFollow"
                   @click="follow"
                 >
@@ -72,22 +74,42 @@
             bài viết
           </li>
           <li class="statistic-item">
-            <span class="value" :title="user.insight.followersCount">{{
-              formatNumber(user.insight.followersCount)
-            }}</span>
-            người theo dõi
+            <component
+              :is="user.insight.followersCount == 0 ? 'span' : 'router-link'"
+              :to="{ name: 'Followers' }"
+            >
+              <span class="value" :title="user.insight.followersCount">{{
+                formatNumber(user.insight.followersCount)
+              }}</span>
+              người theo dõi
+            </component>
           </li>
           <li class="statistic-item">
-            Đang theo dõi
-            <span class="value" :title="user.insight.followingCount">{{
-              formatNumber(user.insight.followingCount)
-            }}</span>
-            người dùng
+            <component
+              :is="user.insight.followingCount == 0 ? 'span' : 'router-link'"
+              :to="{ name: 'Following' }"
+            >
+              Đang theo dõi
+              <span class="value" :title="user.insight.followingCount">{{
+                formatNumber(user.insight.followingCount)
+              }}</span>
+              người dùng
+            </component>
           </li>
         </ul>
         <div class="general-bio flex flex-col">
           <span class="user-fullname">{{ user.fullname }}</span>
           <span class="user-bio">{{ user.bio }}</span>
+        </div>
+        <div v-if="generalFollowers.length != 0" class="general-followers">
+          <router-link :to="{ name: 'Followers' }"
+            >Có
+            <span class="follower-usernames">{{ generalFollowersComp }}</span>
+            <span v-if="generalFollowers.length > 3">
+              và {{ generalFollowers.length - 3 }} người khác theo dõi</span
+            >
+            theo dõi</router-link
+          >
         </div>
       </div>
     </div>
@@ -102,7 +124,6 @@ import UiButton from "../UI/UiButton.vue";
 import { mapGetters } from "vuex";
 import { formatNumberToSuffix } from "@/untils";
 import { useFollow } from "@/composables/useFollow";
-const { setFollow, deleteFollow } = useFollow();
 
 export default {
   props: {
@@ -111,6 +132,7 @@ export default {
   data() {
     return {
       isLoadingFollow: false,
+      generalFollowers: [],
     };
   },
   computed: {
@@ -121,23 +143,45 @@ export default {
         this.$route.params.username == this.currentUser.username
       );
     },
+    generalFollowersComp() {
+      const usernames = [];
+      const threeFollowers = this.generalFollowers.slice(0, 3);
+      threeFollowers.forEach((user) => {
+        usernames.push(user.username);
+      });
+
+      return usernames.join(", ");
+    },
   },
   methods: {
     formatNumber(number) {
       return formatNumberToSuffix(number);
     },
     async follow() {
+      const { setFollow } = useFollow();
+
       this.isLoadingFollow = true;
       await setFollow(this.currentUser.id, this.user.id);
       this.isLoadingFollow = false;
       this.$emit("updateIsFollowing", true);
     },
     async unfollow() {
+      const { deleteFollow } = useFollow();
+
       this.isLoadingFollow = true;
       await deleteFollow(this.currentUser.id, this.user.id);
       this.isLoadingFollow = false;
       this.$emit("updateIsFollowing", false);
     },
+  },
+  async beforeMount() {
+    const { getFollows } = useFollow();
+    this.generalFollowers = await getFollows(
+      "followingId",
+      "followerId",
+      this.user.id
+    );
+    console.log(this.generalFollowers);
   },
   components: { UiButton, SettingIcon, SuggestIcon },
 };
@@ -224,5 +268,16 @@ export default {
 
 .user-fullname {
   font-weight: 600;
+}
+
+.general-followers {
+  margin-top: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--secondary-text-color);
+}
+
+.follower-usernames {
+  color: var(--primary-text-color);
 }
 </style>
