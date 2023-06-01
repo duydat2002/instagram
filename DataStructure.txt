@@ -1,16 +1,18 @@
+// Firestore
+
 Users(id, username, email, fullname, avatar, bio, insight{followersCount, followingCount, postsCount}, isPrivate*, newsPosts*)
 
 Highlights(id, userId, title, stories[id])
 
   x  Insights(id, userId, followersCount, followingCount, postsCount)
 
-Stories(id, userId, content, created_at)
+Stories(id, userId, content, likesCount, created_at)
 
-Posts(id, userId, caption, content, likesCount, comments[id], created_at)
+Posts(id, userId, caption, content(img/ vid), likesCount, comments[id], created_at)
 
-Comments(id, postId, isStory, content, replies{replyId, userId, content, created_at}, created_at)
+Comments(id, postId, storyId, content, likesCount, replies{replyId, userId, content, likesCount, created_at}, created_at)
 
-Likes(id, userId, postId, created_at)
+Likes(id, userId, postId, storyId, commentId, replyId, created_at)
 
 Messages(id, senderId, receiverId, content, created_at)
 
@@ -21,3 +23,12 @@ Notifications(id, userId, type[like, comment, follow], postId, senderId, read, c
 Saved(id, userID, postId[], created_at)
 
 Explores(id, userId, postId[])
+
+
+// Storage
+
+- defaultAvatar.jpg
+- userId:
+  + avatar:
+  + posts:
+  + stories:

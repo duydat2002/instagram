@@ -4,8 +4,26 @@
     <div class="general-container flex">
       <div class="general-avatar">
         <div class="avatar-wrapper">
-          <img src="@/assets/images/defaultAvatar.jpg" alt="Avatar" />
+          <div class="loading" v-if="isLoadingAvatar">
+            <fa :icon="['fas', 'spinner']" />
+          </div>
+          <img class="avatar" :src="user.avatar" alt="Avatar" />
+          <button
+            v-if="isCurrentUser"
+            class="avatar-button"
+            title="Thay đổi ảnh đại diện"
+            @click="handleClickChangeAvatar"
+          ></button>
         </div>
+        <form method="post" enctype="multipart/form-data">
+          <input
+            ref="inputAvatar"
+            accept="image/jpeg,image/png,image/jpg"
+            type="file"
+            style="display: none"
+            @change="getInputAvatar($event)"
+          />
+        </form>
       </div>
       <div class="general-info flex flex-col">
         <div class="general-header flex">
@@ -121,9 +139,10 @@ import SettingIcon from "../SVG/SettingIcon.vue";
 import SuggestIcon from "../SVG/SuggestIcon.vue";
 import UiButton from "../UI/UiButton.vue";
 
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import { formatNumberToSuffix } from "@/untils";
 import { useFollow } from "@/composables/useFollow";
+import { useStorage } from "@/composables/useStorage";
 
 export default {
   props: {
@@ -133,6 +152,8 @@ export default {
   data() {
     return {
       isLoadingFollow: false,
+      isLoadingAvatar: false,
+      urlAvatar: require("@/assets/images/defaultAvatar.jpg"),
     };
   },
   computed: {
@@ -155,16 +176,19 @@ export default {
     },
   },
   methods: {
+    ...mapMutations("user", ["setCurrentUser"]),
     formatNumber(number) {
       return formatNumberToSuffix(number);
     },
     async follow() {
-      const { setFollow } = useFollow();
+      if (this.currentUser) {
+        const { setFollow } = useFollow();
 
-      this.isLoadingFollow = true;
-      await setFollow(this.currentUser.id, this.user.id);
-      this.isLoadingFollow = false;
-      this.$emit("updateIsFollowing", true);
+        this.isLoadingFollow = true;
+        await setFollow(this.currentUser.id, this.user.id);
+        this.isLoadingFollow = false;
+        this.$emit("updateIsFollowing", true);
+      }
     },
     async unfollow() {
       const { deleteFollow } = useFollow();
@@ -173,6 +197,22 @@ export default {
       await deleteFollow(this.currentUser.id, this.user.id);
       this.isLoadingFollow = false;
       this.$emit("updateIsFollowing", false);
+    },
+    handleClickChangeAvatar() {
+      this.$refs.inputAvatar.click();
+    },
+    async getInputAvatar(event) {
+      const file = event.target.files[0];
+      const fileName = file?.name;
+      console.log(file, fileName);
+
+      const { setAvatar } = useStorage();
+
+      this.isLoadingAvatar = true;
+      this.urlAvatar = await setAvatar(this.currentUser.id, file);
+      this.isLoadingAvatar = false;
+
+      console.log(this.urlAvatar);
     },
   },
   async beforeMount() {
@@ -205,11 +245,22 @@ export default {
 }
 
 .avatar-wrapper {
+  position: relative;
   width: 150px;
   height: 150px;
   margin: 0 auto;
   border-radius: 50%;
   overflow: hidden;
+}
+
+.avatar-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 }
 
 .general-info {

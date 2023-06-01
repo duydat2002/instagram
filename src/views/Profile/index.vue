@@ -64,6 +64,7 @@ export default {
   async beforeMount() {
     const { getFollowing } = useFollow();
 
+    document.title = `${this.user.fullname} (@${this.user.username}) | Instagram`;
     if (this.currentUser) {
       this.isFollowing = await getFollowing(this.currentUser.id, this.user.id);
     }

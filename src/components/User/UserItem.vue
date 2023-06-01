@@ -1,7 +1,7 @@
 <template>
   <div class="user-container flex">
     <div class="user-avatar">
-      <img src="@/assets/images/defaultAvatar.jpg" alt="Avatar" />
+      <img :src="user.avatar" alt="Avatar" />
     </div>
     <div class="user-name flex">
       <span class="user-username">
