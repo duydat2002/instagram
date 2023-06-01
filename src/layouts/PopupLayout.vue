@@ -48,7 +48,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("user", ["user"]),
+    ...mapGetters("user", ["user", "currentUser"]),
     isFollowersPage() {
       return this.$route.path.includes("followers")
         ? true // Người follow user
@@ -86,6 +86,7 @@ export default {
         this.user.id
       );
     }
+    console.log(this.follows);
     this.isLoadingFollows = false;
   },
   mounted() {

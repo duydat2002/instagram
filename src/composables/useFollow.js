@@ -41,21 +41,46 @@ export const useFollow = () => {
 
   const getFollows = async (fieldNameFind, fieldNameGet, value) => {
     //Get followers => followingId = userId => get all user - followedId
+    const currentUser = store.getters["user/currentUser"];
+    let hasCurrentUser = false;
     const users = ref([]);
+
     const querySnap = await getDocs(
       query(collection(db, "followers"), where(fieldNameFind, "==", value))
     );
-    querySnap.forEach(async (followDoc) => {
+
+    const promises = querySnap.docs.map(async (followDoc) => {
       const docSnap = await getDoc(
         doc(db, "users", lodashGet(followDoc.data(), fieldNameGet))
       );
       if (docSnap.exists()) {
-        users.value.push({
-          id: docSnap.id,
-          ...docSnap.data(),
-        });
+        //Check is currentUser
+        if (docSnap.id === currentUser.id) {
+          hasCurrentUser = true;
+        } else {
+          //Check currentUser follow?
+          const isCurrentUserFollowing = await getFollowing(
+            currentUser.id,
+            docSnap.id
+          );
+          const userData = {
+            id: docSnap.id,
+            ...docSnap.data(),
+          };
+          if (isCurrentUserFollowing) {
+            users.value.unshift(userData);
+          } else {
+            users.value.push(userData);
+          }
+        }
       }
     });
+
+    await Promise.all(promises);
+
+    if (hasCurrentUser) {
+      users.value.unshift(currentUser);
+    }
 
     return users;
   };
@@ -66,10 +91,8 @@ export const useFollow = () => {
     );
 
     if (docSnap.exists()) {
-      console.log("followed");
       return true;
     } else {
-      console.log("unfollowed");
       return false;
     }
   };

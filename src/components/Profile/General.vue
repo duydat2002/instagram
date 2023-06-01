@@ -150,6 +150,7 @@ export default {
         usernames.push(user.username);
       });
 
+      console.log(this.generalFollowers);
       return usernames.join(", ");
     },
   },
@@ -181,6 +182,7 @@ export default {
       "followerId",
       this.user.id
     );
+    this.generalFollowers.shift();
     console.log(this.generalFollowers);
   },
   components: { UiButton, SettingIcon, SuggestIcon },
