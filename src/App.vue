@@ -45,7 +45,7 @@ export default {
       event.preventDefault();
     },
   },
-  async mounted() {
+  async beforeMount() {
     window.addEventListener("beforeunload", this.handleBeforeUnload);
     await this.initCurrentUser();
     this.isLoadingReload = false;

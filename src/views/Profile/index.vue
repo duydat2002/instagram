@@ -1,9 +1,11 @@
 <template>
-  <div v-if="user && isFollowing != null" class="profile-container">
+  <div v-if="user" class="profile-container">
     <div class="general">
       <general
         :isFollowing="isFollowing"
+        :generalFollowers="generalFollowers"
         @updateIsFollowing="handleUpdateIsFollowing"
+        @updateGeneralFollowers="handleUpdateGeneralFollowers"
       />
     </div>
     <div class="highlight">
@@ -23,12 +25,12 @@ import StoryList from "@/components/Story/StoryList.vue";
 import { mapGetters, mapMutations } from "vuex";
 import { useUser } from "@/composables/useUser";
 import { useFollow } from "@/composables/useFollow";
-const { getFollowing } = useFollow();
 
 export default {
   data() {
     return {
       isFollowing: null,
+      generalFollowers: [],
     };
   },
   computed: {
@@ -36,18 +38,17 @@ export default {
   },
   methods: {
     ...mapMutations("user", ["setUser"]),
-    async setUserByUsername(username) {
-      const { getUserWithUsername } = useUser();
-      const user = await getUserWithUsername(username);
-      console.log(user);
-      this.setUser(user);
-    },
     handleUpdateIsFollowing(value) {
       this.isFollowing = value;
+    },
+    handleUpdateGeneralFollowers(value) {
+      this.generalFollowers = value;
     },
   },
   async beforeRouteUpdate(to) {
     const { getUserWithUsername } = useUser();
+    const { getFollowing } = useFollow();
+
     const user = await getUserWithUsername(to.params.username);
     this.setUser(user);
     if (!user) {
@@ -61,7 +62,11 @@ export default {
     this.isFollowing = await getFollowing(this.currentUser.id, this.user.id);
   },
   async beforeMount() {
-    this.isFollowing = await getFollowing(this.currentUser.id, this.user.id);
+    const { getFollowing } = useFollow();
+
+    if (this.currentUser) {
+      this.isFollowing = await getFollowing(this.currentUser.id, this.user.id);
+    }
   },
   components: { General, StoryList },
 };

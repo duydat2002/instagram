@@ -84,6 +84,11 @@ button[primary]:hover {
   background: var(--primary-button-hover-color);
 }
 
+button[primary] .loading svg {
+  color: #fff;
+  fill: #fff;
+}
+
 button[secondary] {
   color: #000;
   background: var(--secondary-button-color);

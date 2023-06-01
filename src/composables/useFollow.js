@@ -121,6 +121,9 @@ export const useFollow = () => {
 
   //Update currentUser, user when follow user
   const updateFollowCount = async (followerId, followingId) => {
+    const userId = store.getters["user/user"].id;
+
+    // === SERVER ===
     // Update followingCount of currentUser(followerId)
     const followerDocRef = doc(db, "users", followerId);
     const updatedCurrentUserData = await updateWithTransaction(
@@ -128,9 +131,6 @@ export const useFollow = () => {
       "insight.followingCount",
       (oldValue) => oldValue + 1
     );
-    // Update currentUser data in store
-    store.commit("user/setCurrentUser", updatedCurrentUserData);
-
     // Update followersCount of user(followingId)
     const followingDocRef = doc(db, "users", followingId);
     const updatedUserData = await updateWithTransaction(
@@ -138,12 +138,22 @@ export const useFollow = () => {
       "insight.followersCount",
       (oldValue) => oldValue + 1
     );
+
+    // === UI ===
+    // Update user statistic when user = who is currentUser following
+    if (userId == followingId) {
+      // Update user data in store
+      store.commit("user/setUser", updatedUserData);
+    }
     // Update currentUser data in store
-    store.commit("user/setUser", updatedUserData);
+    store.commit("user/setCurrentUser", updatedCurrentUserData);
   };
 
   //Update currentUser, user when unfollow user
   const updateUnfollowCount = async (followerId, followingId) => {
+    const userId = store.getters["user/user"].id;
+
+    // === SERVER ===
     // Update followingCount of currentUser(followerId)
     const followerDocRef = doc(db, "users", followerId);
     const updatedCurrentUserData = await updateWithTransaction(
@@ -151,9 +161,6 @@ export const useFollow = () => {
       "insight.followingCount",
       (oldValue) => oldValue - 1
     );
-    // Update currentUser data in store
-    store.commit("user/setCurrentUser", updatedCurrentUserData);
-
     // Update followersCount of user(followingId)
     const followingDocRef = doc(db, "users", followingId);
     const updatedUserData = await updateWithTransaction(
@@ -161,8 +168,15 @@ export const useFollow = () => {
       "insight.followersCount",
       (oldValue) => oldValue - 1
     );
+
+    // === UI ===
+    // Update user statistic when user = who is currentUser following
+    if (userId == followingId) {
+      // Update user data in store
+      store.commit("user/setUser", updatedUserData);
+    }
     // Update currentUser data in store
-    store.commit("user/setUser", updatedUserData);
+    store.commit("user/setCurrentUser", updatedCurrentUserData);
   };
 
   return {

@@ -39,12 +39,12 @@
                   <span>Theo dõi</span>
                 </ui-button>
               </div>
-              <div class="general-inbox">
+              <div v-if="currentUser" class="general-inbox">
                 <ui-button secondary>
                   <span>Nhắn tin</span>
                 </ui-button>
               </div>
-              <div class="general-suggest">
+              <div v-if="currentUser" class="general-suggest">
                 <ui-button class="suggest" secondary>
                   <template #icon>
                     <suggest-icon :active="true" />
@@ -53,7 +53,7 @@
               </div>
             </div>
           </div>
-          <div class="general-setting">
+          <div v-if="currentUser" class="general-setting">
             <ui-button v-if="isCurrentUser" variant="text" class="setting-icon">
               <template #icon>
                 <setting-icon />
@@ -128,11 +128,11 @@ import { useFollow } from "@/composables/useFollow";
 export default {
   props: {
     isFollowing: Boolean,
+    generalFollowers: Array,
   },
   data() {
     return {
       isLoadingFollow: false,
-      generalFollowers: [],
     };
   },
   computed: {
@@ -177,13 +177,18 @@ export default {
   },
   async beforeMount() {
     const { getFollows } = useFollow();
-    this.generalFollowers = await getFollows(
-      "followingId",
-      "followerId",
-      this.user.id
-    );
-    this.generalFollowers.shift();
-    console.log(this.generalFollowers);
+
+    if (this.currentUser) {
+      const newGeneralFollowers = await getFollows(
+        "followingId",
+        "followerId",
+        this.user.id
+      );
+
+      if (newGeneralFollowers.value[0].id == this.currentUser.id)
+        newGeneralFollowers.value.shift();
+      this.$emit("updateGeneralFollowers", newGeneralFollowers);
+    }
   },
   components: { UiButton, SettingIcon, SuggestIcon },
 };
