@@ -115,7 +115,7 @@
         >
           <template #icon="slotProps">
             <div :class="['user-avatar', { active: slotProps.active }]">
-              <img :src="currentUser.avatar" alt="" />
+              <img :src="currentUser?.avatar" alt="" />
             </div>
           </template>
         </sidebar-left-tab>

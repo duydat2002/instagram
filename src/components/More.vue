@@ -137,9 +137,9 @@ export default {
   methods: {
     ...mapMutations("modal", ["setLogoutModalShow"]),
     ...mapMutations("theme", ["setTheme"]),
-    async handleLogout() {
+    handleLogout() {
       this.setLogoutModalShow(true);
-      await signOut(auth);
+      signOut(auth);
       setTimeout(() => {
         this.setTheme("light");
         this.setLogoutModalShow(false);

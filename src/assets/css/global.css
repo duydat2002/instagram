@@ -85,6 +85,11 @@
   fill: #fff;
 }
 
+:root.dark button svg {
+  color: #000;
+  fill: #000;
+}
+
 /* ===== BASE ===== */
 * {
   margin: 0;

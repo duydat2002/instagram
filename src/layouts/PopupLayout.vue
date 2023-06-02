@@ -50,9 +50,11 @@ export default {
   computed: {
     ...mapGetters("user", ["user", "currentUser"]),
     isFollowersPage() {
-      return this.$route.path.includes("followers")
-        ? true // Người follow user
-        : false; // Người user follow
+      if (this.$route.path.includes("followers")) return true;
+
+      if (this.$route.path.includes("following")) return false;
+
+      return null;
     },
   },
   methods: {
@@ -70,21 +72,15 @@ export default {
     },
   },
   async beforeMount() {
-    const { getFollows } = useFollow();
-    if (this.isFollowersPage) {
-      //Get followers => followingId = userId => get all user - followedId
-      this.follows = await getFollows(
-        "followingId",
-        "followerId",
-        this.user.id
-      );
-    } else {
-      //Get followings => followedId = userId => get all user - followingId
-      this.follows = await getFollows(
-        "followerId",
-        "followingId",
-        this.user.id
-      );
+    const { getFollowers, getFollowings } = useFollow();
+    if (this.isFollowersPage != null) {
+      if (this.isFollowersPage) {
+        //Get followers => followingId = userId => get all user - followedId
+        this.follows = await getFollowers("followingId", "followerId");
+      } else {
+        //Get followings => followedId = userId => get all user - followingId
+        this.follows = await getFollowings("followerId", "followingId");
+      }
     }
     console.log(this.follows);
     this.isLoadingFollows = false;

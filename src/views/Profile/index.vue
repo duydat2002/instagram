@@ -3,9 +3,8 @@
     <div class="general">
       <general
         :isFollowing="isFollowing"
-        :generalFollowers="generalFollowers"
+        :mutualFollowers="mutualFollowers"
         @updateIsFollowing="handleUpdateIsFollowing"
-        @updateGeneralFollowers="handleUpdateGeneralFollowers"
       />
     </div>
     <div class="highlight">
@@ -30,7 +29,7 @@ export default {
   data() {
     return {
       isFollowing: null,
-      generalFollowers: [],
+      mutualFollowers: [],
     };
   },
   computed: {
@@ -41,13 +40,23 @@ export default {
     handleUpdateIsFollowing(value) {
       this.isFollowing = value;
     },
-    handleUpdateGeneralFollowers(value) {
-      this.generalFollowers = value;
+    async getMutualFollowers() {
+      const { getFollowers } = useFollow();
+
+      if (this.currentUser) {
+        const newMutualFollowers = await getFollowers();
+
+        this.mutualFollowers = newMutualFollowers.value.filter((user) => {
+          return user.isCurrentUserFollowing && user.id != this.currentUser.id;
+        });
+
+        console.log("after", newMutualFollowers);
+      }
     },
   },
-  async beforeRouteUpdate(to) {
+  async beforeRouteUpdate(to, from) {
     const { getUserWithUsername } = useUser();
-    const { getFollowing } = useFollow();
+    const { isFollowing } = useFollow();
 
     const user = await getUserWithUsername(to.params.username);
     this.setUser(user);
@@ -59,15 +68,23 @@ export default {
         hash: to.hash,
       });
     }
-    this.isFollowing = await getFollowing(this.currentUser.id, this.user.id);
+    this.isFollowing = await isFollowing(this.currentUser.id, this.user.id);
+
+    if (to.params.username != from.params.username)
+      await this.getMutualFollowers();
   },
   async beforeMount() {
-    const { getFollowing } = useFollow();
+    const { isFollowing } = useFollow();
 
     document.title = `${this.user.fullname} (@${this.user.username}) | Instagram`;
     if (this.currentUser) {
-      this.isFollowing = await getFollowing(this.currentUser.id, this.user.id);
+      this.isFollowing = await isFollowing(this.currentUser.id, this.user.id);
     }
+
+    await this.getMutualFollowers();
+
+    const { watchUserChange } = useUser();
+    watchUserChange(this.user.id);
   },
   components: { General, StoryList },
 };

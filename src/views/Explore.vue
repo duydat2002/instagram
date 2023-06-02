@@ -7,8 +7,8 @@ import { useUser } from "@/composables/useUser";
 
 export default {
   async created() {
-    const { getUser } = useUser();
-    const user = await getUser();
+    const { getCurrentUser } = useUser();
+    const user = await getCurrentUser();
     console.log(user);
   },
 };

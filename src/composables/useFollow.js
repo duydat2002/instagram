@@ -17,16 +17,16 @@ import store from "@/store/index";
 import { get as lodashGet } from "lodash";
 
 export const useFollow = () => {
-  const isFollowing = ref(null);
+  const checkFollowing = ref(null);
   const watchFollowChange = async (followerId, followingId) => {
     const unsubscribe = onSnapshot(
       doc(db, "followers", `${followerId}-${followingId}`),
       (doc) => {
         if (!doc.metadata.hasPendingWrites) {
           if (doc.exists()) {
-            isFollowing.value = true;
+            checkFollowing.value = true;
           } else {
-            isFollowing.value = false;
+            checkFollowing.value = false;
           }
         }
       }
@@ -36,17 +36,18 @@ export const useFollow = () => {
       unsubscribe();
     });
 
-    return isFollowing;
+    return checkFollowing;
   };
 
-  const getFollows = async (fieldNameFind, fieldNameGet, value) => {
-    //Get followers => followingId = userId => get all user - followedId
+  const getFollows = async (fieldNameFind, fieldNameGet) => {
+    //Ex: Get followers => followingId = userId => get all user - followedId
     const currentUser = store.getters["user/currentUser"];
+    const user = store.getters["user/user"];
     let hasCurrentUser = false;
     const users = ref([]);
 
     const querySnap = await getDocs(
-      query(collection(db, "followers"), where(fieldNameFind, "==", value))
+      query(collection(db, "followers"), where(fieldNameFind, "==", user.id))
     );
 
     const promises = querySnap.docs.map(async (followDoc) => {
@@ -59,13 +60,14 @@ export const useFollow = () => {
           hasCurrentUser = true;
         } else {
           //Check currentUser follow?
-          const isCurrentUserFollowing = await getFollowing(
+          const isCurrentUserFollowing = await isFollowing(
             currentUser.id,
             docSnap.id
           );
           const userData = {
             id: docSnap.id,
             ...docSnap.data(),
+            isCurrentUserFollowing,
           };
           if (isCurrentUserFollowing) {
             users.value.unshift(userData);
@@ -85,7 +87,15 @@ export const useFollow = () => {
     return users;
   };
 
-  const getFollowing = async (followerId, followingId) => {
+  const getFollowers = async () => {
+    return await getFollows("followingId", "followerId");
+  };
+
+  const getFollowings = async () => {
+    return await getFollows("followerId", "followingId");
+  };
+
+  const isFollowing = async (followerId, followingId) => {
     const docSnap = await getDoc(
       doc(db, "followers", `${followerId}-${followingId}`)
     );
@@ -121,69 +131,45 @@ export const useFollow = () => {
 
   //Update currentUser, user when follow user
   const updateFollowCount = async (followerId, followingId) => {
-    const userId = store.getters["user/user"].id;
-
     // === SERVER ===
     // Update followingCount of currentUser(followerId)
-    const followerDocRef = doc(db, "users", followerId);
-    const updatedCurrentUserData = await updateWithTransaction(
-      followerDocRef,
+    await updateWithTransaction(
+      doc(db, "users", followerId),
       "insight.followingCount",
       (oldValue) => oldValue + 1
     );
     // Update followersCount of user(followingId)
-    const followingDocRef = doc(db, "users", followingId);
-    const updatedUserData = await updateWithTransaction(
-      followingDocRef,
+    await updateWithTransaction(
+      doc(db, "users", followingId),
       "insight.followersCount",
       (oldValue) => oldValue + 1
     );
-
-    // === UI ===
-    // Update user statistic when user = who is currentUser following
-    if (userId == followingId) {
-      // Update user data in store
-      store.commit("user/setUser", updatedUserData);
-    }
-    // Update currentUser data in store
-    store.commit("user/setCurrentUser", updatedCurrentUserData);
   };
 
   //Update currentUser, user when unfollow user
   const updateUnfollowCount = async (followerId, followingId) => {
-    const userId = store.getters["user/user"].id;
-
     // === SERVER ===
     // Update followingCount of currentUser(followerId)
-    const followerDocRef = doc(db, "users", followerId);
-    const updatedCurrentUserData = await updateWithTransaction(
-      followerDocRef,
+    await updateWithTransaction(
+      doc(db, "users", followerId),
       "insight.followingCount",
       (oldValue) => oldValue - 1
     );
     // Update followersCount of user(followingId)
-    const followingDocRef = doc(db, "users", followingId);
-    const updatedUserData = await updateWithTransaction(
-      followingDocRef,
+    await updateWithTransaction(
+      doc(db, "users", followingId),
       "insight.followersCount",
       (oldValue) => oldValue - 1
     );
-
-    // === UI ===
-    // Update user statistic when user = who is currentUser following
-    if (userId == followingId) {
-      // Update user data in store
-      store.commit("user/setUser", updatedUserData);
-    }
-    // Update currentUser data in store
-    store.commit("user/setCurrentUser", updatedCurrentUserData);
   };
 
   return {
     setFollow,
     deleteFollow,
-    getFollowing,
+    isFollowing,
     getFollows,
+    getFollowers,
+    getFollowings,
     watchFollowChange,
   };
 };

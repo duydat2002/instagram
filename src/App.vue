@@ -26,6 +26,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import Loading from "./components/Loading.vue";
+import { useUser } from "@/composables/useUser";
 
 export default {
   data() {
@@ -49,6 +50,11 @@ export default {
     window.addEventListener("beforeunload", this.handleBeforeUnload);
     await this.initCurrentUser();
     this.isLoadingReload = false;
+
+    const { watchUserChange } = useUser();
+    if (this.currentUser) {
+      watchUserChange(this.currentUser.id);
+    }
   },
   beforeUnmount() {
     window.removeEventListener("beforeunload", this.handleBeforeUnload);

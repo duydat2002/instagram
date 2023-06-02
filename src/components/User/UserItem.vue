@@ -1,8 +1,11 @@
 <template>
   <div class="user-container flex">
-    <div class="user-avatar">
+    <router-link
+      :to="{ name: 'Profile', params: { username: user.username } }"
+      class="user-avatar"
+    >
       <img :src="user.avatar" alt="Avatar" />
-    </div>
+    </router-link>
     <div class="user-name flex">
       <span class="user-username">
         <router-link
@@ -67,8 +70,8 @@ export default {
     },
   },
   async beforeMount() {
-    const { getFollowing } = useFollow();
-    this.isFollowing = await getFollowing(this.currentUser.id, this.user.id);
+    const { isFollowing } = useFollow();
+    this.isFollowing = await isFollowing(this.currentUser.id, this.user.id);
     this.$emit("updateFollowState", false);
   },
   components: { UiButton },

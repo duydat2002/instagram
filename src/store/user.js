@@ -1,6 +1,6 @@
-import { auth, db } from "@/firebase/init";
+import { auth } from "@/firebase/init";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { useUser } from "@/composables/useUser";
 
 const user = {
   namespaced: true,
@@ -21,21 +21,20 @@ const user = {
     setCurrentUser(state, currentUser) {
       state.currentUser = currentUser;
     },
+    updateUser(state, payload) {
+      Object.assign(state.user, payload);
+    },
+    updateCurrentUser(state, payload) {
+      Object.assign(state.currentUser, payload);
+    },
   },
   actions: {
     async initCurrentUser({ commit }) {
+      const { getCurrentUser } = useUser();
+      if (auth.currentUser) commit("setCurrentUser", await getCurrentUser());
       await onAuthStateChanged(auth, async (user) => {
         if (user) {
-          const docSnap = await getDoc(doc(db, "users", user.uid));
-
-          if (docSnap.exists()) {
-            commit("setCurrentUser", {
-              id: docSnap.id,
-              ...docSnap.data(),
-            });
-          } else {
-            commit("setCurrentUser", null);
-          }
+          commit("setCurrentUser", await getCurrentUser());
         } else {
           commit("setCurrentUser", null);
         }

@@ -119,12 +119,15 @@
           <span class="user-fullname">{{ user.fullname }}</span>
           <span class="user-bio">{{ user.bio }}</span>
         </div>
-        <div v-if="generalFollowers.length != 0" class="general-followers">
+        <div
+          v-if="!isCurrentUser && mutualFollowers.length != 0"
+          class="general-followers"
+        >
           <router-link :to="{ name: 'Followers' }"
             >Có
-            <span class="follower-usernames">{{ generalFollowersComp }}</span>
-            <span v-if="generalFollowers.length > 3">
-              và {{ generalFollowers.length - 3 }} người khác theo dõi</span
+            <span class="follower-usernames">{{ mutualFollowersComp }}</span>
+            <span v-if="mutualFollowers.length > 3">
+              và {{ mutualFollowers.length - 3 }} người khác theo dõi</span
             >
             theo dõi</router-link
           >
@@ -141,19 +144,19 @@ import UiButton from "../UI/UiButton.vue";
 
 import { mapGetters, mapMutations } from "vuex";
 import { formatNumberToSuffix } from "@/untils";
+import { useUser } from "@/composables/useUser";
 import { useFollow } from "@/composables/useFollow";
 import { useStorage } from "@/composables/useStorage";
 
 export default {
   props: {
     isFollowing: Boolean,
-    generalFollowers: Array,
+    mutualFollowers: Array,
   },
   data() {
     return {
       isLoadingFollow: false,
       isLoadingAvatar: false,
-      urlAvatar: require("@/assets/images/defaultAvatar.jpg"),
     };
   },
   computed: {
@@ -164,14 +167,13 @@ export default {
         this.$route.params.username == this.currentUser.username
       );
     },
-    generalFollowersComp() {
+    mutualFollowersComp() {
       const usernames = [];
-      const threeFollowers = this.generalFollowers.slice(0, 3);
+      const threeFollowers = this.mutualFollowers.slice(0, 3);
       threeFollowers.forEach((user) => {
         usernames.push(user.username);
       });
 
-      console.log(this.generalFollowers);
       return usernames.join(", ");
     },
   },
@@ -207,29 +209,15 @@ export default {
       console.log(file, fileName);
 
       const { setAvatar } = useStorage();
+      const { updateAvatar } = useUser();
 
       this.isLoadingAvatar = true;
-      this.urlAvatar = await setAvatar(this.currentUser.id, file);
+      const urlAvatar = await setAvatar(this.currentUser.id, file);
+      await updateAvatar(this.currentUser.id, urlAvatar);
       this.isLoadingAvatar = false;
-
-      console.log(this.urlAvatar);
     },
   },
-  async beforeMount() {
-    const { getFollows } = useFollow();
-
-    if (this.currentUser) {
-      const newGeneralFollowers = await getFollows(
-        "followingId",
-        "followerId",
-        this.user.id
-      );
-
-      if (newGeneralFollowers.value[0].id == this.currentUser.id)
-        newGeneralFollowers.value.shift();
-      this.$emit("updateGeneralFollowers", newGeneralFollowers);
-    }
-  },
+  async beforeMount() {},
   components: { UiButton, SettingIcon, SuggestIcon },
 };
 </script>

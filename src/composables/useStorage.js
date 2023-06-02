@@ -6,7 +6,7 @@ export const useStorage = () => {
   const setAvatar = async (userId, file) => {
     try {
       const snapshot = await uploadBytes(
-        ref(storage, `${userId}/avatar/${file.name}`),
+        ref(storage, `${userId}/avatar/${userId}.jpg`),
         file,
         {
           contentType: file.type,
