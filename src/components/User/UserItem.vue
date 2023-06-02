@@ -44,7 +44,7 @@ export default {
   },
   data() {
     return {
-      isFollowing: null,
+      isFollowing: this.user.isCurrentUserFollowing,
       isLoadingFollow: false,
     };
   },
@@ -68,11 +68,6 @@ export default {
       this.isFollowing = false;
       this.isLoadingFollow = false;
     },
-  },
-  async beforeMount() {
-    const { isFollowing } = useFollow();
-    this.isFollowing = await isFollowing(this.currentUser.id, this.user.id);
-    this.$emit("updateFollowState", false);
   },
   components: { UiButton },
 };

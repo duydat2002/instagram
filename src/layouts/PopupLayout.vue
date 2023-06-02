@@ -43,7 +43,7 @@ export default {
     return {
       isShow: true,
       isLoadingFollows: true,
-      isLoadingFollowState: true,
+      isLoadingFollowState: false,
       follows: [],
     };
   },

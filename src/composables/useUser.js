@@ -40,18 +40,18 @@ export const useUser = () => {
     const unsubscribe = onSnapshot(doc(db, "users", userId), (doc) => {
       if (doc.exists()) {
         console.log("Data change", userId);
-        if (userId == store.getters["user/currentUser"].id) {
+        if (userId == store.getters["user/currentUser"]?.id) {
           store.commit("user/updateCurrentUser", {
             ...doc.data(),
           });
-          console.log(store.getters["user/currentUser"]);
+          console.log(store.getters["user/currentUser"]?.id);
         }
 
-        if (userId == store.getters["user/user"].id) {
+        if (userId == store.getters["user/user"]?.id) {
           store.commit("user/updateUser", {
             ...doc.data(),
           });
-          console.log(store.getters["user/user"]);
+          console.log(store.getters["user/user"]?.id);
         }
       }
     });

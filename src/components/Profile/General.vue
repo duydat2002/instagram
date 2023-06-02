@@ -93,7 +93,11 @@
           </li>
           <li class="statistic-item">
             <component
-              :is="user.insight.followersCount == 0 ? 'span' : 'router-link'"
+              :is="
+                user.insight.followersCount == 0 || !currentUser
+                  ? 'span'
+                  : 'router-link'
+              "
               :to="{ name: 'Followers' }"
             >
               <span class="value" :title="user.insight.followersCount">{{
@@ -104,7 +108,11 @@
           </li>
           <li class="statistic-item">
             <component
-              :is="user.insight.followingCount == 0 ? 'span' : 'router-link'"
+              :is="
+                user.insight.followingCount == 0 || !currentUser
+                  ? 'span'
+                  : 'router-link'
+              "
               :to="{ name: 'Following' }"
             >
               Đang theo dõi
@@ -121,7 +129,7 @@
         </div>
         <div
           v-if="!isCurrentUser && mutualFollowers.length != 0"
-          class="general-followers"
+          class="mutual-followers"
         >
           <router-link :to="{ name: 'Followers' }"
             >Có
@@ -316,7 +324,7 @@ export default {
   font-weight: 600;
 }
 
-.general-followers {
+.mutual-followers {
   margin-top: 12px;
   font-size: 12px;
   font-weight: 500;
