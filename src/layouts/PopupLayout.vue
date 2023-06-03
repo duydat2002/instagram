@@ -24,6 +24,12 @@
             :user="user"
             @updateFollowState="handleUpdateFollowState"
           />
+          <router-link
+            v-if="isMutualFollowersPage"
+            class="mutual-first"
+            :to="{ name: 'MutualFirstFollowers' }"
+            >Xem tất cả người theo dõi</router-link
+          >
         </template>
       </div>
     </div>
@@ -56,6 +62,9 @@ export default {
 
       return null;
     },
+    isMutualFollowersPage() {
+      return this.$route.path.includes("mutualOnly") ? true : false;
+    },
   },
   methods: {
     ...mapMutations("modal", ["setActiveOverlay"]),
@@ -70,20 +79,42 @@ export default {
       this.setActiveOverlay(false);
       this.$router.push({ name: "Profile" });
     },
+    async getFollows() {
+      const { getFollowers, getMutualFollowers, getFollowings } = useFollow();
+      if (this.isFollowersPage != null) {
+        if (this.isFollowersPage) {
+          //Get followers => followingId = userId => get all user - followedId
+          if (this.isMutualFollowersPage) {
+            this.follows = await getMutualFollowers();
+          } else {
+            this.follows = await getFollowers();
+            if (this.$route.path.includes("mutualFirst")) {
+              this.follows.sort((a, b) => {
+                if (!a.isCurrentUserFollowing && !b.isCurrentUserFollowing)
+                  return 0;
+                if (a.isCurrentUserFollowing && !b.isCurrentUserFollowing)
+                  return -1;
+                if (!a.isCurrentUserFollowing && b.isCurrentUserFollowing)
+                  return 1;
+              });
+            }
+          }
+        } else {
+          //Get followings => followedId = userId => get all user - followingId
+          this.follows = await getFollowings();
+        }
+      }
+      console.log(this.follows);
+      this.isLoadingFollows = false;
+    },
+  },
+  watch: {
+    async $route() {
+      await this.getFollows();
+    },
   },
   async beforeMount() {
-    const { getFollowers, getFollowings } = useFollow();
-    if (this.isFollowersPage != null) {
-      if (this.isFollowersPage) {
-        //Get followers => followingId = userId => get all user - followedId
-        this.follows = await getFollowers("followingId", "followerId");
-      } else {
-        //Get followings => followedId = userId => get all user - followingId
-        this.follows = await getFollowings("followerId", "followingId");
-      }
-    }
-    console.log(this.follows);
-    this.isLoadingFollows = false;
+    await this.getFollows();
   },
   mounted() {
     this.setActiveOverlay(true);
@@ -132,5 +163,17 @@ export default {
   transform: translateY(-50%);
   padding: 8px;
   cursor: pointer;
+}
+
+.mutual-first {
+  display: block;
+  margin-top: 16px;
+  font-weight: 600;
+  color: var(--primary-button-color);
+  text-align: center;
+}
+
+.mutual-first:hover {
+  color: var(--link-color);
 }
 </style>

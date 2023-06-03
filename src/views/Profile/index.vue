@@ -40,23 +40,10 @@ export default {
     handleUpdateIsFollowing(value) {
       this.isFollowing = value;
     },
-    async getMutualFollowers() {
-      const { getFollowers } = useFollow();
-
-      if (this.currentUser) {
-        const newMutualFollowers = await getFollowers();
-
-        this.mutualFollowers = newMutualFollowers.value.filter((user) => {
-          return user.isCurrentUserFollowing && user.id != this.currentUser.id;
-        });
-
-        console.log("after", newMutualFollowers);
-      }
-    },
   },
   async beforeRouteUpdate(to, from) {
     const { getUserWithUsername } = useUser();
-    const { isFollowing } = useFollow();
+    const { isFollowing, getMutualFollowers } = useFollow();
 
     const user = await getUserWithUsername(to.params.username);
     this.setUser(user);
@@ -71,17 +58,17 @@ export default {
     this.isFollowing = await isFollowing(this.currentUser.id, this.user.id);
 
     if (to.params.username != from.params.username)
-      await this.getMutualFollowers();
+      this.mutualFollowers = await getMutualFollowers();
   },
   async beforeMount() {
-    const { isFollowing } = useFollow();
+    const { isFollowing, getMutualFollowers } = useFollow();
 
     document.title = `${this.user.fullname} (@${this.user.username}) | Instagram`;
     if (this.currentUser) {
       this.isFollowing = await isFollowing(this.currentUser.id, this.user.id);
     }
 
-    await this.getMutualFollowers();
+    this.mutualFollowers = await getMutualFollowers();
 
     const { watchUserChange } = useUser();
     watchUserChange(this.user.id);

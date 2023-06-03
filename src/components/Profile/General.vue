@@ -131,7 +131,7 @@
           v-if="!isCurrentUser && mutualFollowers.length != 0"
           class="mutual-followers"
         >
-          <router-link :to="{ name: 'Followers' }"
+          <router-link :to="{ name: 'MutualFollowers' }"
             >Có
             <span class="follower-usernames">{{ mutualFollowersComp }}</span>
             <span v-if="mutualFollowers.length > 3">
@@ -225,7 +225,6 @@ export default {
       this.isLoadingAvatar = false;
     },
   },
-  async beforeMount() {},
   components: { UiButton, SettingIcon, SuggestIcon },
 };
 </script>

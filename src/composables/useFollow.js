@@ -95,6 +95,38 @@ export const useFollow = () => {
     return await getFollows("followerId", "followingId");
   };
 
+  const getMutualFollowers = async () => {
+    const currentUser = store.getters["user/currentUser"];
+    const user = store.getters["user/user"];
+    const users = ref([]);
+
+    const querySnap = await getDocs(
+      query(collection(db, "followers"), where("followingId", "==", user.id))
+    );
+
+    querySnap.docs.map(async (followDoc) => {
+      const docSnap = await getDoc(
+        doc(db, "users", lodashGet(followDoc.data(), "followerId"))
+      );
+      if (docSnap.exists()) {
+        //Check currentUser follow?
+        const isCurrentUserFollowing = await isFollowing(
+          currentUser.id,
+          docSnap.id
+        );
+        if (isCurrentUserFollowing) {
+          users.value.push({
+            id: docSnap.id,
+            ...docSnap.data(),
+            isCurrentUserFollowing,
+          });
+        }
+      }
+    });
+
+    return users;
+  };
+
   const isFollowing = async (followerId, followingId) => {
     const docSnap = await getDoc(
       doc(db, "followers", `${followerId}-${followingId}`)
@@ -169,6 +201,7 @@ export const useFollow = () => {
     isFollowing,
     getFollows,
     getFollowers,
+    getMutualFollowers,
     getFollowings,
     watchFollowChange,
   };
