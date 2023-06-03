@@ -136,8 +136,7 @@ const router = createRouter({
 const authPath = ["/accounts/login", "/accounts/signup"];
 
 router.beforeEach(async (to, from, next) => {
-  store.commit("splash/setIsLoading", true);
-  store.commit("splash/setProgress", 0);
+  store.dispatch("loading/start");
 
   const requiresAuth = to.meta.requiresAuth;
   const user = auth.currentUser;
@@ -154,10 +153,7 @@ router.beforeEach(async (to, from, next) => {
 });
 
 router.afterEach(() => {
-  store.commit("splash/setProgress", 100);
-  setTimeout(() => {
-    store.commit("splash/setIsLoading", false);
-  }, 3000);
+  store.dispatch("loading/stop");
 });
 
 export default router;

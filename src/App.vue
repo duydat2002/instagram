@@ -6,7 +6,7 @@
       top: `${-scrollPosition}px`,
     }"
   >
-    <loading v-if="isLoading" :progress="progress" />
+    <loading />
 
     <div v-if="isLoadingReload" id="splash-screen">
       <div class="logo">
@@ -37,7 +37,6 @@ export default {
   computed: {
     ...mapGetters("user", ["currentUser"]),
     ...mapGetters("modal", ["activeOverlay", "scrollPosition"]),
-    ...mapGetters("splash", ["isLoading", "progress"]),
   },
   methods: {
     ...mapActions("user", ["initCurrentUser"]),

@@ -1,13 +1,15 @@
 <template>
-  <div id="loading" :style="{ width: progress + '%' }">
+  <div id="loading" v-if="isLoading">
     <div></div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
-  props: {
-    progress: Number,
+  computed: {
+    ...mapGetters("loading", ["isLoading"]),
   },
 };
 </script>
@@ -20,7 +22,7 @@ export default {
   height: 3px;
   width: 0%;
   z-index: 1000;
-  transition: 1s linear;
+  animation: scaleWidth 1s cubic-bezier(0.17, 0.67, 0.38, 1) forwards;
 }
 
 #loading div {
