@@ -1,39 +1,30 @@
 <template>
-  <modal :isShow="isShow" :handleClick="handleClickOutside">
-    <div class="follow-container flex flex-col">
-      <div class="follow-header">
-        <h1 class="follow-title">
-          {{ isFollowersPage ? "Người theo dõi" : "Đang theo dõi" }}
-        </h1>
-        <div class="close" @click="closePopup">
-          <fa size="xl" :icon="['fas', 'xmark']" />
+  <Teleport to="#popup">
+    <modal :isShow="isShow" :handleClick="handleClickOutside">
+      <div class="follow-container flex flex-col">
+        <div class="follow-header">
+          <h1 class="follow-title">
+            {{ isFollowersPage ? "Người theo dõi" : "Đang theo dõi" }}
+          </h1>
+          <div class="close" @click="closePopup">
+            <fa size="xl" :icon="['fas', 'xmark']" />
+          </div>
         </div>
-      </div>
-      <div class="follow-list">
-        <div class="loading" v-if="isLoadingFollows">
-          <fa :icon="['fas', 'spinner']" />
-        </div>
-        <template v-else>
-          <template v-if="isLoadingFollowState">
+        <div class="follow-list">
+          <template v-if="isLoadingFollowItems">
             <user-item-skeleton v-for="n in 10" :key="n" />
           </template>
-          <user-item
-            v-show="!isLoadingFollowState"
-            v-for="user in follows"
-            :key="user.id"
-            :user="user"
-            @updateFollowState="handleUpdateFollowState"
-          />
+          <user-item v-for="user in follows" :key="user.id" :user="user" />
           <router-link
             v-if="isMutualFollowersPage"
             class="mutual-first"
             :to="{ name: 'MutualFirstFollowers' }"
             >Xem tất cả người theo dõi</router-link
           >
-        </template>
+        </div>
       </div>
-    </div>
-  </modal>
+    </modal>
+  </Teleport>
 </template>
 
 <script>
@@ -48,8 +39,7 @@ export default {
   data() {
     return {
       isShow: true,
-      isLoadingFollows: true,
-      isLoadingFollowState: false,
+      isLoadingFollowItems: true,
       follows: [],
     };
   },
@@ -72,14 +62,12 @@ export default {
       this.setActiveOverlay(false);
       this.$router.push({ name: "Profile" });
     },
-    handleUpdateFollowState(value) {
-      this.isLoadingFollowState = value;
-    },
     closePopup() {
       this.setActiveOverlay(false);
       this.$router.push({ name: "Profile" });
     },
     async getFollows() {
+      this.isLoadingFollowItems = true;
       const { getFollowers, getMutualFollowers, getFollowings } = useFollow();
       if (this.isFollowersPage != null) {
         if (this.isFollowersPage) {
@@ -104,8 +92,7 @@ export default {
           this.follows = await getFollowings();
         }
       }
-      console.log(this.follows);
-      this.isLoadingFollows = false;
+      this.isLoadingFollowItems = false;
     },
   },
   watch: {
@@ -114,6 +101,7 @@ export default {
     },
   },
   async beforeMount() {
+    console.log("cac");
     await this.getFollows();
   },
   mounted() {

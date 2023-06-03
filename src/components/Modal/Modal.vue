@@ -1,13 +1,11 @@
 <template>
-  <Teleport to="#modal">
-    <div
-      v-if="isShow"
-      class="modal-container flex"
-      @click.self="handleChildClick"
-    >
-      <slot />
-    </div>
-  </Teleport>
+  <div
+    v-if="isShow"
+    class="modal-container flex"
+    @click.self="handleChildClick"
+  >
+    <slot />
+  </div>
 </template>
 
 <script>

@@ -1,6 +1,5 @@
 <template>
-  <h1>Post Tabs</h1>
-  <router-view></router-view>
+  <h1>Post</h1>
 </template>
 
 <script>

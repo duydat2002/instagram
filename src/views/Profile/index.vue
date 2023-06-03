@@ -10,10 +10,10 @@
     <div class="highlight">
       <story-list />
     </div>
-    <div class="user-posts">
-      <component :is="$route.meta.nestedLayout" />
+    <div class="tabs">
+      <h1>Tabs</h1>
+      <router-view></router-view>
     </div>
-    <component v-if="true" :is="$route.meta.isPopup" />
   </div>
 </template>
 

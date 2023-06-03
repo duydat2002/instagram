@@ -56,6 +56,11 @@ export default {
       watchUserChange(this.currentUser.id);
     }
   },
+  watch: {
+    $route() {
+      console.log(this.$route);
+    },
+  },
   beforeUnmount() {
     window.removeEventListener("beforeunload", this.handleBeforeUnload);
   },
