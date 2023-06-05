@@ -99,11 +99,12 @@ button[secondary]:hover {
 }
 
 .button--variant-text {
-  color: #385185;
+  font-weight: 600;
+  color: var(--primary-button-color);
   background: transparent;
 }
-.button--variant-text:active {
-  opacity: 0.6;
+.button--variant-text:hover {
+  color: var(--link-color);
 }
 
 .button--variant-contained {

@@ -37,6 +37,7 @@ export default {
   },
   methods: {
     ...mapMutations("user", ["setUser"]),
+    ...mapMutations("loading", ["setIsLoadingOnReload"]),
     handleUpdateIsFollowing(value) {
       this.isFollowing = value;
     },

@@ -136,7 +136,7 @@ const router = createRouter({
 const authPath = ["/accounts/login", "/accounts/signup"];
 
 router.beforeEach(async (to, from, next) => {
-  store.dispatch("loading/start");
+  store.dispatch("loading/startLoading");
 
   const requiresAuth = to.meta.requiresAuth;
   const user = auth.currentUser;
@@ -153,7 +153,7 @@ router.beforeEach(async (to, from, next) => {
 });
 
 router.afterEach(() => {
-  store.dispatch("loading/stop");
+  store.dispatch("loading/stopLoading");
 });
 
 export default router;

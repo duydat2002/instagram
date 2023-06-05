@@ -1,11 +1,13 @@
 <template>
-  <div
-    v-if="isShow"
-    class="modal-container flex"
-    @click.self="handleChildClick"
-  >
-    <slot />
-  </div>
+  <Teleport :to="isPopup ? '#popup' : '#modal'">
+    <div
+      v-if="isShow"
+      class="modal-container flex"
+      @click.self="handleChildClick"
+    >
+      <slot />
+    </div>
+  </Teleport>
 </template>
 
 <script>
@@ -17,15 +19,24 @@ export default {
       type: Boolean,
       default: false,
     },
-    handleClick: {
+    isPopup: {
+      type: Boolean,
+      default: false,
+    },
+    hasClose: {
+      type: Boolean,
+      default: false,
+    },
+    handleClickOutside: {
       type: Function,
       default: () => {},
     },
   },
   methods: {
-    ...mapMutations("modal", ["setScrollPosition"]),
+    ...mapMutations("modal", ["setScrollPosition", "setActiveOverlay"]),
     handleChildClick() {
-      this.handleClick();
+      this.setActiveOverlay(false);
+      this.handleClickOutside();
     },
   },
   mounted() {

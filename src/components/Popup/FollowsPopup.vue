@@ -1,36 +1,36 @@
 <template>
-  <Teleport to="#popup">
-    <modal :isShow="isShow" :handleClick="handleClickOutside">
-      <div class="follow-container flex flex-col">
-        <div class="follow-header">
-          <h1 class="follow-title">
-            {{ isFollowersPage ? "Người theo dõi" : "Đang theo dõi" }}
-          </h1>
-          <div class="close" @click="closePopup">
-            <fa size="xl" :icon="['fas', 'xmark']" />
-          </div>
+  <modal isPopup :isShow="isShow" :handleClickOutside="handleClickOutside">
+    <div class="follow-container flex flex-col">
+      <div class="follow-header">
+        <h1 class="follow-title">
+          {{ isFollowersPage ? "Người theo dõi" : "Đang theo dõi" }}
+        </h1>
+        <div class="close" @click="closePopup">
+          <fa size="xl" :icon="['fas', 'xmark']" />
         </div>
-        <div class="follow-list">
-          <template v-if="isLoadingFollowItems">
-            <user-item-skeleton v-for="n in 10" :key="n" />
-          </template>
-          <user-item v-for="user in follows" :key="user.id" :user="user" />
+      </div>
+      <div class="follow-list">
+        <template v-if="isLoadingFollowItems">
+          <user-item-skeleton v-for="n in 10" :key="n" />
+        </template>
+        <user-item v-for="user in follows" :key="user.id" :user="user" />
+        <ui-button variant="text">
           <router-link
             v-if="isMutualFollowersPage"
-            class="mutual-first"
             :to="{ name: 'MutualFirstFollowers' }"
             >Xem tất cả người theo dõi</router-link
           >
-        </div>
+        </ui-button>
       </div>
-    </modal>
-  </Teleport>
+    </div>
+  </modal>
 </template>
 
 <script>
 import Modal from "@/components/Modal/Modal.vue";
 import UserItem from "@/components/User/UserItem.vue";
 import UserItemSkeleton from "@/components/User/UserItemSkeleton.vue";
+import UiButton from "@/components/UI/UiButton.vue";
 
 import { mapGetters, mapMutations } from "vuex";
 import { useFollow } from "@/composables/useFollow";
@@ -59,11 +59,11 @@ export default {
   methods: {
     ...mapMutations("modal", ["setActiveOverlay"]),
     handleClickOutside() {
-      this.setActiveOverlay(false);
+      // this.setActiveOverlay(false);
       this.$router.push({ name: "Profile" });
     },
     closePopup() {
-      this.setActiveOverlay(false);
+      // this.setActiveOverlay(false);
       this.$router.push({ name: "Profile" });
     },
     async getFollows() {
@@ -107,7 +107,7 @@ export default {
   mounted() {
     this.setActiveOverlay(true);
   },
-  components: { Modal, UserItem, UserItemSkeleton },
+  components: { Modal, UserItem, UserItemSkeleton, UiButton },
 };
 </script>
 
@@ -151,17 +151,5 @@ export default {
   transform: translateY(-50%);
   padding: 8px;
   cursor: pointer;
-}
-
-.mutual-first {
-  display: block;
-  margin-top: 16px;
-  font-weight: 600;
-  color: var(--primary-button-color);
-  text-align: center;
-}
-
-.mutual-first:hover {
-  color: var(--link-color);
 }
 </style>

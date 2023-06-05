@@ -3,6 +3,7 @@ import user from "./user";
 import loading from "./loading";
 import modal from "./modal";
 import theme from "./theme";
+import createPost from "./createPost";
 
 const store = createStore({
   modules: {
@@ -10,6 +11,7 @@ const store = createStore({
     loading,
     modal,
     theme,
+    createPost,
   },
 });
 

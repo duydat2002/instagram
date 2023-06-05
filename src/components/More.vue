@@ -69,11 +69,9 @@
             <span>Đăng xuất</span>
           </div>
         </div>
-        <Teleport to="#modal">
-          <modal :isShow="logoutModalShow">
-            <modal-logout />
-          </modal>
-        </Teleport>
+        <modal :isShow="logoutModalShow">
+          <modal-logout />
+        </modal>
       </div>
     </div>
     <div class="switch-theme-tabs">

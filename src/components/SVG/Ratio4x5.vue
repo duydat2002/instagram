@@ -1,0 +1,16 @@
+<template>
+  <svg
+    aria-label="Biểu tượng cắt theo khung hình dọc"
+    class="_ab6-"
+    color="rgb(255, 255, 255)"
+    fill="rgb(255, 255, 255)"
+    height="24"
+    role="img"
+    viewBox="0 0 24 24"
+    width="24"
+  >
+    <path
+      d="M16 23H8a4.004 4.004 0 0 1-4-4V5a4.004 4.004 0 0 1 4-4h8a4.004 4.004 0 0 1 4 4v14a4.004 4.004 0 0 1-4 4ZM8 3a2.002 2.002 0 0 0-2 2v14a2.002 2.002 0 0 0 2 2h8a2.002 2.002 0 0 0 2-2V5a2.002 2.002 0 0 0-2-2Z"
+    ></path>
+  </svg>
+</template>

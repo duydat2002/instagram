@@ -100,9 +100,23 @@
           tab="Create"
           :currentTab="currentTab"
           @changeTab="handleChangeTab"
+          @click="isShowModalCreatePost = true"
         >
           <template #icon="slotProps">
             <plus-icon :active="slotProps.active" />
+          </template>
+          <template #child>
+            <modal
+              hasClose
+              :isShow="isShowModalCreatePost"
+              :handleClickOutside="
+                () => {
+                  isShowModalCreatePost = false;
+                }
+              "
+            >
+              <modal-create-post></modal-create-post>
+            </modal>
           </template>
         </sidebar-left-tab>
         <sidebar-left-tab
@@ -162,9 +176,12 @@ import PlusIcon from "../SVG/PlusIcon.vue";
 import BarIcon from "../SVG/BarIcon.vue";
 import InstagramIcon from "../SVG/InstagramIcon.vue";
 import logo from "../SVG/Logo.vue";
+
 import SidebarLeftTab from "./SidebarLeftTab.vue";
 import Search from "../Search.vue";
 import More from "../More.vue";
+import Modal from "@/components/Modal/Modal.vue";
+import ModalCreatePost from "@/components/Modal/ModalCreatePost.vue";
 
 import { mapGetters } from "vuex";
 
@@ -177,6 +194,7 @@ export default {
       searchActive: false,
       moreActive: false,
       themeTabActive: false,
+      isShowModalCreatePost: false,
     };
   },
   computed: {
@@ -244,6 +262,8 @@ export default {
     BarIcon,
     Search,
     More,
+    Modal,
+    ModalCreatePost,
   },
 };
 </script>

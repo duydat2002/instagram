@@ -8,7 +8,7 @@
   >
     <loading />
 
-    <div v-if="isLoadingReload" id="splash-screen">
+    <div v-if="isLoadingOnReload" id="splash-screen">
       <div class="logo">
         <img src="" alt="Instagram" />
       </div>
@@ -31,7 +31,7 @@ import { useUser } from "@/composables/useUser";
 export default {
   data() {
     return {
-      isLoadingReload: true,
+      isLoadingOnReload: true,
     };
   },
   computed: {
@@ -41,14 +41,14 @@ export default {
   methods: {
     ...mapActions("user", ["initCurrentUser"]),
     handleBeforeUnload(event) {
-      this.isLoadingReload = true;
+      this.isLoadingOnReload = true;
       event.preventDefault();
     },
   },
   async beforeMount() {
-    window.addEventListener("beforeunload", this.handleBeforeUnload);
+    // window.addEventListener("beforeunload", this.handleBeforeUnload);
     await this.initCurrentUser();
-    this.isLoadingReload = false;
+    this.isLoadingOnReload = false;
 
     const { watchUserChange } = useUser();
     if (this.currentUser) {
@@ -61,7 +61,7 @@ export default {
     },
   },
   beforeUnmount() {
-    window.removeEventListener("beforeunload", this.handleBeforeUnload);
+    // window.removeEventListener("beforeunload", this.handleBeforeUnload);
   },
   components: { Loading },
 };
