@@ -242,3 +242,16 @@ button {
     transform: rotate(360deg);
   }
 }
+
+.fadeUp-enter-active,
+.fadeUp-leave-active {
+  transform: translateY(0px);
+  opacity: 1;
+  transition: opacity 180ms linear, transform 90ms ease-out;
+}
+
+.fadeUp-enter-from,
+.fadeUp-leave-to {
+  transform: translateY(16px);
+  opacity: 0;
+}
