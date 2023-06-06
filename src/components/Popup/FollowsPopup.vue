@@ -45,6 +45,7 @@ export default {
   },
   computed: {
     ...mapGetters("user", ["user", "currentUser"]),
+    ...mapGetters("modal", ["stopScroll", "scrollPosition"]),
     isFollowersPage() {
       if (this.$route.path.includes("followers")) return true;
 
@@ -57,13 +58,11 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("modal", ["setActiveOverlay"]),
+    ...mapMutations("modal", ["setStopScroll"]),
     handleClickOutside() {
-      // this.setActiveOverlay(false);
       this.$router.push({ name: "Profile" });
     },
     closePopup() {
-      // this.setActiveOverlay(false);
       this.$router.push({ name: "Profile" });
     },
     async getFollows() {
@@ -101,11 +100,7 @@ export default {
     },
   },
   async beforeMount() {
-    console.log("cac");
     await this.getFollows();
-  },
-  mounted() {
-    this.setActiveOverlay(true);
   },
   components: { Modal, UserItem, UserItemSkeleton, UiButton },
 };

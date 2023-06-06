@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   props: {
@@ -32,15 +32,27 @@ export default {
       default: () => {},
     },
   },
+  computed: {
+    ...mapGetters("modal", ["scrollPosition"]),
+  },
   methods: {
-    ...mapMutations("modal", ["setScrollPosition", "setActiveOverlay"]),
+    ...mapMutations("modal", ["setStopScroll"]),
     handleChildClick() {
-      this.setActiveOverlay(false);
+      this.setStopScroll(false);
       this.handleClickOutside();
     },
   },
   mounted() {
-    this.setScrollPosition(document.scrollingElement.scrollTop);
+    this.setStopScroll(true);
+    setTimeout(() => {
+      document.documentElement.scrollTop = this.scrollPosition;
+    }, 0);
+  },
+  unmounted() {
+    this.setStopScroll(false);
+    setTimeout(() => {
+      document.documentElement.scrollTop = this.scrollPosition;
+    }, 0);
   },
 };
 </script>

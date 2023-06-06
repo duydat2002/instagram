@@ -1,9 +1,20 @@
 <template>
-  <h1>Inbox</h1>
+  <h1 @click.self="cac">Inbox</h1>
 </template>
 
 <script>
-export default {};
+export default {
+  methods: {
+    cac() {
+      console.log("cac");
+    },
+  },
+};
 </script>
 
-<style></style>
+<style scoped>
+h1 {
+  user-select: none;
+  cursor: pointer;
+}
+</style>

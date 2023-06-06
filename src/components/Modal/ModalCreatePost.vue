@@ -24,7 +24,7 @@ import CropFiles from "@/components/Post/CropFiles.vue";
 import EditFiles from "@/components/Post/EditFiles.vue";
 import PostFiles from "@/components/Post/PostFiles.vue";
 
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   data() {
@@ -36,6 +36,7 @@ export default {
     ...mapGetters("createPost", ["currentTab", "files"]),
   },
   methods: {
+    ...mapMutations("modal", ["setStopScroll"]),
     ...mapActions("createPost", ["nextTab", "prevTab"]),
     handleBack() {
       this.prevTab();
@@ -43,6 +44,9 @@ export default {
     handleNext() {
       this.nextTab();
     },
+  },
+  mounted() {
+    this.setStopScroll(true);
   },
   components: { InitFiles, CropFiles, EditFiles, PostFiles, UiButton },
 };

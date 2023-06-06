@@ -1,11 +1,5 @@
 <template>
-  <div
-    :class="{ 'active-overlay': activeOverlay }"
-    :style="{
-      background: 'var(--primary-bg-color)',
-      top: `${-scrollPosition}px`,
-    }"
-  >
+  <div class="main" :class="{ 'active-overlay': stopScroll }">
     <loading />
 
     <div v-if="isLoadingOnReload" id="splash-screen">
@@ -24,7 +18,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loading from "./components/Loading.vue";
 import { useUser } from "@/composables/useUser";
 
@@ -36,10 +30,11 @@ export default {
   },
   computed: {
     ...mapGetters("user", ["currentUser"]),
-    ...mapGetters("modal", ["activeOverlay", "scrollPosition"]),
+    ...mapGetters("modal", ["stopScroll"]),
   },
   methods: {
     ...mapActions("user", ["initCurrentUser"]),
+    ...mapMutations("modal", ["setScrollPosition"]),
     handleBeforeUnload(event) {
       this.isLoadingOnReload = true;
       event.preventDefault();
@@ -56,8 +51,16 @@ export default {
     }
   },
   watch: {
+    stopScroll(active) {
+      this.setScrollPosition(document.documentElement.scrollTop);
+      if (active) {
+        document.documentElement.style.overflow = "hidden";
+      } else {
+        document.documentElement.style.overflow = "visible";
+      }
+    },
     $route() {
-      console.log(this.$route);
+      // console.log(this.$route);
     },
   },
   beforeUnmount() {
@@ -68,10 +71,11 @@ export default {
 </script>
 
 <style scoped>
+.main {
+  background: var(--primary-bg-color);
+}
+
 .active-overlay {
-  position: fixed;
-  left: 0;
-  right: 0;
   overflow-y: scroll;
 }
 </style>
