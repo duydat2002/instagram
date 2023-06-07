@@ -1,11 +1,9 @@
 <template>
   <Teleport :to="isPopup ? '#popup' : '#modal'">
-    <div
-      v-if="isShow"
-      class="modal-container flex"
-      @click.self="handleChildClick"
-    >
-      <slot />
+    <div v-if="isShow" class="modal-container">
+      <div class="content flex" v-click-outside="handleClickOutsideModal">
+        <slot />
+      </div>
     </div>
   </Teleport>
 </template>
@@ -37,13 +35,13 @@ export default {
   },
   methods: {
     ...mapMutations("modal", ["setStopScroll"]),
-    handleChildClick() {
-      this.setStopScroll(false);
+    handleClickOutsideModal() {
       this.handleClickOutside();
+      this.setStopScroll(false);
     },
   },
   mounted() {
-    this.setStopScroll(true);
+    if (this.isShow) this.setStopScroll(true);
     setTimeout(() => {
       document.documentElement.scrollTop = this.scrollPosition;
     }, 0);
@@ -64,9 +62,19 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  align-items: center;
-  justify-content: center;
   background: rgba(0, 0, 0, 0.3);
   z-index: 1001;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  /* width: 100%;
+  height: 100%; */
+  margin: 20px;
+  align-items: center;
+  justify-content: center;
 }
 </style>

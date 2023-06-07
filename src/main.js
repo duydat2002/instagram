@@ -18,15 +18,34 @@ onAuthStateChanged(auth, () => {
 
     app.directive("click-outside", {
       mounted(el, binding) {
-        el._clickOutside = (event) => {
+        let mouseDownPosition = null;
+
+        el._mouseDownEvent = (event) => {
           if (!(el === event.target || el.contains(event.target))) {
-            binding.value(event);
+            mouseDownPosition = { x: event.clientX, y: event.clientY };
           }
         };
-        document.body.addEventListener("click", el._clickOutside);
+
+        el._mouseUpEvent = (event) => {
+          const mouseUpPosition = { x: event.clientX, y: event.clientY };
+
+          if (
+            mouseDownPosition &&
+            mouseDownPosition.x == mouseUpPosition.x &&
+            mouseDownPosition.y == mouseUpPosition.y
+          ) {
+            binding.value(event);
+          }
+
+          mouseDownPosition = null;
+        };
+
+        document.body.addEventListener("mousedown", el._mouseDownEvent);
+        document.body.addEventListener("mouseup", el._mouseUpEvent);
       },
       unmounted(el) {
-        document.body.removeEventListener("click", el._clickOutside);
+        document.body.removeEventListener("mousedown", el._mouseDownEvent);
+        document.body.removeEventListener("mouseup", el._mouseUpEvent);
       },
     });
 

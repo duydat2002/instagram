@@ -109,9 +109,8 @@ export default {
 <style scoped>
 .follow-container {
   flex-wrap: nowrap;
-  margin: 20px;
   width: 400px;
-  height: calc(100% - 40px);
+  height: calc(100vh - 40px);
   max-height: 400px;
   color: var(--primary-text-color);
   background: var(--modal-color);
