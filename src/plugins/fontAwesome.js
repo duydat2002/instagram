@@ -10,6 +10,7 @@ import {
   faEllipsis,
   faXmark,
   faArrowLeft,
+  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { faSquareFacebook } from "@fortawesome/free-brands-svg-icons";
@@ -30,7 +31,8 @@ library.add(
   faChevronDown,
   faEllipsis,
   faXmark,
-  faArrowLeft
+  faArrowLeft,
+  faPlus
 );
 
 export { FontAwesomeIcon };

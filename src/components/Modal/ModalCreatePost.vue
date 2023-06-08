@@ -23,6 +23,7 @@ import InitFiles from "@/components/Post/InitFiles.vue";
 import CropFiles from "@/components/Post/CropFiles.vue";
 import EditFiles from "@/components/Post/EditFiles.vue";
 import PostFiles from "@/components/Post/PostFiles.vue";
+import test from "@/components/Post/test.vue";
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 
@@ -48,7 +49,7 @@ export default {
   mounted() {
     this.setStopScroll(true);
   },
-  components: { InitFiles, CropFiles, EditFiles, PostFiles, UiButton },
+  components: { InitFiles, CropFiles, EditFiles, PostFiles, UiButton, test },
 };
 </script>
 
@@ -71,7 +72,9 @@ export default {
   flex: none;
   align-items: center;
   height: 42px;
+  background: var(--modal-color);
   border-bottom: 1px solid var(--separator-modal-color);
+  z-index: 1;
 }
 
 .title {

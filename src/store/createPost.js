@@ -2,7 +2,7 @@ const createPost = {
   namespaced: true,
   state() {
     return {
-      tabs: ["InitFiles", "CropFiles", "EditFiles", "PostFiles"],
+      tabs: ["InitFiles", "test", "EditFiles", "PostFiles"],
       currentTab: "InitFiles",
       files: [],
       canvasOptions: {},

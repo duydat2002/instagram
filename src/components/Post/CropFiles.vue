@@ -2,12 +2,26 @@
   <div class="crop-file">
     <div ref="container" class="image-container flex">
       <div
-        ref="wrapper"
-        class="image-wrapper"
-        :style="{ height: imgStyle.height, width: imgStyle.width }"
+        ref="cropper"
+        class="image-cropper"
+        :style="{
+          height: cropperSize.height + 'px',
+          width: cropperSize.width + 'px',
+        }"
       >
-        <div ref="image" class="img-show" :style="imgStyle"></div>
+        <div
+          ref="image"
+          class="img-show"
+          :style="imgStyle"
+          @mousedown="mouseDownImage"
+        ></div>
       </div>
+      <canvas
+        v-show="false"
+        ref="canvas"
+        :width="cropperSize.width"
+        :height="cropperSize.height"
+      />
     </div>
     <div class="crop-editor">
       <div class="left">
@@ -104,7 +118,7 @@ import Ratio1x1 from "@/components/SVG/Ratio1x1.vue";
 import Ratio4x5 from "@/components/SVG/Ratio4x5.vue";
 import Ratio16x9 from "@/components/SVG/Ratio16x9.vue";
 
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   data() {
@@ -115,14 +129,30 @@ export default {
       isDragging: false,
       aspectRatio: "1:1",
       scaleValue: 1,
-      xAxis: 0,
-      yAxis: 0,
-      containerHeight: 0,
-      containerWidth: 0,
-      newHeight: 0,
-      newWidth: 0,
-      heightOriginal: 0,
-      widthOriginal: 0,
+      translatePosition: {
+        x: 0,
+        y: 0,
+      },
+      containerSize: {
+        width: 0,
+        height: 0,
+      },
+      cropperSize: {
+        width: 0,
+        height: 0,
+      },
+      imageSize: {
+        width: 0,
+        height: 0,
+      },
+      mousePosition: {
+        x: 0,
+        y: 0,
+      },
+      mouseDownPosition: {
+        x: 0,
+        y: 0,
+      },
       img: null,
     };
   },
@@ -139,41 +169,94 @@ export default {
     imgStyle() {
       return {
         backgroundImage: `url(${this.currentFileURL})`,
-        height: this.newHeight + "px",
-        width: this.newWidth + "px",
-        transform: `translate(${this.xAxis}px, ${this.yAxis}px) scale(${this.scaleValue})`,
+        transform: `translate(${this.translatePosition.x}px, ${this.translatePosition.y}px) scale(${this.scaleValue})`,
         cursor: this.isDragging ? "grabbing" : "grab",
       };
     },
   },
   methods: {
+    ...mapMutations("createPost", ["setCanvasFiles"]),
     changeRatio(ratio) {
       this.aspectRatio = ratio;
 
       switch (this.aspectRatio) {
         case "original":
-          if (this.heightOriginal < this.widthOriginal) {
-            this.newHeight =
-              (this.containerWidth * this.heightOriginal) / this.widthOriginal;
-            this.newWidth = this.containerWidth;
+          if (this.imageSize.height < this.imageSize.width) {
+            this.cropperSize.height =
+              (this.containerSize.width * this.imageSize.height) /
+              this.imageSize.width;
+            this.cropperSize.width = this.containerSize.width;
           } else {
-            this.newHeight = this.containerHeight;
-            this.newWidth =
-              (this.containerHeight * this.widthOriginal) / this.heightOriginal;
+            this.cropperSize.height = this.containerSize.height;
+            this.cropperSize.width =
+              (this.containerSize.height * this.imageSize.width) /
+              this.imageSize.height;
           }
           break;
         case "1:1":
-          this.newHeight = this.containerHeight;
-          this.newWidth = this.containerWidth;
+          this.cropperSize.height = this.containerSize.height;
+          this.cropperSize.width = this.containerSize.width;
           break;
         case "4:5":
-          this.newHeight = this.containerHeight;
-          this.newWidth = (this.containerHeight * 4) / 5;
+          this.cropperSize.height = this.containerSize.height;
+          this.cropperSize.width = (this.containerSize.height * 4) / 5;
           break;
         case "16:9":
-          this.newHeight = (this.containerWidth * 9) / 16;
-          this.newWidth = this.containerWidth;
+          this.cropperSize.height = (this.containerSize.width * 9) / 16;
+          this.cropperSize.width = this.containerSize.width;
           break;
+      }
+    },
+    mouseDownImage(event) {
+      document.body.style.cursor = "grabbing";
+      this.isDragging = true;
+      this.aspectRatioActive = false;
+      this.scaleImageActive = false;
+
+      this.mousePosition.x = event.clientX;
+      this.mousePosition.y = event.clientY;
+
+      this.mouseDownPosition.x = this.translatePosition.x;
+      this.mouseDownPosition.y = this.translatePosition.y;
+    },
+    mouseMoveImage(event) {
+      this.translatePosition.x =
+        this.mouseDownPosition.x + (event.clientX - this.mousePosition.x) / 2;
+      this.translatePosition.y =
+        this.mouseDownPosition.y + (event.clientY - this.mousePosition.y) / 2;
+    },
+    mouseUpImage() {
+      document.body.style.cursor = "auto";
+      this.isDragging = false;
+
+      this.stick();
+    },
+    stick() {
+      const cropper = this.$refs.cropper.getBoundingClientRect();
+      const image = this.$refs.image.getBoundingClientRect();
+
+      if (cropper.left < image.left) {
+        this.translatePosition.x += cropper.left - image.left;
+      }
+      if (cropper.top < image.top) {
+        this.translatePosition.y += cropper.top - image.top;
+      }
+      if (cropper.right > image.right) {
+        this.translatePosition.x += cropper.right - image.right;
+      }
+      if (cropper.bottom > image.bottom) {
+        this.translatePosition.y += cropper.bottom - image.bottom;
+      }
+    },
+  },
+  watch: {
+    isDragging(newValue) {
+      if (newValue) {
+        document.addEventListener("mousemove", this.mouseMoveImage);
+        document.addEventListener("mouseup", this.mouseUpImage);
+      } else {
+        document.removeEventListener("mousemove", this.mouseMoveImage);
+        document.removeEventListener("mouseup", this.mouseUpImage);
       }
     },
   },
@@ -183,35 +266,42 @@ export default {
     this.img.src = this.currentFileURL;
 
     this.img.addEventListener("load", () => {
-      this.heightOriginal = this.img.height;
-      this.widthOriginal = this.img.width;
+      this.imageSize.height = this.img.height;
+      this.imageSize.width = this.img.width;
     });
   },
   mounted() {
-    this.containerHeight = this.$refs.container.offsetHeight;
-    this.containerWidth = this.$refs.container.offsetWidth;
+    this.containerSize.height = this.$refs.container.offsetHeight;
+    this.containerSize.width = this.$refs.container.offsetWidth;
 
-    this.newHeight = this.containerHeight;
-    this.newWidth = this.containerWidth;
+    this.cropperSize.height = this.containerSize.height;
+    this.cropperSize.width = this.containerSize.width;
   },
   beforeUnmount() {
     console.log(this.currentTab);
     if (this.currentTab == "EditFiles") {
-      const canvas = document.createElement("canvas");
+      const cropper = this.$refs.cropper.getBoundingClientRect();
+      const image = this.$refs.image.getBoundingClientRect();
+      const canvas = this.$refs.canvas;
       const ctx = canvas.getContext("2d");
-      canvas.width = this.newWidth;
-      canvas.height = this.newHeight;
 
-      // ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
-      // ctx.translate(canvas.width / 2, canvas.height / 2);
-      // if (rotate !== 0) {
-      //   ctx.rotate((rotate * Math.PI) / 180);
-      // }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+      const loadImg = new Promise((resolve) => {
+        this.img.addEventListener("load", () => {
+          ctx.drawImage(this.img, 0, 0, canvas.width, canvas.height);
+          resolve();
+        });
+      });
+      ctx.translate(image.x - cropper.x, image.y - cropper.y);
       ctx.scale(this.scaleValue, this.scaleValue);
-      ctx.drawImage(this.img, 0, 0, canvas.width, canvas.height);
 
-      // console.log(canvas.toDataURL());
-      window.open(canvas.toDataURL(), "_blank").focus();
+      this.setCanvasFiles([canvas.toDataURL()]);
+      loadImg.then(() => {
+        const url = canvas.toDataURL();
+        console.log(url);
+      });
     }
   },
   components: {
@@ -242,11 +332,13 @@ export default {
   position: relative;
 }
 
-.image-wrapper {
+.image-cropper {
   overflow: hidden;
 }
 
 .img-show {
+  height: 100%;
+  width: 100%;
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -375,6 +467,7 @@ export default {
 .scale-input::-webkit-slider-runnable-track {
   width: 100%;
   height: 1px;
+  margin: 5px 0;
   cursor: pointer;
   color: transparent;
   background: #000;
@@ -382,6 +475,7 @@ export default {
 .scale-input::-moz-range-trackk {
   width: 100%;
   height: 1px;
+  margin: 5px 0;
   cursor: pointer;
   color: transparent;
   background: #000;
@@ -389,6 +483,7 @@ export default {
 .scale-input::-ms-track {
   width: 100%;
   height: 1px;
+  margin: 5px 0;
   cursor: pointer;
   color: transparent;
   background: #000;

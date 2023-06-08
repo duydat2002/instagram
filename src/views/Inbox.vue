@@ -19,7 +19,9 @@
         <span class="dot se"></span>
         <span class="dot sw"></span>
       </div>
-      <canvas id="canvas" ref="canvas" width="304.5" height="406" />
+      <div class="canvas-container">
+        <canvas id="canvas" ref="canvas" />
+      </div>
     </div>
     <div class="control flex">
       <div class="group">
@@ -29,14 +31,6 @@
       <div class="group">
         <label for="y">y</label>
         <input type="number" step="100" id="y" v-model="y" />
-      </div>
-      <div class="group">
-        <label for="xCanvas">xCanvas</label>
-        <input type="number" step="100" id="xCanvas" v-model="xCanvas" />
-      </div>
-      <div class="group">
-        <label for="yCanvas">yCanvas</label>
-        <input type="number" step="100" id="yCanvas" v-model="yCanvas" />
       </div>
       <div class="group">
         <label for="width">width</label>
@@ -71,8 +65,6 @@ export default {
     return {
       x: 0,
       y: 0,
-      xCanvas: 0,
-      yCanvas: 0,
       width: 1536,
       height: 2048,
       scale: 1,
@@ -80,6 +72,7 @@ export default {
       mousePosition: { x: 0, y: 0 },
       oldX: 0,
       oldY: 0,
+      canvasFull: null,
     };
   },
   computed: {
@@ -92,6 +85,7 @@ export default {
   },
   methods: {
     mouseDownImage(event) {
+      document.body.style.cursor = "grabbing";
       this.isDragging = true;
       this.mousePosition.x = event.clientX;
       this.mousePosition.y = event.clientY;
@@ -109,8 +103,66 @@ export default {
 
       this.stick();
     },
+    testCanvas() {
+      const originalImage = new Image();
+      originalImage.src = require("@/assets/images/IMG_0683.jpeg");
+
+      originalImage.addEventListener("load", () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = 406;
+        canvas.height = 406;
+
+        this.canvasFull = canvas;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(
+          originalImage,
+          0,
+          0,
+          originalImage.width,
+          originalImage.height,
+          (canvas.width - originalImage.width) / 2, // Căn giữa theo chiều ngang
+          (canvas.height - originalImage.height) / 2, // Căn giữa theo chiều dọc
+          originalImage.width,
+          originalImage.height
+        );
+
+        const croppedImage = new Image();
+        croppedImage.src = canvas.toDataURL("image/jpeg");
+        console.log(croppedImage.src);
+      });
+    },
+    newCanvas() {
+      const img = new Image();
+      img.src = require("@/assets/images/IMG_0683.jpeg");
+
+      const canvas = document.createElement("canvas");
+
+      const ratioCrop = img.width / (304.5 * this.scale);
+
+      this.canvasFull = canvas;
+      canvas.width = 304.5 * ratioCrop;
+      canvas.height = 406 * ratioCrop;
+
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+      const cropper = this.$refs.cropper.getBoundingClientRect();
+      const image = this.$refs.image.getBoundingClientRect();
+
+      img.addEventListener("load", () => {
+        ctx.drawImage(img, 0, 0);
+      });
+      ctx.translate(
+        (image.x - cropper.x) * ratioCrop,
+        (image.y - cropper.y) * ratioCrop
+      );
+    },
     click() {
       const canvas = this.$refs.canvas;
+      canvas.width = 304.5;
+      canvas.height = 406;
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -127,6 +179,8 @@ export default {
       });
       ctx.translate(image.x - cropper.x, image.y - cropper.y);
       ctx.scale(this.scale, this.scale);
+
+      this.testCanvas();
     },
     reset() {
       this.x = 0;
@@ -151,8 +205,15 @@ export default {
       }
     },
     cac() {
-      const url = this.$refs.canvas.toDataURL();
-      console.log(url);
+      // const url = this.$refs.canvas.toDataURL();
+      const a = this.canvasFull.toDataURL();
+      console.log(a);
+      // console.log(url);
+
+      const newTab1 = window.open();
+      newTab1.document.write(
+        '<html><body><img src="' + a + '"/></body></html>'
+      );
     },
   },
   watch: {
@@ -224,6 +285,17 @@ button {
   background-repeat: no-repeat;
   background-size: cover;
   cursor: grab;
+  /* transition: 0.16s; */
+}
+
+.canvas-container {
+  width: 304.5px;
+  height: 406px;
+}
+
+#canvas {
+  width: 100%;
+  height: 100%;
 }
 
 .dot {
