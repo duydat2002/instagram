@@ -27,35 +27,56 @@
 <script>
 import MediaFilesIcon from "@/components/SVG/MediaFilesIcon.vue";
 import UiButton from "../UI/UiButton.vue";
-import { mapGetters, mapMutations, mapActions } from "vuex";
+import { mapMutations, mapActions } from "vuex";
 
 export default {
-  computed: {
-    ...mapGetters("createPost", ["files"]),
-  },
+  computed: {},
   methods: {
-    ...mapMutations("createPost", ["setFiles"]),
+    ...mapMutations("createPost", ["setMedias"]),
     ...mapActions("createPost", ["nextTab"]),
     handleClickChooseFile() {
       this.$refs.inputFiles.click();
     },
     getInputFiles(event) {
-      this.setFiles(event.target.files);
-      this.done();
+      const files = event.target.files;
+      const medias = [];
+      for (let file of files) {
+        const url = URL.createObjectURL(file);
+        const media = {
+          url,
+          translate: {
+            x: null,
+            y: null,
+          },
+          scale: 1,
+          filters: null,
+        };
+        medias.push(media);
+      }
+      this.setMedias(medias);
+      this.nextTab();
     },
     handleDragOver(event) {
       event.preventDefault();
     },
     handleDrop(event) {
       event.preventDefault();
-      this.setFiles(event.dataTransfer.files);
-      this.done();
-    },
-    done() {
-      for (const file of this.files) {
-        const fileName = file?.name;
-        console.log(file, fileName);
+      const files = event.dataTransfer.files;
+      const medias = [];
+      for (let file of files) {
+        const url = URL.createObjectURL(file);
+        const media = {
+          url,
+          translate: {
+            x: null,
+            y: null,
+          },
+          scale: 1,
+          filters: null,
+        };
+        medias.push(media);
       }
+      this.setMedias(medias);
       this.nextTab();
     },
   },

@@ -4,30 +4,28 @@ const createPost = {
     return {
       tabs: ["InitFiles", "test", "EditFiles", "PostFiles"],
       currentTab: "InitFiles",
-      files: [],
-      canvasOptions: {},
-      canvasFiles: [],
+      medias: [],
+      currentMedia: null,
     };
   },
   getters: {
     tabs: (state) => state.tabs,
     currentTab: (state) => state.currentTab,
-    files: (state) => state.files,
-    canvasOptions: (state) => state.canvasOptions,
-    canvasFiles: (state) => state.canvasFiles,
+    medias: (state) => state.medias,
+    currentMedia: (state) => state.currentMedia,
   },
   mutations: {
     setCurrentTab(state, tabName) {
       state.currentTab = tabName;
     },
-    setFiles(state, files) {
-      state.files = files;
+    setMedias(state, medias) {
+      state.medias = medias;
     },
-    setCanvasOptions(state, canvasOptions) {
-      state.canvasOptions = canvasOptions;
+    addMedia(state, media) {
+      state.medias.push(media);
     },
-    setCanvasFiles(state, canvasFiles) {
-      state.canvasFiles = canvasFiles;
+    setCurrentMedia(state, currentMedia) {
+      state.currentMedia = currentMedia;
     },
   },
   actions: {
@@ -46,10 +44,6 @@ const createPost = {
       if (currentIndex > 0) {
         commit("setCurrentTab", tabs[currentIndex - 1]);
       }
-    },
-    pushCanvasFile({ getters, commit }, canvasFile) {
-      const newFiles = getters.canvasFiles.push(canvasFile);
-      commit("setCanvasFiles", newFiles);
     },
   },
 };

@@ -1,10 +1,9 @@
 <template>
-  <div class="list-container">
+  <div class="list-post-container">
     <div class="list-wrapper slider-wrapper">
       <draggable
         class="list-draggable slider-list"
         tag="transition-group"
-        :style="translateDraggable"
         :component-data="{
           tag: 'div',
           name: 'flip',
@@ -13,7 +12,11 @@
         v-bind="dragOptions"
       >
         <template #item="{ element: media }">
-          <div class="image-item slider-item" @click="cac(media)">
+          <div
+            class="image-item slider-item"
+            :class="{ active: currentMedia.url == media.url }"
+            @mousedown="setCurrentMedia(media)"
+          >
             <div
               class="image"
               :style="{ backgroundImage: `url(${media.url})` }"
@@ -25,10 +28,10 @@
         </template>
       </draggable>
       <div class="navigation">
-        <div class="navigation-button navigation-prev" @click="prev">
+        <div class="navigation-button navigation-prev">
           <fa :icon="['fas', 'circle-chevron-left']" class="navigation-icon" />
         </div>
-        <div class="navigation-button navigation-next" @click="next">
+        <div class="navigation-button navigation-next">
           <fa :icon="['fas', 'circle-chevron-right']" class="navigation-icon" />
         </div>
       </div>
@@ -51,6 +54,9 @@
 import draggable from "vuedraggable";
 import { mapGetters, mapMutations } from "vuex";
 
+import { useSlider } from "@/composables/useSlider";
+const { initSlider, reset } = useSlider();
+
 export default {
   data() {
     return {
@@ -61,18 +67,6 @@ export default {
         chosenClass: "chosen", // Class name for the chosen item
         dragClass: "drag", // Class name for the dragging item
       },
-
-      // Slider options
-      // sliderOptions: {
-      wrapper: "",
-      listContainer: "",
-      isStart: true,
-      isEnd: false,
-      currentIndex: 0,
-      itemWidth: 0,
-      translateX: 0,
-      step: 2,
-      // }
     };
   },
   computed: {
@@ -84,11 +78,6 @@ export default {
       set(value) {
         this.setMedias(value);
       },
-    },
-    translateDraggable() {
-      return {
-        transform: `translateX(-${this.translateX}px)`,
-      };
     },
   },
   methods: {
@@ -111,6 +100,8 @@ export default {
         };
         this.addMedia(media);
       }
+
+      reset();
       event.target.value = "";
     },
     handleDeleteMedia(url) {
@@ -119,58 +110,28 @@ export default {
       });
 
       this.setMedias(newMedias);
-    },
-    prev() {
-      console.log("prev");
-      if (this.currentIndex > 0) {
-        this.currentIndex--;
-        this.translateX = this.step * this.currentIndex * this.itemWidth;
-      }
-    },
-    next() {
-      console.log("next");
-      const wrapperWidth = document.querySelector(
-        ".list-post-container .list-wrapper"
-      ).offsetWidth;
-      const listWidth = document.querySelector(
-        ".list-post-container .list-draggable"
-      ).offsetWidth;
+      this.setCurrentMedia(newMedias[0]);
 
-      if (
-        this.translateX + this.step * this.itemWidth <
-        listWidth - wrapperWidth
-      ) {
-        this.currentIndex++;
-        this.translateX = this.step * this.currentIndex * this.itemWidth;
-      } else {
-        this.translateX = listWidth - wrapperWidth;
-        this.isEnd = true;
-      }
-    },
-    checkStartEnd() {
-      if (this.translateX == 0) {
-        this.isStart = true;
-      } else {
-        this.isStart = false;
-      }
-
-      // if (this.)
-    },
-    cac(post) {
-      console.log("cac", post);
+      reset();
     },
   },
   components: {
     draggable,
   },
   mounted() {
-    this.itemWidth = document.querySelector(".image-item")?.offsetWidth;
+    initSlider(".list-post-container", {
+      step: 2,
+      navigation: {
+        prevEl: ".navigation-prev",
+        nextEl: ".navigation-next",
+      },
+    });
   },
 };
 </script>
 
 <style scoped>
-.list-container {
+.list-post-container {
   padding: 8px;
   background: rgba(26, 26, 26, 0.8);
   border-radius: 8px;
@@ -195,6 +156,7 @@ export default {
 .list-draggable {
   display: flex;
   align-items: center;
+  transition: 0.2s;
 }
 
 .image-item {
@@ -214,16 +176,20 @@ export default {
 .image-item .image-delete {
   position: absolute;
   top: 5px;
-  right: 5px;
+  right: 10px;
   width: 20px;
   height: 20px;
   background: rgba(26, 26, 26, 0.8);
   border-radius: 50%;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: 0.2s;
+}
+
+.image-item.active .image-delete {
+  display: flex;
 }
 
 .image-item .image-delete:hover {

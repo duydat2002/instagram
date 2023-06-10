@@ -18,8 +18,8 @@
     "lodash": "^4.17.21",
     "swiper": "^9.3.2",
     "vue": "^3.2.13",
-    "vue-cropperjs": "^5.0.0",
     "vue-router": "^4.0.3",
+    "vuedraggable": "^4.1.0",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
@@ -45,7 +45,8 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {
-      "vue/multi-word-component-names": "off"
+      "vue/multi-word-component-names": "off",
+      "vue/no-deprecated-slot-attribute": "off"
     }
   },
   "browserslist": [

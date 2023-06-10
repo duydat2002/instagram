@@ -116,25 +116,7 @@
           <transition name="fadeUp">
             <div class="extend flex" v-if="listImageActive">
               <div class="item flex">
-                <div class="list-image-container flex">
-                  <div class="image-item" @click="cac">
-                    <div class="image"></div>
-                    <div class="image-delete">
-                      <fa size="xl" :icon="['fas', 'xmark']" />
-                    </div>
-                  </div>
-                  <div class="image-item">
-                    <div class="image"></div>
-                    <div class="image-delete">
-                      <fa size="xl" :icon="['fas', 'xmark']" />
-                    </div>
-                  </div>
-                  <div class="add-image" @click="lon">
-                    <div class="add-image-icon">
-                      <fa :icon="['fas', 'plus']" />
-                    </div>
-                  </div>
-                </div>
+                <list-post />
               </div>
             </div>
           </transition>
@@ -155,6 +137,7 @@ import LayerIcon from "@/components/SVG/LayerIcon.vue";
 import Ratio1x1 from "@/components/SVG/Ratio1x1.vue";
 import Ratio4x5 from "@/components/SVG/Ratio4x5.vue";
 import Ratio16x9 from "@/components/SVG/Ratio16x9.vue";
+import ListPost from "@/components/Post/ListPost.vue";
 
 import { mapGetters, mapMutations } from "vuex";
 
@@ -201,27 +184,19 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("createPost", ["files", "currentTab"]),
-    filesUrl() {
-      let urls = [];
-      for (const file of this.files) {
-        urls.push(URL.createObjectURL(file));
-      }
-      console.log(this.files);
-      return urls;
-    },
+    ...mapGetters("createPost", ["medias", "currentMedia", "currentTab"]),
     imgStyle() {
       return {
         width: this.reviewImageSize.width + "px",
         height: this.reviewImageSize.height + "px",
-        backgroundImage: `url(${this.currentFileURL})`,
+        backgroundImage: `url(${this.currentMedia.url})`,
         transform: `translate(calc(-50% + ${this.translatePosition.x}px), calc(-50% + ${this.translatePosition.y}px)) scale(${this.scaleValue})`,
         cursor: this.isDragging ? "grabbing" : "grab",
       };
     },
   },
   methods: {
-    ...mapMutations("createPost", ["setCanvasFiles"]),
+    ...mapMutations("createPost", ["setCurrentMedia"]),
     changeRatio(ratio) {
       this.aspectRatio = ratio;
 
@@ -309,7 +284,7 @@ export default {
       }
     },
     async initImage() {
-      this.currentFileURL = URL.createObjectURL(this.files[0]);
+      this.currentFileURL = this.medias[0].url;
       this.img = new Image();
       this.img.src = this.currentFileURL;
 
@@ -374,33 +349,8 @@ export default {
     await this.initImage();
 
     this.changeRatio("original");
-  },
-  beforeUnmount() {
-    console.log(this.currentTab);
-    if (this.currentTab == "EditFiles") {
-      const cropper = this.$refs.cropper.getBoundingClientRect();
-      const image = this.$refs.image.getBoundingClientRect();
-      const canvas = this.$refs.canvas;
-      const ctx = canvas.getContext("2d");
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-      const loadImg = new Promise((resolve) => {
-        this.img.addEventListener("load", () => {
-          ctx.drawImage(this.img, 0, 0, canvas.width, canvas.height);
-          resolve();
-        });
-      });
-      ctx.translate(image.x - cropper.x, image.y - cropper.y);
-      ctx.scale(this.scaleValue, this.scaleValue);
-
-      this.setCanvasFiles([canvas.toDataURL()]);
-      loadImg.then(() => {
-        const url = canvas.toDataURL();
-        console.log(url);
-      });
-    }
+    this.setCurrentMedia(this.medias[0]);
   },
   components: {
     RatioIcon,
@@ -410,6 +360,7 @@ export default {
     Ratio1x1,
     Ratio4x5,
     Ratio16x9,
+    ListPost,
   },
 };
 </script>
@@ -483,11 +434,15 @@ export default {
   fill: #000;
 }
 
+.option .extend,
+.option .icon {
+  z-index: 1;
+}
+
 .aspect-ratio {
   position: absolute;
   bottom: 0;
   left: 0;
-  z-index: 1;
 }
 
 .aspect-ratio .extend {
@@ -526,7 +481,6 @@ export default {
   position: absolute;
   left: 44px;
   bottom: 0;
-  z-index: 1;
 }
 
 .scale .extend {
@@ -604,14 +558,6 @@ export default {
   position: absolute;
   bottom: 0;
   right: 0;
-  z-index: 1;
-}
-
-.list-image-container {
-  padding: 8px;
-  background: rgba(26, 26, 26, 0.8);
-  height: 118px;
-  align-items: center;
-  justify-content: center;
+  align-items: end;
 }
 </style>

@@ -34,7 +34,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("createPost", ["currentTab", "files"]),
+    ...mapGetters("createPost", ["currentTab"]),
   },
   methods: {
     ...mapMutations("modal", ["setStopScroll"]),
