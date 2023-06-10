@@ -85,21 +85,47 @@ export default {
     handleAddMedia() {
       this.$refs.inputFiles.click();
     },
-    getInputFiles(event) {
-      const files = event.target.files;
+    getImageSize(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.src = url;
+        img.onload = () => {
+          resolve({ width: img.width, height: img.height });
+        };
+      });
+    },
+    filesToMedias(files) {
+      const medias = [];
+      const promises = [];
+
       for (let file of files) {
         const url = URL.createObjectURL(file);
-        const media = {
-          url,
-          translate: {
-            x: null,
-            y: null,
-          },
-          scale: 1,
-          filters: null,
-        };
-        this.addMedia(media);
+
+        const promise = this.getImageSize(url).then((size) => {
+          const media = {
+            url,
+            size,
+            translate: {
+              x: null,
+              y: null,
+            },
+            scale: 1,
+            filters: null,
+          };
+          medias.push(media);
+        });
+
+        promises.push(promise);
       }
+
+      Promise.all(promises).then(() => {
+        this.addMedia(...medias);
+      });
+    },
+    getInputFiles(event) {
+      const files = event.target.files;
+
+      this.filesToMedias(files);
 
       reset();
       event.target.value = "";
