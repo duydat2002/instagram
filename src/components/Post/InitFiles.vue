@@ -32,29 +32,54 @@ import { mapMutations, mapActions } from "vuex";
 export default {
   computed: {},
   methods: {
-    ...mapMutations("createPost", ["setMedias"]),
+    ...mapMutations("createPost", ["setMedias", "setCurrentMedia"]),
     ...mapActions("createPost", ["nextTab"]),
+    getImageSize(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.src = url;
+        img.onload = () => {
+          resolve({ width: img.width, height: img.height });
+        };
+      });
+    },
+    filesToMedias(files) {
+      const medias = [];
+      const promises = [];
+
+      for (let file of files) {
+        const url = URL.createObjectURL(file);
+
+        const promise = this.getImageSize(url).then((size) => {
+          const media = {
+            url,
+            size,
+            translate: {
+              x: null,
+              y: null,
+            },
+            scale: 1,
+            filters: null,
+          };
+          medias.push(media);
+        });
+
+        promises.push(promise);
+      }
+
+      Promise.all(promises).then(() => {
+        this.setMedias(medias);
+        this.setCurrentMedia(medias[0]);
+        this.nextTab();
+      });
+    },
     handleClickChooseFile() {
       this.$refs.inputFiles.click();
     },
     getInputFiles(event) {
       const files = event.target.files;
-      const medias = [];
-      for (let file of files) {
-        const url = URL.createObjectURL(file);
-        const media = {
-          url,
-          translate: {
-            x: null,
-            y: null,
-          },
-          scale: 1,
-          filters: null,
-        };
-        medias.push(media);
-      }
-      this.setMedias(medias);
-      this.nextTab();
+
+      this.filesToMedias(files);
     },
     handleDragOver(event) {
       event.preventDefault();
@@ -62,22 +87,8 @@ export default {
     handleDrop(event) {
       event.preventDefault();
       const files = event.dataTransfer.files;
-      const medias = [];
-      for (let file of files) {
-        const url = URL.createObjectURL(file);
-        const media = {
-          url,
-          translate: {
-            x: null,
-            y: null,
-          },
-          scale: 1,
-          filters: null,
-        };
-        medias.push(media);
-      }
-      this.setMedias(medias);
-      this.nextTab();
+
+      this.filesToMedias(files);
     },
   },
   components: { UiButton, MediaFilesIcon },

@@ -144,7 +144,6 @@ import { mapGetters, mapMutations } from "vuex";
 export default {
   data() {
     return {
-      currentFileURL: null,
       aspectRatioActive: false,
       scaleImageActive: false,
       listImageActive: false,
@@ -163,10 +162,6 @@ export default {
         width: 0,
         height: 0,
       },
-      imageSize: {
-        width: 0,
-        height: 0,
-      },
       reviewImageSize: {
         width: 0,
         height: 0,
@@ -179,7 +174,6 @@ export default {
         x: 0,
         y: 0,
       },
-      img: null,
       newCanvas: null,
     };
   },
@@ -202,16 +196,16 @@ export default {
 
       switch (this.aspectRatio) {
         case "original":
-          if (this.imageSize.height < this.imageSize.width) {
+          if (this.currentMedia.size.height < this.currentMedia.size.width) {
             this.cropperSize.height =
-              (this.containerSize.width * this.imageSize.height) /
-              this.imageSize.width;
+              (this.containerSize.width * this.currentMedia.size.height) /
+              this.currentMedia.size.width;
             this.cropperSize.width = this.containerSize.width;
           } else {
             this.cropperSize.height = this.containerSize.height;
             this.cropperSize.width =
-              (this.containerSize.height * this.imageSize.width) /
-              this.imageSize.height;
+              (this.containerSize.height * this.currentMedia.size.width) /
+              this.currentMedia.size.height;
           }
           break;
         case "1:1":
@@ -228,16 +222,20 @@ export default {
           break;
       }
 
-      if (this.imageSize.height < this.imageSize.width) {
+      if (
+        this.currentMedia.size.height < this.currentMedia.size.width ||
+        (this.aspectRatio == "4:5" &&
+          this.currentMedia.size.height == this.currentMedia.size.width)
+      ) {
         this.reviewImageSize.height = this.cropperSize.height;
         this.reviewImageSize.width =
-          (this.cropperSize.height * this.imageSize.width) /
-          this.imageSize.height;
+          (this.cropperSize.height * this.currentMedia.size.width) /
+          this.currentMedia.size.height;
       } else {
         this.reviewImageSize.width = this.cropperSize.width;
         this.reviewImageSize.height =
-          (this.reviewImageSize.width * this.imageSize.height) /
-          this.imageSize.width;
+          (this.reviewImageSize.width * this.currentMedia.size.height) /
+          this.currentMedia.size.width;
       }
 
       this.stick();
@@ -267,34 +265,23 @@ export default {
       this.stick();
     },
     stick() {
-      const cropper = this.$refs.cropper.getBoundingClientRect();
-      const image = this.$refs.image.getBoundingClientRect();
+      setTimeout(() => {
+        const cropper = this.$refs.cropper.getBoundingClientRect();
+        const image = this.$refs.image.getBoundingClientRect();
 
-      if (cropper.left < image.left) {
-        this.translatePosition.x += cropper.left - image.left;
-      }
-      if (cropper.top < image.top) {
-        this.translatePosition.y += cropper.top - image.top;
-      }
-      if (cropper.right > image.right) {
-        this.translatePosition.x += cropper.right - image.right;
-      }
-      if (cropper.bottom > image.bottom) {
-        this.translatePosition.y += cropper.bottom - image.bottom;
-      }
-    },
-    async initImage() {
-      this.currentFileURL = this.medias[0].url;
-      this.img = new Image();
-      this.img.src = this.currentFileURL;
-
-      return new Promise((resolve) => {
-        this.img.addEventListener("load", () => {
-          this.imageSize.height = this.img.height;
-          this.imageSize.width = this.img.width;
-          resolve();
-        });
-      });
+        if (cropper.left < image.left) {
+          this.translatePosition.x += cropper.left - image.left;
+        }
+        if (cropper.top < image.top) {
+          this.translatePosition.y += cropper.top - image.top;
+        }
+        if (cropper.right > image.right) {
+          this.translatePosition.x += cropper.right - image.right;
+        }
+        if (cropper.bottom > image.bottom) {
+          this.translatePosition.y += cropper.bottom - image.bottom;
+        }
+      }, 0);
     },
     cac() {
       const cropper = this.$refs.cropper.getBoundingClientRect();
@@ -345,8 +332,6 @@ export default {
   async mounted() {
     this.containerSize.height = this.$refs.container.offsetHeight;
     this.containerSize.width = this.$refs.container.offsetWidth;
-
-    await this.initImage();
 
     this.changeRatio("original");
 
