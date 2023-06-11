@@ -78,6 +78,7 @@ export const useSlider = () => {
   });
 
   const reset = () => {
+    console.log("reset");
     currentIndex.value = 0;
     translateX.value = 0;
     initElement();
@@ -96,25 +97,22 @@ export const useSlider = () => {
   };
 
   const initElement = () => {
-    setTimeout(() => {
-      wrapper = sliderContainer.querySelector(sliderOptions.wrapperEl);
-      listContainer = sliderContainer.querySelector(
-        sliderOptions.listContainerEl
-      );
-      itemWidth = sliderContainer.querySelector(
-        sliderOptions.itemEl
-      ).offsetWidth;
-      wrapperWidth = wrapper.offsetWidth;
-      listWidth = listContainer.offsetWidth;
-      prevEl = sliderContainer.querySelector(sliderOptions.navigation.prevEl);
-      nextEl = sliderContainer.querySelector(sliderOptions.navigation.nextEl);
+    wrapper = sliderContainer.querySelector(sliderOptions.wrapperEl);
+    listContainer = sliderContainer.querySelector(
+      sliderOptions.listContainerEl
+    );
+    itemWidth = sliderContainer.querySelector(sliderOptions.itemEl).offsetWidth;
+    wrapperWidth = wrapper.offsetWidth;
+    listWidth = listContainer.offsetWidth;
 
-      checkStartEnd(translateX.value);
+    prevEl = sliderContainer.querySelector(sliderOptions.navigation.prevEl);
+    nextEl = sliderContainer.querySelector(sliderOptions.navigation.nextEl);
 
-      if (prevEl || nextEl) {
-        initNavigation();
-      }
-    }, 0);
+    checkStartEnd(translateX.value);
+
+    if (prevEl || nextEl) {
+      initNavigation();
+    }
   };
 
   const initNavigation = () => {
@@ -130,6 +128,8 @@ export const useSlider = () => {
   return {
     initSlider,
     reset,
+    next,
+    prev,
     currentIndex,
     translateX,
     isStart,

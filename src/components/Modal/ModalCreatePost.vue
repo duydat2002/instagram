@@ -64,6 +64,7 @@ export default {
   border-radius: 12px;
   overflow: hidden;
   text-align: center;
+  user-select: none;
 }
 
 .header {

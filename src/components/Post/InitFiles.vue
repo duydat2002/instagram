@@ -55,11 +55,11 @@ export default {
             url,
             size,
             translate: {
-              x: null,
-              y: null,
+              x: 0,
+              y: 0,
             },
             scale: 1,
-            filters: null,
+            filters: "",
           };
           medias.push(media);
         });

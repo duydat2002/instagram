@@ -95,7 +95,6 @@ export default {
       });
     },
     filesToMedias(files) {
-      const medias = [];
       const promises = [];
 
       for (let file of files) {
@@ -106,43 +105,40 @@ export default {
             url,
             size,
             translate: {
-              x: null,
-              y: null,
+              x: 0,
+              y: 0,
             },
             scale: 1,
-            filters: null,
+            filters: "",
           };
-          medias.push(media);
+          this.addMedia(media);
         });
 
         promises.push(promise);
       }
 
-      Promise.all(promises).then(() => {
-        this.addMedia(...medias);
-      });
+      return Promise.all(promises);
     },
     getInputFiles(event) {
       const files = event.target.files;
 
-      this.filesToMedias(files);
+      this.filesToMedias(files).then(() => {
+        event.target.value = "";
 
-      reset();
-      event.target.value = "";
+        reset();
+      });
     },
     handleDeleteMedia(url) {
       const newMedias = this.medias.filter((media) => {
         return media.url !== url;
       });
-
       this.setMedias(newMedias);
       this.setCurrentMedia(newMedias[0]);
 
-      reset();
+      setTimeout(() => {
+        reset();
+      });
     },
-  },
-  components: {
-    draggable,
   },
   mounted() {
     initSlider(".list-post-container", {
@@ -152,6 +148,9 @@ export default {
         nextEl: ".navigation-next",
       },
     });
+  },
+  components: {
+    draggable,
   },
 };
 </script>

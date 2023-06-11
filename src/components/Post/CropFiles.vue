@@ -16,6 +16,41 @@
           @mousedown="mouseDownImage"
         ></div>
       </div>
+      <div class="navigation">
+        <div
+          v-if="currentMedia.url != medias[0].url"
+          class="navigation-button navigation-prev"
+          @click="prevMedia"
+        >
+          <fa :icon="['fas', 'chevron-left']" class="navigation-icon" />
+        </div>
+        <div
+          v-if="currentMedia.url != medias[medias.length - 1].url"
+          class="navigation-button navigation-next"
+          @click="nextMedia"
+        >
+          <fa :icon="['fas', 'chevron-right']" class="navigation-icon" />
+        </div>
+      </div>
+      <div class="pagination">
+        <div
+          v-for="media in medias"
+          :key="media.url"
+          :class="['dot', { active: media.url == currentMedia.url }]"
+        ></div>
+      </div>
+      <div v-if="isDragging" class="gridlines">
+        <div class="lines lines-col flex flex-col">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+        <div class="lines lines-row flex flex-row">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+      </div>
       <canvas
         v-show="false"
         ref="canvas"
@@ -139,7 +174,7 @@ import Ratio4x5 from "@/components/SVG/Ratio4x5.vue";
 import Ratio16x9 from "@/components/SVG/Ratio16x9.vue";
 import ListPost from "@/components/Post/ListPost.vue";
 
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   data() {
@@ -162,10 +197,6 @@ export default {
         width: 0,
         height: 0,
       },
-      imageSize: {
-        width: 0,
-        height: 0,
-      },
       reviewImageSize: {
         width: 0,
         height: 0,
@@ -178,7 +209,6 @@ export default {
         x: 0,
         y: 0,
       },
-      img: null,
       newCanvas: null,
     };
   },
@@ -195,22 +225,23 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("createPost", ["setCurrentMedia"]),
+    ...mapMutations("createPost", ["setCurrentMedia", "updateMedia"]),
+    ...mapActions("createPost", ["nextMedia", "prevMedia"]),
     changeRatio(ratio) {
       this.aspectRatio = ratio;
 
       switch (this.aspectRatio) {
         case "original":
-          if (this.imageSize.height < this.imageSize.width) {
+          if (this.currentMedia.size.height < this.currentMedia.size.width) {
             this.cropperSize.height =
-              (this.containerSize.width * this.imageSize.height) /
-              this.imageSize.width;
+              (this.containerSize.width * this.currentMedia.size.height) /
+              this.currentMedia.size.width;
             this.cropperSize.width = this.containerSize.width;
           } else {
             this.cropperSize.height = this.containerSize.height;
             this.cropperSize.width =
-              (this.containerSize.height * this.imageSize.width) /
-              this.imageSize.height;
+              (this.containerSize.height * this.currentMedia.size.width) /
+              this.currentMedia.size.height;
           }
           break;
         case "1:1":
@@ -227,16 +258,20 @@ export default {
           break;
       }
 
-      if (this.imageSize.height < this.imageSize.width) {
+      if (
+        this.currentMedia.size.height < this.currentMedia.size.width ||
+        (this.aspectRatio == "4:5" &&
+          this.currentMedia.size.height == this.currentMedia.size.width)
+      ) {
         this.reviewImageSize.height = this.cropperSize.height;
         this.reviewImageSize.width =
-          (this.cropperSize.height * this.imageSize.width) /
-          this.imageSize.height;
+          (this.cropperSize.height * this.currentMedia.size.width) /
+          this.currentMedia.size.height;
       } else {
         this.reviewImageSize.width = this.cropperSize.width;
         this.reviewImageSize.height =
-          (this.reviewImageSize.width * this.imageSize.height) /
-          this.imageSize.width;
+          (this.reviewImageSize.width * this.currentMedia.size.height) /
+          this.currentMedia.size.width;
       }
 
       this.stick();
@@ -266,21 +301,23 @@ export default {
       this.stick();
     },
     stick() {
-      const cropper = this.$refs.cropper.getBoundingClientRect();
-      const image = this.$refs.image.getBoundingClientRect();
+      setTimeout(() => {
+        const cropper = this.$refs.cropper.getBoundingClientRect();
+        const image = this.$refs.image.getBoundingClientRect();
 
-      if (cropper.left < image.left) {
-        this.translatePosition.x += cropper.left - image.left;
-      }
-      if (cropper.top < image.top) {
-        this.translatePosition.y += cropper.top - image.top;
-      }
-      if (cropper.right > image.right) {
-        this.translatePosition.x += cropper.right - image.right;
-      }
-      if (cropper.bottom > image.bottom) {
-        this.translatePosition.y += cropper.bottom - image.bottom;
-      }
+        if (cropper.left < image.left) {
+          this.translatePosition.x += cropper.left - image.left;
+        }
+        if (cropper.top < image.top) {
+          this.translatePosition.y += cropper.top - image.top;
+        }
+        if (cropper.right > image.right) {
+          this.translatePosition.x += cropper.right - image.right;
+        }
+        if (cropper.bottom > image.bottom) {
+          this.translatePosition.y += cropper.bottom - image.bottom;
+        }
+      }, 0);
     },
     cac() {
       const cropper = this.$refs.cropper.getBoundingClientRect();
@@ -327,13 +364,28 @@ export default {
         document.removeEventListener("mouseup", this.mouseUpImage);
       }
     },
+    currentMedia(newMedia, oldMedia) {
+      // Update scale and translate of oldMedia
+      const oldMediaIndex = this.medias.findIndex((media) => {
+        return media.url == oldMedia.url;
+      });
+
+      const media = {
+        ...oldMedia,
+        scale: this.scaleValue,
+        translate: { ...this.translatePosition },
+      };
+
+      this.updateMedia({ index: oldMediaIndex, newMedia: media });
+
+      // Set scale and translate from newMedia
+      this.scaleValue = newMedia.scale;
+      this.translatePosition = { ...newMedia.translate };
+    },
   },
   async mounted() {
     this.containerSize.height = this.$refs.container.offsetHeight;
     this.containerSize.width = this.$refs.container.offsetWidth;
-
-    this.imageSize.height = this.currentMedia.size.height;
-    this.imageSize.width = this.currentMedia.size.width;
 
     this.changeRatio("original");
 
@@ -546,5 +598,95 @@ export default {
   bottom: 0;
   right: 0;
   align-items: end;
+}
+
+.gridlines {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
+}
+
+.gridlines,
+.lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.line {
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.lines-col .line {
+  width: 1px;
+  height: 100%;
+}
+
+.lines-row .line {
+  height: 1px;
+  width: 100%;
+}
+
+.navigation-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  background: #1a1a1acc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  transition: 0.2s;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.navigation-button:hover {
+  opacity: 0.6;
+}
+
+.navigation-button svg {
+  color: #fff;
+  fill: #fff;
+}
+
+.navigation-prev {
+  left: 8px;
+}
+.navigation-next {
+  right: 8px;
+}
+
+.navigation-icon {
+  font-size: 16px;
+}
+
+.pagination {
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  display: flex;
+  z-index: 1;
+}
+
+.pagination .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--border-dark-color);
+  border-radius: 50%;
+  margin: 0 2px;
+  transition: all 0.2s ease-in-out;
+}
+
+.pagination .dot.active {
+  background: var(--primary-button-color);
 }
 </style>

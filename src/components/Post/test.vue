@@ -16,6 +16,41 @@
           @mousedown="mouseDownImage"
         ></div>
       </div>
+      <div class="navigation">
+        <div
+          v-if="currentMedia.url != medias[0].url"
+          class="navigation-button navigation-prev"
+          @click="prevMedia"
+        >
+          <fa :icon="['fas', 'chevron-left']" class="navigation-icon" />
+        </div>
+        <div
+          v-if="currentMedia.url != medias[medias.length - 1].url"
+          class="navigation-button navigation-next"
+          @click="nextMedia"
+        >
+          <fa :icon="['fas', 'chevron-right']" class="navigation-icon" />
+        </div>
+      </div>
+      <div class="pagination">
+        <div
+          v-for="media in medias"
+          :key="media.url"
+          :class="['dot', { active: media.url == currentMedia.url }]"
+        ></div>
+      </div>
+      <div v-if="isDragging" class="gridlines">
+        <div class="lines lines-col flex flex-col">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+        <div class="lines lines-row flex flex-row">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+      </div>
       <canvas
         v-show="false"
         ref="canvas"
@@ -139,7 +174,7 @@ import Ratio4x5 from "@/components/SVG/Ratio4x5.vue";
 import Ratio16x9 from "@/components/SVG/Ratio16x9.vue";
 import ListPost from "@/components/Post/ListPost.vue";
 
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   data() {
@@ -190,7 +225,8 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("createPost", ["setCurrentMedia"]),
+    ...mapMutations("createPost", ["setCurrentMedia", "updateMedia"]),
+    ...mapActions("createPost", ["nextMedia", "prevMedia"]),
     changeRatio(ratio) {
       this.aspectRatio = ratio;
 
@@ -327,6 +363,24 @@ export default {
         document.removeEventListener("mousemove", this.mouseMoveImage);
         document.removeEventListener("mouseup", this.mouseUpImage);
       }
+    },
+    currentMedia(newMedia, oldMedia) {
+      // Update scale and translate of oldMedia
+      const oldMediaIndex = this.medias.findIndex((media) => {
+        return media.url == oldMedia.url;
+      });
+
+      const media = {
+        ...oldMedia,
+        scale: this.scaleValue,
+        translate: { ...this.translatePosition },
+      };
+
+      this.updateMedia({ index: oldMediaIndex, newMedia: media });
+
+      // Set scale and translate from newMedia
+      this.scaleValue = newMedia.scale;
+      this.translatePosition = { ...newMedia.translate };
     },
   },
   async mounted() {
@@ -544,5 +598,95 @@ export default {
   bottom: 0;
   right: 0;
   align-items: end;
+}
+
+.gridlines {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
+}
+
+.gridlines,
+.lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.line {
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.lines-col .line {
+  width: 1px;
+  height: 100%;
+}
+
+.lines-row .line {
+  height: 1px;
+  width: 100%;
+}
+
+.navigation-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  background: #1a1a1acc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  transition: 0.2s;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.navigation-button:hover {
+  opacity: 0.6;
+}
+
+.navigation-button svg {
+  color: #fff;
+  fill: #fff;
+}
+
+.navigation-prev {
+  left: 8px;
+}
+.navigation-next {
+  right: 8px;
+}
+
+.navigation-icon {
+  font-size: 16px;
+}
+
+.pagination {
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  display: flex;
+  z-index: 1;
+}
+
+.pagination .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--border-dark-color);
+  border-radius: 50%;
+  margin: 0 2px;
+  transition: all 0.2s ease-in-out;
+}
+
+.pagination .dot.active {
+  background: var(--primary-button-color);
 }
 </style>
