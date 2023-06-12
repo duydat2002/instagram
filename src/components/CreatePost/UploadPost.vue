@@ -98,7 +98,7 @@ export default {
 <style scoped>
 .drag-drop-container {
   height: 100%;
-  width: 100%;
+  width: 406px;
   align-items: center;
   justify-content: center;
 }

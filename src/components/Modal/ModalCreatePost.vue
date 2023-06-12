@@ -1,40 +1,54 @@
 <template>
   <div class="create-post-modal flex flex-col">
     <div class="header">
-      <div v-if="currentTab != 'InitFiles'" class="back" @click="handleBack">
+      <div v-if="currentTab != 'UploadPost'" class="back" @click="handleBack">
         <fa size="xl" :icon="['fas', 'arrow-left']" />
       </div>
       <div class="title">
         <span>{{ title }}</span>
       </div>
-      <div v-if="currentTab != 'InitFiles'" class="next" @click="handleNext">
+      <div v-if="currentTab != 'UploadPost'" class="next" @click="handleNext">
         <ui-button variant="text">Tiếp</ui-button>
       </div>
     </div>
     <div class="content">
-      <component :is="currentTab"></component>
+      <upload-post v-if="currentTab == 'UploadPost'" />
+      <editor-post v-else />
     </div>
   </div>
 </template>
 
 <script>
 import UiButton from "@/components/UI/UiButton.vue";
-import InitFiles from "@/components/Post/InitFiles.vue";
-import CropFiles from "@/components/Post/CropFiles.vue";
-import EditFiles from "@/components/Post/EditFiles.vue";
-import PostFiles from "@/components/Post/PostFiles.vue";
-import test from "@/components/Post/test.vue";
+import UploadPost from "@/components/CreatePost/UploadPost.vue";
+import EditorPost from "@/components/CreatePost/EditorPost.vue";
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   data() {
-    return {
-      title: "Tạo bài viết mới",
-    };
+    return {};
   },
   computed: {
     ...mapGetters("createPost", ["currentTab"]),
+    title() {
+      let titleText = "";
+      switch (this.currentTab) {
+        case "UploadPost":
+          titleText = "Tạo bài viết mới";
+          break;
+        case "EditorPost":
+          titleText = "Cắt";
+          break;
+        case "FilterPost":
+          titleText = "Chỉnh sửa";
+          break;
+        case "CaptionPost":
+          titleText = "Tạo bài viết mới";
+          break;
+      }
+      return titleText;
+    },
   },
   methods: {
     ...mapMutations("modal", ["setStopScroll"]),
@@ -49,14 +63,14 @@ export default {
   mounted() {
     this.setStopScroll(true);
   },
-  components: { InitFiles, CropFiles, EditFiles, PostFiles, UiButton, test },
+  components: { UploadPost, EditorPost, UiButton },
 };
 </script>
 
 <style scoped>
 .create-post-modal {
   flex-wrap: nowrap;
-  width: 406px;
+  width: 100%;
   height: calc(100vh - 40px);
   max-height: 448px;
   color: var(--primary-text-color);

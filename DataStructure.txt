@@ -8,7 +8,7 @@ Highlights(id, userId, title, stories[id])
 
 Stories(id, userId, content, likesCount, created_at)
 
-Posts(id, userId, caption, content(img/ vid), likesCount, comments[id], created_at)
+Posts(id, userId, tags[id], caption, content(img/ vid), likesCount, comments[id], created_at)
 
 Comments(id, postId, storyId, content, likesCount, replies{replyId, userId, content, likesCount, created_at}, created_at)
 

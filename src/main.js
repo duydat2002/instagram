@@ -18,50 +18,50 @@ onAuthStateChanged(auth, () => {
 
     app.directive("click-outside", {
       mounted(el, binding) {
-        let mouseDownPosition = null;
+        if (!binding.modifiers.short) {
+          let mouseDownPosition = null;
 
-        el._mouseDownEvent = (event) => {
-          if (!(el === event.target || el.contains(event.target))) {
-            mouseDownPosition = { x: event.clientX, y: event.clientY };
-          }
-        };
+          el._mouseDownEvent = (event) => {
+            if (!(el === event.target || el.contains(event.target))) {
+              mouseDownPosition = { x: event.clientX, y: event.clientY };
+            }
+          };
 
-        el._mouseUpEvent = (event) => {
-          const mouseUpPosition = { x: event.clientX, y: event.clientY };
+          el._mouseUpEvent = (event) => {
+            const mouseUpPosition = { x: event.clientX, y: event.clientY };
 
-          if (
-            mouseDownPosition &&
-            mouseDownPosition.x == mouseUpPosition.x &&
-            mouseDownPosition.y == mouseUpPosition.y
-          ) {
-            binding.value(event);
-          }
+            if (
+              mouseDownPosition &&
+              mouseDownPosition.x == mouseUpPosition.x &&
+              mouseDownPosition.y == mouseUpPosition.y
+            ) {
+              binding.value(event);
+            }
 
-          mouseDownPosition = null;
-        };
+            mouseDownPosition = null;
+          };
 
-        document.body.addEventListener("mousedown", el._mouseDownEvent);
-        document.body.addEventListener("mouseup", el._mouseUpEvent);
+          document.body.addEventListener("mousedown", el._mouseDownEvent);
+          document.body.addEventListener("mouseup", el._mouseUpEvent);
+        } else {
+          el._clickEvent = (event) => {
+            if (!(el === event.target || el.contains(event.target))) {
+              binding.value(event);
+            }
+          };
+
+          document.body.addEventListener("mousedown", el._clickEvent);
+        }
       },
-      unmounted(el) {
-        document.body.removeEventListener("mousedown", el._mouseDownEvent);
-        document.body.removeEventListener("mouseup", el._mouseUpEvent);
+      unmounted(el, binding) {
+        if (!binding.modifiers.short) {
+          document.body.removeEventListener("mousedown", el._mouseDownEvent);
+          document.body.removeEventListener("mouseup", el._mouseUpEvent);
+        } else {
+          document.body.removeEventListener("mousedown", el._clickEvent);
+        }
       },
     });
-
-    // app.directive("click-outside", {
-    //   mounted(el, binding) {
-    //     el._clickOutside = (event) => {
-    //       if (!(el === event.target || el.contains(event.target))) {
-    //         binding.value(event);
-    //       }
-    //     };
-    //     document.body.addEventListener("click", el._clickOutside);
-    //   },
-    //   unmounted(el) {
-    //     document.body.removeEventListener("click", el._clickOutside);
-    //   },
-    // });
 
     app.use(router).use(store).mount("#app");
   }

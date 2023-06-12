@@ -1,166 +1,177 @@
 <template>
-  <div class="crop-file">
-    <div ref="container" class="image-container flex">
+  <div class="editor-post flex">
+    <div class="editor-left">
+      <div ref="container" class="image-cropper-container flex">
+        <div
+          ref="cropper"
+          class="image-cropper"
+          :style="{
+            height: cropperSize.height + 'px',
+            width: cropperSize.width + 'px',
+          }"
+        >
+          <div
+            ref="image"
+            class="img-show"
+            :style="imgStyle"
+            @mousedown="mouseDownImage"
+          ></div>
+        </div>
+        <div class="navigation">
+          <div
+            v-if="currentMedia.url != medias[0].url"
+            class="navigation-button navigation-prev"
+            @click="prevMedia"
+          >
+            <fa :icon="['fas', 'chevron-left']" class="navigation-icon" />
+          </div>
+          <div
+            v-if="currentMedia.url != medias[medias.length - 1].url"
+            class="navigation-button navigation-next"
+            @click="nextMedia"
+          >
+            <fa :icon="['fas', 'chevron-right']" class="navigation-icon" />
+          </div>
+        </div>
+        <div class="pagination">
+          <div
+            v-for="media in medias"
+            :key="media.url"
+            :class="['dot', { active: media.url == currentMedia.url }]"
+          ></div>
+        </div>
+        <div v-if="isDragging" class="gridlines">
+          <div class="lines lines-col flex flex-col">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+          </div>
+          <div class="lines lines-row flex flex-row">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+          </div>
+        </div>
+        <canvas
+          v-show="false"
+          ref="canvas"
+          :width="cropperSize.width"
+          :height="cropperSize.height"
+        />
+      </div>
+      <div v-if="currentTab == 'EditorPost'" class="crop-editor">
+        <div class="left">
+          <div
+            class="option aspect-ratio flex flex-col"
+            :class="{ active: aspectRatioActive }"
+            v-click-outside.short="() => (aspectRatioActive = false)"
+          >
+            <transition name="fadeUp">
+              <div class="extend" v-if="aspectRatioActive">
+                <div
+                  class="item flex original"
+                  :class="{ active: aspectRatio == 'original' }"
+                  @click="changeRatio('original')"
+                >
+                  <span class="item-text">Gốc</span>
+                  <div class="item-icon">
+                    <image-icon />
+                  </div>
+                </div>
+                <div class="separator separator-small"></div>
+                <div
+                  class="item flex ratio-1-1"
+                  :class="{ active: aspectRatio == '1:1' }"
+                  @click="changeRatio('1:1')"
+                >
+                  <span class="item-text">1:1</span>
+                  <div class="item-icon">
+                    <Ratio1x1 />
+                  </div>
+                </div>
+                <div class="separator separator-small"></div>
+                <div
+                  class="item flex ratio-4-5"
+                  :class="{ active: aspectRatio == '4:5' }"
+                  @click="changeRatio('4:5')"
+                >
+                  <span class="item-text">4:5</span>
+                  <div class="item-icon">
+                    <Ratio4x5 />
+                  </div>
+                </div>
+                <div class="separator separator-small"></div>
+                <div
+                  class="item flex ratio-16-9"
+                  :class="{ active: aspectRatio == '16:9' }"
+                  @click="changeRatio('16:9')"
+                >
+                  <span class="item-text">16:9</span>
+                  <div class="item-icon">
+                    <Ratio16x9 />
+                  </div>
+                </div>
+              </div>
+            </transition>
+            <div class="icon" @click="aspectRatioActive = !aspectRatioActive">
+              <ratio-icon />
+            </div>
+          </div>
+          <div
+            class="option scale flex flex-col"
+            :class="{ active: scaleImageActive }"
+            v-click-outside.short="() => (scaleImageActive = false)"
+          >
+            <transition name="fadeUp">
+              <div class="extend flex" v-if="scaleImageActive">
+                <div class="item flex">
+                  <input
+                    ref="scale"
+                    class="scale-input"
+                    type="range"
+                    min="1"
+                    max="2"
+                    step="0.01"
+                    v-model="scaleValue"
+                    @change="stick"
+                  />
+                </div>
+              </div>
+            </transition>
+            <div class="icon" @click="scaleImageActive = !scaleImageActive">
+              <glass-plus-icon />
+            </div>
+          </div>
+        </div>
+        <div class="right">
+          <div
+            class="option list flex flex-col"
+            :class="{ active: listImageActive }"
+            v-click-outside.short="() => (listImageActive = false)"
+          >
+            <transition name="fadeUp">
+              <div class="extend flex" v-if="listImageActive">
+                <div class="item flex">
+                  <list-post />
+                </div>
+              </div>
+            </transition>
+            <div class="icon" @click="listImageActive = !listImageActive">
+              <layer-icon />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <transition name="slideRight">
       <div
-        ref="cropper"
-        class="image-cropper"
-        :style="{
-          height: cropperSize.height + 'px',
-          width: cropperSize.width + 'px',
-        }"
+        v-if="currentTab == 'FilterPost' || currentTab == 'CaptionPost'"
+        class="editor-right"
       >
-        <div
-          ref="image"
-          class="img-show"
-          :style="imgStyle"
-          @mousedown="mouseDownImage"
-        ></div>
+        <filter-post v-if="currentTab == 'FilterPost'" />
+        <caption-post v-if="currentTab == 'CaptionPost'" />
       </div>
-      <div class="navigation">
-        <div
-          v-if="currentMedia.url != medias[0].url"
-          class="navigation-button navigation-prev"
-          @click="prevMedia"
-        >
-          <fa :icon="['fas', 'chevron-left']" class="navigation-icon" />
-        </div>
-        <div
-          v-if="currentMedia.url != medias[medias.length - 1].url"
-          class="navigation-button navigation-next"
-          @click="nextMedia"
-        >
-          <fa :icon="['fas', 'chevron-right']" class="navigation-icon" />
-        </div>
-      </div>
-      <div class="pagination">
-        <div
-          v-for="media in medias"
-          :key="media.url"
-          :class="['dot', { active: media.url == currentMedia.url }]"
-        ></div>
-      </div>
-      <div v-if="isDragging" class="gridlines">
-        <div class="lines lines-col flex flex-col">
-          <div class="line"></div>
-          <div class="line"></div>
-          <div class="line"></div>
-        </div>
-        <div class="lines lines-row flex flex-row">
-          <div class="line"></div>
-          <div class="line"></div>
-          <div class="line"></div>
-        </div>
-      </div>
-      <canvas
-        v-show="false"
-        ref="canvas"
-        :width="cropperSize.width"
-        :height="cropperSize.height"
-      />
-    </div>
-    <div class="crop-editor">
-      <div class="left">
-        <div
-          class="option aspect-ratio flex flex-col"
-          :class="{ active: aspectRatioActive }"
-          v-click-outside="() => (aspectRatioActive = false)"
-        >
-          <transition name="fadeUp">
-            <div class="extend" v-if="aspectRatioActive">
-              <div
-                class="item flex original"
-                :class="{ active: aspectRatio == 'original' }"
-                @click="changeRatio('original')"
-              >
-                <span class="item-text">Gốc</span>
-                <div class="item-icon">
-                  <image-icon />
-                </div>
-              </div>
-              <div class="separator separator-small"></div>
-              <div
-                class="item flex ratio-1-1"
-                :class="{ active: aspectRatio == '1:1' }"
-                @click="changeRatio('1:1')"
-              >
-                <span class="item-text">1:1</span>
-                <div class="item-icon">
-                  <Ratio1x1 />
-                </div>
-              </div>
-              <div class="separator separator-small"></div>
-              <div
-                class="item flex ratio-4-5"
-                :class="{ active: aspectRatio == '4:5' }"
-                @click="changeRatio('4:5')"
-              >
-                <span class="item-text">4:5</span>
-                <div class="item-icon">
-                  <Ratio4x5 />
-                </div>
-              </div>
-              <div class="separator separator-small"></div>
-              <div
-                class="item flex ratio-16-9"
-                :class="{ active: aspectRatio == '16:9' }"
-                @click="changeRatio('16:9')"
-              >
-                <span class="item-text">16:9</span>
-                <div class="item-icon">
-                  <Ratio16x9 />
-                </div>
-              </div>
-            </div>
-          </transition>
-          <div class="icon" @click="aspectRatioActive = !aspectRatioActive">
-            <ratio-icon />
-          </div>
-        </div>
-        <div
-          class="option scale flex flex-col"
-          :class="{ active: scaleImageActive }"
-          v-click-outside="() => (scaleImageActive = false)"
-        >
-          <transition name="fadeUp">
-            <div class="extend flex" v-if="scaleImageActive">
-              <div class="item flex">
-                <input
-                  ref="scale"
-                  class="scale-input"
-                  type="range"
-                  min="1"
-                  max="2"
-                  step="0.01"
-                  v-model="scaleValue"
-                  @change="stick"
-                />
-              </div>
-            </div>
-          </transition>
-          <div class="icon" @click="scaleImageActive = !scaleImageActive">
-            <glass-plus-icon />
-          </div>
-        </div>
-      </div>
-      <div class="right">
-        <div
-          class="option list flex flex-col"
-          :class="{ active: listImageActive }"
-          v-click-outside="() => (listImageActive = false)"
-        >
-          <transition name="fadeUp">
-            <div class="extend flex" v-if="listImageActive">
-              <div class="item flex">
-                <list-post />
-              </div>
-            </div>
-          </transition>
-          <div class="icon" @click="listImageActive = !listImageActive">
-            <layer-icon />
-          </div>
-        </div>
-      </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -172,7 +183,9 @@ import LayerIcon from "@/components/SVG/LayerIcon.vue";
 import Ratio1x1 from "@/components/SVG/Ratio1x1.vue";
 import Ratio4x5 from "@/components/SVG/Ratio4x5.vue";
 import Ratio16x9 from "@/components/SVG/Ratio16x9.vue";
-import ListPost from "@/components/Post/ListPost.vue";
+import FilterPost from "@/components/CreatePost/FilterPost.vue";
+import CaptionPost from "@/components/CreatePost/CaptionPost.vue";
+import ListPost from "@/components/CreatePost/ListPost.vue";
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 
@@ -213,24 +226,38 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("createPost", ["medias", "currentMedia", "currentTab"]),
+    ...mapGetters("createPost", [
+      "medias",
+      "currentMedia",
+      "currentRatio",
+      "currentTab",
+    ]),
     imgStyle() {
       return {
         width: this.reviewImageSize.width + "px",
         height: this.reviewImageSize.height + "px",
         backgroundImage: `url(${this.currentMedia.url})`,
         transform: `translate(calc(-50% + ${this.translatePosition.x}px), calc(-50% + ${this.translatePosition.y}px)) scale(${this.scaleValue})`,
-        cursor: this.isDragging ? "grabbing" : "grab",
+        cursor:
+          this.currentTab == "EditorPost"
+            ? this.isDragging
+              ? "grabbing"
+              : "grab"
+            : "pointer",
       };
     },
   },
   methods: {
-    ...mapMutations("createPost", ["setCurrentMedia", "updateMedia"]),
+    ...mapMutations("createPost", [
+      "setCurrentMedia",
+      "updateMedia",
+      "setCurrentRatio",
+    ]),
     ...mapActions("createPost", ["nextMedia", "prevMedia"]),
     changeRatio(ratio) {
-      this.aspectRatio = ratio;
+      this.setCurrentRatio(ratio);
 
-      switch (this.aspectRatio) {
+      switch (ratio) {
         case "original":
           if (this.currentMedia.size.height < this.currentMedia.size.width) {
             this.cropperSize.height =
@@ -260,7 +287,7 @@ export default {
 
       if (
         this.currentMedia.size.height < this.currentMedia.size.width ||
-        (this.aspectRatio == "4:5" &&
+        (ratio == "4:5" &&
           this.currentMedia.size.height == this.currentMedia.size.width)
       ) {
         this.reviewImageSize.height = this.cropperSize.height;
@@ -277,16 +304,18 @@ export default {
       this.stick();
     },
     mouseDownImage(event) {
-      document.body.style.cursor = "grabbing";
-      this.isDragging = true;
-      this.aspectRatioActive = false;
-      this.scaleImageActive = false;
+      if (this.currentTab == "EditorPost") {
+        document.body.style.cursor = "grabbing";
+        this.isDragging = true;
+        this.currentRatioActive = false;
+        this.scaleImageActive = false;
 
-      this.mousePosition.x = event.clientX;
-      this.mousePosition.y = event.clientY;
+        this.mousePosition.x = event.clientX;
+        this.mousePosition.y = event.clientY;
 
-      this.mouseDownPosition.x = this.translatePosition.x;
-      this.mouseDownPosition.y = this.translatePosition.y;
+        this.mouseDownPosition.x = this.translatePosition.x;
+        this.mouseDownPosition.y = this.translatePosition.y;
+      }
     },
     mouseMoveImage(event) {
       this.translatePosition.x =
@@ -364,30 +393,36 @@ export default {
         document.removeEventListener("mouseup", this.mouseUpImage);
       }
     },
-    currentMedia(newMedia, oldMedia) {
-      // Update scale and translate of oldMedia
-      const oldMediaIndex = this.medias.findIndex((media) => {
-        return media.url == oldMedia.url;
-      });
+    // currentMedia(newMedia, oldMedia) {
+    //   console.log(newMedia, oldMedia);
 
-      const media = {
-        ...oldMedia,
-        scale: this.scaleValue,
-        translate: { ...this.translatePosition },
-      };
+    //   // Update scale and translate of oldMedia
+    //   const oldMediaIndex = this.medias.findIndex((media) => {
+    //     return media.url == oldMedia.url;
+    //   });
 
-      this.updateMedia({ index: oldMediaIndex, newMedia: media });
+    //   const media = {
+    //     ...oldMedia,
+    //     scale: this.scaleValue,
+    //     translate: { ...this.translatePosition },
+    //   };
 
-      // Set scale and translate from newMedia
-      this.scaleValue = newMedia.scale;
-      this.translatePosition = { ...newMedia.translate };
-    },
+    //   this.updateMedia({ index: oldMediaIndex, newMedia: media });
+
+    //   // Set scale and translate from newMedia
+    //   this.scaleValue = newMedia.scale;
+    //   this.translatePosition = { ...newMedia.translate };
+
+    //   setTimeout(() => {
+    //     this.changeRatio(this.currentRatio);
+    //   }, 0);
+    // },
   },
   async mounted() {
     this.containerSize.height = this.$refs.container.offsetHeight;
     this.containerSize.width = this.$refs.container.offsetWidth;
 
-    this.changeRatio("original");
+    this.changeRatio(this.currentRatio);
 
     this.setCurrentMedia(this.medias[0]);
   },
@@ -400,25 +435,39 @@ export default {
     Ratio4x5,
     Ratio16x9,
     ListPost,
+    FilterPost,
+    CaptionPost,
   },
 };
 </script>
 
 <style scoped>
-.image-container {
+.editor-post {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100%;
+  height: 100%;
+}
+
+.image-cropper-container {
   background: #f5f5f5;
   align-items: center;
   justify-content: center;
 }
 
-.crop-file,
-.image-container {
+.editor-left,
+.image-cropper-container {
   height: 100%;
   width: 100%;
 }
 
-.crop-file {
+.editor-left {
   position: relative;
+  width: 406px;
+}
+
+.editor-right {
+  overflow: hidden;
 }
 
 .image-cropper {

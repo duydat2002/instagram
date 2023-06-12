@@ -256,6 +256,19 @@ button {
   opacity: 0;
 }
 
+.slideRight-enter-active,
+.slideRight-leave-active {
+  max-width: 340px;
+  opacity: 1;
+  transition: all 180ms linear;
+}
+
+.slideRight-enter-from,
+.slideRight-leave-to {
+  max-width: 0px;
+  opacity: 0;
+}
+
 .slider-button-disable {
   display: none;
 }

@@ -2,10 +2,11 @@ const createPost = {
   namespaced: true,
   state() {
     return {
-      tabs: ["InitFiles", "CropFiles", "EditFiles", "PostFiles"],
-      currentTab: "InitFiles",
+      tabs: ["UploadPost", "EditorPost", "FilterPost", "CaptionPost"],
+      currentTab: "UploadPost",
       medias: [],
       currentMedia: null,
+      currentRatio: "1:1",
     };
   },
   getters: {
@@ -13,6 +14,7 @@ const createPost = {
     currentTab: (state) => state.currentTab,
     medias: (state) => state.medias,
     currentMedia: (state) => state.currentMedia,
+    currentRatio: (state) => state.currentRatio,
   },
   mutations: {
     setCurrentTab(state, tabName) {
@@ -26,10 +28,13 @@ const createPost = {
     },
     updateMedia(state, payload) {
       const { index, newMedia } = payload;
-      state.medias.splice(index, 1, newMedia);
+      if (index != -1) state.medias.splice(index, 1, newMedia);
     },
     setCurrentMedia(state, currentMedia) {
       state.currentMedia = currentMedia;
+    },
+    setCurrentRatio(state, currentRatio) {
+      state.currentRatio = currentRatio;
     },
   },
   actions: {
