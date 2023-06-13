@@ -6,6 +6,7 @@ const createPost = {
       currentTab: "UploadPost",
       medias: [],
       currentMedia: null,
+      currentMediaIndex: 0,
       currentRatio: "1:1",
       filter: "none",
     };
@@ -15,6 +16,7 @@ const createPost = {
     currentTab: (state) => state.currentTab,
     medias: (state) => state.medias,
     currentMedia: (state) => state.currentMedia,
+    currentMediaIndex: (state) => state.currentMediaIndex,
     currentRatio: (state) => state.currentRatio,
     filter: (state) => state.filter,
   },
@@ -37,6 +39,9 @@ const createPost = {
     },
     setCurrentMedia(state, currentMedia) {
       state.currentMedia = currentMedia;
+      state.currentMediaIndex = state.medias.findIndex((media) => {
+        return media.url == state.currentMedia.url;
+      });
     },
     setCurrentRatio(state, currentRatio) {
       state.currentRatio = currentRatio;

@@ -181,10 +181,14 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("createPost", ["filter"]),
+    ...mapGetters("createPost", [
+      "filter",
+      "currentMedia",
+      "currentMediaIndex",
+    ]),
   },
   methods: {
-    ...mapMutations("createPost", ["setFilter"]),
+    ...mapMutations("createPost", ["setFilter", "updateMedia"]),
     convertToFilter(adjust) {
       //Filter
       const adjustOptions = [
@@ -245,10 +249,24 @@ export default {
         }) 140%)`
       );
 
-      this.setFilter({
+      const filters = {
         background: backgroundValues.join(" "),
         filter: filter.join(" "),
-      });
+      };
+
+      this.setFilter(filters);
+
+      const media = {
+        ...this.currentMedia,
+        filters,
+        adjust,
+        filterTemplate: {
+          name: this.curentFilterTemplate,
+          filter: this.filterTemplate,
+        },
+      };
+
+      this.updateMedia({ index: this.currentMediaIndex, newMedia: media });
     },
     chooseTemplate(filterTemplate) {
       this.filterTemplate = {
@@ -269,6 +287,14 @@ export default {
         this.convertToFilter(newAdjust);
       },
       deep: true,
+    },
+    currentMedia(newMedia) {
+      this.curentFilterTemplate = newMedia.filterTemplate.name;
+      this.filterTemplate = {
+        ...this.filterTemplate,
+        ...newMedia.filterTemplate.filter,
+      };
+      this.adjust = newMedia.adjust;
     },
   },
   components: { AdjustInput },

@@ -128,6 +128,8 @@ export default {
 
 .item-input .input::-webkit-slider-thumb {
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   height: 20px;
   width: 20px;
   background: var(--thumb-color) !important;
@@ -136,6 +138,8 @@ export default {
 }
 .item-input .input::-moz-range-thumb {
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   height: 20px;
   width: 20px;
   background: var(--thumb-color) !important;
@@ -144,6 +148,8 @@ export default {
 }
 .item-input .input::-ms-thumb {
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   height: 20px;
   width: 20px;
   background: var(--thumb-color) !important;

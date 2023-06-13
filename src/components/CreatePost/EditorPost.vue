@@ -224,7 +224,6 @@ export default {
         y: 0,
       },
       newCanvas: null,
-      currentMediaIndex: 0,
     };
   },
   computed: {
@@ -232,6 +231,7 @@ export default {
       "medias",
       "filter",
       "currentMedia",
+      "currentMediaIndex",
       "currentRatio",
       "currentTab",
     ]),
@@ -251,13 +251,13 @@ export default {
         backgroundImage: `url(${this.currentMedia.url})`,
         transform: `translate(calc(-50% + ${this.translatePosition.x}px), calc(-50% + ${this.translatePosition.y}px)) scale(${this.scaleValue})`,
         cursor: cursorType,
-        "-webkit-filter": this.filter.filter,
-        filter: this.filter.filter,
+        "-webkit-filter": this.currentMedia.filters.filter,
+        filter: this.currentMedia.filters.filter,
       };
     },
     imgCoverStyle() {
       return {
-        background: this.filter.background,
+        background: this.currentMedia.filters.background,
       };
     },
   },
@@ -318,8 +318,6 @@ export default {
       this.stick();
     },
     handleChangeScale() {
-      console.log(this.currentMediaIndex);
-
       const media = {
         ...this.currentMedia,
         scale: this.scaleValue,
@@ -426,26 +424,20 @@ export default {
       }
     },
     currentMedia(newMedia) {
-      this.currentMediaIndex = this.medias.findIndex((media) => {
-        return media.url == newMedia.url;
-      });
+      if (this.currentTab == "EditorPost") {
+        // Set scale and translate from newMedia
+        this.scaleValue = newMedia.scale;
+        this.translatePosition = { ...newMedia.translate };
 
-      // Set scale and translate from newMedia
-      this.scaleValue = newMedia.scale;
-      this.translatePosition = { ...newMedia.translate };
-
-      setTimeout(() => {
-        this.changeRatio(this.currentRatio);
-      }, 0);
+        setTimeout(() => {
+          this.changeRatio(this.currentRatio);
+        }, 0);
+      }
     },
   },
   async mounted() {
     this.containerSize.height = this.$refs.container.offsetHeight;
     this.containerSize.width = this.$refs.container.offsetWidth;
-
-    this.currentMediaIndex = this.medias.findIndex((media) => {
-      return media.url == this.currentMedia.url;
-    });
 
     this.changeRatio(this.currentRatio);
 
@@ -621,11 +613,15 @@ export default {
 
 .scale-input {
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   background: transparent;
 }
 
 .scale-input::-webkit-slider-thumb {
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   height: 16px;
   width: 16px;
   background: #fff !important;
@@ -635,6 +631,8 @@ export default {
 }
 .scale-input::-moz-range-thumb {
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   height: 16px;
   width: 16px;
   background: #fff !important;
@@ -644,6 +642,8 @@ export default {
 }
 .scale-input::-ms-thumb {
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   height: 16px;
   width: 16px;
   background: #fff !important;

@@ -59,7 +59,19 @@ export default {
               y: 0,
             },
             scale: 1,
-            filters: "",
+            filters: {},
+            adjust: {
+              brightness: 0,
+              contrast: 0,
+              saturate: 0,
+              blur: 0,
+              grayscale: 0,
+              sepia: 0,
+              "hue-rotate": 0,
+              temperature: 0,
+              blurBorder: 0,
+            },
+            filterTemplate: {},
           };
           medias.push(media);
         });
