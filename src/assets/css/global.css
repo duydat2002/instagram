@@ -31,6 +31,10 @@
   --border-dark-color: #a8a8a8;
   --border-super-dark-color: #262626;
 
+  --track-color: #dbdbdb;
+  --active-track-color: #262626;
+  --thumb-color: #000;
+
   --primary-button-color: #0095f6;
   --primary-button-hover-color: #1877f2;
   --secondary-button-color: #efefef;
@@ -78,6 +82,10 @@
   --border-color: #262626;
   --border-dark-color: #a8a8a8;
   --border-super-dark-color: #262626;
+
+  --track-color: #363636;
+  --active-track-color: #e0f1ff;
+  --thumb-color: #fff;
 }
 
 :root.dark svg {

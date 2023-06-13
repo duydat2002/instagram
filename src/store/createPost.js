@@ -7,6 +7,7 @@ const createPost = {
       medias: [],
       currentMedia: null,
       currentRatio: "1:1",
+      filter: "none",
     };
   },
   getters: {
@@ -15,6 +16,7 @@ const createPost = {
     medias: (state) => state.medias,
     currentMedia: (state) => state.currentMedia,
     currentRatio: (state) => state.currentRatio,
+    filter: (state) => state.filter,
   },
   mutations: {
     setCurrentTab(state, tabName) {
@@ -28,13 +30,19 @@ const createPost = {
     },
     updateMedia(state, payload) {
       const { index, newMedia } = payload;
-      if (index != -1) state.medias.splice(index, 1, newMedia);
+      if (index != -1) {
+        state.medias.splice(index, 1, newMedia);
+        state.currentMedia = newMedia;
+      }
     },
     setCurrentMedia(state, currentMedia) {
       state.currentMedia = currentMedia;
     },
     setCurrentRatio(state, currentRatio) {
       state.currentRatio = currentRatio;
+    },
+    setFilter(state, filter) {
+      state.filter = filter;
     },
   },
   actions: {

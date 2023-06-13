@@ -137,7 +137,7 @@ export default {
 
       setTimeout(() => {
         reset();
-      });
+      }, 0);
     },
   },
   mounted() {

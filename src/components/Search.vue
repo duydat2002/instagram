@@ -1,12 +1,7 @@
-<template>
-  <list-post />
-</template>
+<template>cac</template>
 
 <script>
-import ListPost from "./CreatePost/ListPost.vue";
-export default {
-  components: { ListPost },
-};
+export default {};
 </script>
 
 <style></style>

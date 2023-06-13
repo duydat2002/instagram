@@ -16,6 +16,7 @@
             :style="imgStyle"
             @mousedown="mouseDownImage"
           ></div>
+          <div class="img-cover" :style="imgCoverStyle"></div>
         </div>
         <div class="navigation">
           <div
@@ -33,7 +34,7 @@
             <fa :icon="['fas', 'chevron-right']" class="navigation-icon" />
           </div>
         </div>
-        <div class="pagination">
+        <div v-if="medias.length > 1" class="pagination">
           <div
             v-for="media in medias"
             :key="media.url"
@@ -53,7 +54,7 @@
           </div>
         </div>
         <canvas
-          v-show="false"
+          v-show="true"
           ref="canvas"
           :width="cropperSize.width"
           :height="cropperSize.height"
@@ -133,7 +134,7 @@
                     max="2"
                     step="0.01"
                     v-model="scaleValue"
-                    @change="stick"
+                    @change="handleChangeScale"
                   />
                 </div>
               </div>
@@ -223,27 +224,40 @@ export default {
         y: 0,
       },
       newCanvas: null,
+      currentMediaIndex: 0,
     };
   },
   computed: {
     ...mapGetters("createPost", [
       "medias",
+      "filter",
       "currentMedia",
       "currentRatio",
       "currentTab",
     ]),
     imgStyle() {
+      let cursorType;
+      if (this.currentTab == "EditorPost") {
+        cursorType = this.isDragging ? "grabbing" : "grab";
+      } else if (this.currentTab == "FilterPost") {
+        cursorType = "pointer";
+      } else {
+        cursorType = "crosshair";
+      }
+
       return {
         width: this.reviewImageSize.width + "px",
         height: this.reviewImageSize.height + "px",
         backgroundImage: `url(${this.currentMedia.url})`,
         transform: `translate(calc(-50% + ${this.translatePosition.x}px), calc(-50% + ${this.translatePosition.y}px)) scale(${this.scaleValue})`,
-        cursor:
-          this.currentTab == "EditorPost"
-            ? this.isDragging
-              ? "grabbing"
-              : "grab"
-            : "pointer",
+        cursor: cursorType,
+        "-webkit-filter": this.filter.filter,
+        filter: this.filter.filter,
+      };
+    },
+    imgCoverStyle() {
+      return {
+        background: this.filter.background,
       };
     },
   },
@@ -303,6 +317,17 @@ export default {
 
       this.stick();
     },
+    handleChangeScale() {
+      console.log(this.currentMediaIndex);
+
+      const media = {
+        ...this.currentMedia,
+        scale: this.scaleValue,
+      };
+
+      this.updateMedia({ index: this.currentMediaIndex, newMedia: media });
+      this.stick();
+    },
     mouseDownImage(event) {
       if (this.currentTab == "EditorPost") {
         document.body.style.cursor = "grabbing";
@@ -326,6 +351,13 @@ export default {
     mouseUpImage() {
       document.body.style.cursor = "auto";
       this.isDragging = false;
+
+      const media = {
+        ...this.currentMedia,
+        translate: { ...this.translatePosition },
+      };
+
+      this.updateMedia({ index: this.currentMediaIndex, newMedia: media });
 
       this.stick();
     },
@@ -393,34 +425,27 @@ export default {
         document.removeEventListener("mouseup", this.mouseUpImage);
       }
     },
-    // currentMedia(newMedia, oldMedia) {
-    //   console.log(newMedia, oldMedia);
+    currentMedia(newMedia) {
+      this.currentMediaIndex = this.medias.findIndex((media) => {
+        return media.url == newMedia.url;
+      });
 
-    //   // Update scale and translate of oldMedia
-    //   const oldMediaIndex = this.medias.findIndex((media) => {
-    //     return media.url == oldMedia.url;
-    //   });
+      // Set scale and translate from newMedia
+      this.scaleValue = newMedia.scale;
+      this.translatePosition = { ...newMedia.translate };
 
-    //   const media = {
-    //     ...oldMedia,
-    //     scale: this.scaleValue,
-    //     translate: { ...this.translatePosition },
-    //   };
-
-    //   this.updateMedia({ index: oldMediaIndex, newMedia: media });
-
-    //   // Set scale and translate from newMedia
-    //   this.scaleValue = newMedia.scale;
-    //   this.translatePosition = { ...newMedia.translate };
-
-    //   setTimeout(() => {
-    //     this.changeRatio(this.currentRatio);
-    //   }, 0);
-    // },
+      setTimeout(() => {
+        this.changeRatio(this.currentRatio);
+      }, 0);
+    },
   },
   async mounted() {
     this.containerSize.height = this.$refs.container.offsetHeight;
     this.containerSize.width = this.$refs.container.offsetWidth;
+
+    this.currentMediaIndex = this.medias.findIndex((media) => {
+      return media.url == this.currentMedia.url;
+    });
 
     this.changeRatio(this.currentRatio);
 
@@ -483,6 +508,16 @@ export default {
   background-repeat: no-repeat;
   background-size: cover;
   z-index: 1;
+}
+
+.img-cover {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .crop-editor {
