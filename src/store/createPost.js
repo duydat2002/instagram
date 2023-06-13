@@ -8,7 +8,7 @@ const createPost = {
       currentMedia: null,
       currentMediaIndex: 0,
       currentRatio: "1:1",
-      filter: "none",
+      filter: {},
     };
   },
   getters: {
@@ -36,6 +36,10 @@ const createPost = {
         state.medias.splice(index, 1, newMedia);
         state.currentMedia = newMedia;
       }
+    },
+    deleteMedia(state, mediaIndex) {
+      state.medias.splice(mediaIndex, 1);
+      state.currentMedia = state.medias[0];
     },
     setCurrentMedia(state, currentMedia) {
       state.currentMedia = currentMedia;
@@ -86,6 +90,13 @@ const createPost = {
       if (currentIndex > 0) {
         commit("setCurrentMedia", medias[currentIndex - 1]);
       }
+    },
+    resetCreatePost({ commit }) {
+      commit("setCurrentTab", "UploadPost");
+      commit("setMedias", []);
+      commit("setCurrentMedia", null);
+      commit("setCurrentRatio", "1:1");
+      commit("setFilter", {});
     },
   },
 };

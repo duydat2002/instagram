@@ -1,3 +1,4 @@
+modal-create-post
 <template>
   <div :class="['sidebar-left', { narrow: isNarrow }]">
     <div class="sidebar-nav">
@@ -100,7 +101,7 @@
           tab="Create"
           :currentTab="currentTab"
           @changeTab="handleChangeTab"
-          @click="isShowModalCreatePost = true"
+          @click="setModalCreatePostShow(true)"
         >
           <template #icon="slotProps">
             <plus-icon :active="slotProps.active" />
@@ -108,10 +109,10 @@
           <template #child>
             <modal
               hasClose
-              :isShow="isShowModalCreatePost"
+              :isShow="modalCreatePostShow"
               :handleClickOutside="
                 () => {
-                  isShowModalCreatePost = false;
+                  setRemovePostPopupShow(true);
                 }
               "
             >
@@ -183,7 +184,7 @@ import More from "../More.vue";
 import Modal from "@/components/Modal/Modal.vue";
 import ModalCreatePost from "@/components/Modal/ModalCreatePost.vue";
 
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   data() {
@@ -194,17 +195,19 @@ export default {
       searchActive: false,
       moreActive: false,
       themeTabActive: false,
-      isShowModalCreatePost: false,
     };
   },
   computed: {
     ...mapGetters("user", ["currentUser"]),
+    ...mapGetters("modal", ["modalCreatePostShow"]),
   },
   methods: {
+    ...mapMutations("modal", [
+      "setModalCreatePostShow",
+      "setRemovePostPopupShow",
+    ]),
     handleChangeTab(tab) {
-      // this.previousTab = this.currentTab;
       this.currentTab = tab;
-      // console.log(this.previousTab, this.currentTab);
     },
     handleSearchClick(event) {
       if (
@@ -221,7 +224,6 @@ export default {
       if (this.searchActive == true) {
         this.isNarrow = false;
         this.searchActive = false;
-        // this.currentTab = this.previousTab;
       }
     },
     handleMoreClick(event) {
@@ -236,7 +238,6 @@ export default {
       if (this.moreActive == true) {
         this.moreActive = false;
         this.themeTabActive = false;
-        // this.currentTab = this.previousTab;
       }
     },
     changeTabActive(value) {

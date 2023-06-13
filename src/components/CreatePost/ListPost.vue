@@ -21,7 +21,7 @@
               class="image"
               :style="{ backgroundImage: `url(${media.url})` }"
             ></div>
-            <div class="image-delete" @click="handleDeleteMedia(media.url)">
+            <div class="image-delete" @click="handleDeleteMedia()">
               <fa size="sm" style="color: #fff" :icon="['fas', 'xmark']" />
             </div>
           </div>
@@ -52,6 +52,7 @@
 
 <script>
 import draggable from "vuedraggable";
+
 import { mapGetters, mapMutations } from "vuex";
 
 import { useSlider } from "@/composables/useSlider";
@@ -82,6 +83,10 @@ export default {
   },
   methods: {
     ...mapMutations("createPost", ["setMedias", "addMedia", "setCurrentMedia"]),
+    ...mapMutations("modal", [
+      "setRemoveMediaPopupShow",
+      "setRemovePostPopupShow",
+    ]),
     handleAddMedia() {
       this.$refs.inputFiles.click();
     },
@@ -109,7 +114,19 @@ export default {
               y: 0,
             },
             scale: 1,
-            filters: "",
+            filters: {},
+            adjust: {
+              brightness: 0,
+              contrast: 0,
+              saturate: 0,
+              blur: 0,
+              grayscale: 0,
+              sepia: 0,
+              "hue-rotate": 0,
+              temperature: 0,
+              blurBorder: 0,
+            },
+            filterTemplate: {},
           };
           this.addMedia(media);
         });
@@ -128,16 +145,9 @@ export default {
         reset();
       });
     },
-    handleDeleteMedia(url) {
-      const newMedias = this.medias.filter((media) => {
-        return media.url !== url;
-      });
-      this.setMedias(newMedias);
-      this.setCurrentMedia(newMedias[0]);
-
-      setTimeout(() => {
-        reset();
-      }, 0);
+    handleDeleteMedia() {
+      if (this.medias.length > 1) this.setRemoveMediaPopupShow(true);
+      else this.setRemovePostPopupShow(true);
     },
   },
   mounted() {

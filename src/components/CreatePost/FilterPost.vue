@@ -289,9 +289,12 @@ export default {
       deep: true,
     },
     currentMedia(newMedia) {
-      this.curentFilterTemplate = newMedia.filterTemplate.name;
+      this.curentFilterTemplate = newMedia.filterTemplate.name
+        ? newMedia.filterTemplate.name
+        : "Normal";
+
       this.filterTemplate = {
-        ...this.filterTemplate,
+        ...this.defaultFilter,
         ...newMedia.filterTemplate.filter,
       };
       this.adjust = newMedia.adjust;

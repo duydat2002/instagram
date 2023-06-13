@@ -36,8 +36,14 @@ export default {
   methods: {
     ...mapMutations("modal", ["setStopScroll"]),
     handleClickOutsideModal() {
-      this.handleClickOutside();
-      this.setStopScroll(false);
+      if (
+        (document.querySelector("#modal > div") &&
+          !document.querySelector("#popup > div")) ||
+        (!document.querySelector("#modal > div") &&
+          document.querySelector("#popup > div"))
+      ) {
+        this.handleClickOutside();
+      }
     },
   },
   mounted() {
@@ -47,7 +53,9 @@ export default {
     }, 0);
   },
   unmounted() {
-    this.setStopScroll(false);
+    if (!this.isPopup) {
+      this.setStopScroll(false);
+    }
     setTimeout(() => {
       document.documentElement.scrollTop = this.scrollPosition;
     }, 0);

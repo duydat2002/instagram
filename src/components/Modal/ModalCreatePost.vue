@@ -16,21 +16,35 @@
       <editor-post v-else />
     </div>
   </div>
+
+  <remove-popup
+    v-if="removePostPopupShow"
+    title="Bỏ bài viết?"
+    desc="Nếu rời đi, bạn sẽ mất những gì vừa chỉnh sửa."
+    @remove="handleRemovePost"
+    @cancel="setRemovePostPopupShow(false)"
+  />
+  <remove-popup
+    v-if="removeMediaPopupShow"
+    title="Bỏ ảnh?"
+    desc="Thao tác này sẽ gỡ ảnh khỏi bài viết của bạn."
+    @remove="hanldeRemoveMedia"
+    @cancel="setRemoveMediaPopupShow(false)"
+  />
 </template>
 
 <script>
 import UiButton from "@/components/UI/UiButton.vue";
+import RemovePopup from "@/components/Popup/RemovePopup.vue";
 import UploadPost from "@/components/CreatePost/UploadPost.vue";
 import EditorPost from "@/components/CreatePost/EditorPost.vue";
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
-  data() {
-    return {};
-  },
   computed: {
-    ...mapGetters("createPost", ["currentTab"]),
+    ...mapGetters("createPost", ["currentTab", "currentMediaIndex"]),
+    ...mapGetters("modal", ["removeMediaPopupShow", "removePostPopupShow"]),
     title() {
       let titleText = "";
       switch (this.currentTab) {
@@ -51,19 +65,33 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("modal", ["setStopScroll"]),
-    ...mapActions("createPost", ["nextTab", "prevTab"]),
+    ...mapMutations("modal", [
+      "setModalCreatePostShow",
+      "setRemoveMediaPopupShow",
+      "setRemovePostPopupShow",
+    ]),
+    ...mapMutations("createPost", ["deleteMedia"]),
+    ...mapActions("createPost", ["nextTab", "prevTab", "resetCreatePost"]),
     handleBack() {
       this.prevTab();
     },
     handleNext() {
       this.nextTab();
     },
+    hanldeRemoveMedia() {
+      this.deleteMedia(this.currentMediaIndex);
+      this.setRemoveMediaPopupShow(false);
+    },
+    handleRemovePost() {
+      this.setRemovePostPopupShow(false);
+      this.setModalCreatePostShow(false);
+
+      setTimeout(() => {
+        this.resetCreatePost();
+      }, 0);
+    },
   },
-  mounted() {
-    this.setStopScroll(true);
-  },
-  components: { UploadPost, EditorPost, UiButton },
+  components: { UploadPost, EditorPost, UiButton, RemovePopup },
 };
 </script>
 
