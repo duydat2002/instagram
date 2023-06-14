@@ -424,15 +424,13 @@ export default {
       }
     },
     currentMedia(newMedia) {
-      if (this.currentTab == "EditorPost") {
-        // Set scale and translate from newMedia
-        this.scaleValue = newMedia.scale;
-        this.translatePosition = { ...newMedia.translate };
+      // Set scale and translate from newMedia
+      this.scaleValue = newMedia.scale;
+      this.translatePosition = { ...newMedia.translate };
 
-        setTimeout(() => {
-          this.changeRatio(this.currentRatio);
-        }, 0);
-      }
+      setTimeout(() => {
+        this.changeRatio(this.currentRatio);
+      }, 0);
     },
   },
   async mounted() {
