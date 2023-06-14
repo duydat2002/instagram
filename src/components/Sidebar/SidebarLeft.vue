@@ -243,11 +243,24 @@ export default {
     changeTabActive(value) {
       this.themeTabActive = value;
     },
+    handleResizeWindow() {
+      if (window.innerWidth <= 1264) {
+        this.isNarrow = true;
+      } else {
+        this.isNarrow = false;
+      }
+    },
   },
   watch: {
     $route() {
       this.currentTab = this.$route.name;
     },
+  },
+  mounted() {
+    window.addEventListener("resize", this.handleResizeWindow);
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.handleResizeWindow);
   },
   components: {
     logo,

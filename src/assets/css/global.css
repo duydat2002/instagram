@@ -40,6 +40,8 @@
   --secondary-button-color: #efefef;
   --secondary-button-hover-color: #dbdbdb;
 
+  --placeholder-color: #c7c7c7;
+
   --gradient-lavender: 211, 0, 197;
   --gradient-orange: 255, 122, 0;
   --gradient-pink: 255, 1, 105;
@@ -135,6 +137,7 @@ img {
 }
 
 input,
+textarea,
 button {
   outline: none !important;
   border: none;
