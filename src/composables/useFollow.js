@@ -12,7 +12,7 @@ import {
   collection,
 } from "firebase/firestore";
 import { ref, onBeforeUnmount } from "vue";
-import { updateWithTransaction } from "@/untils";
+import { updateWithTransaction } from "@/utils";
 import store from "@/store/index";
 import { get as lodashGet } from "lodash";
 

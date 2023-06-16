@@ -151,7 +151,7 @@ import SuggestIcon from "../SVG/SuggestIcon.vue";
 import UiButton from "../UI/UiButton.vue";
 
 import { mapGetters, mapMutations } from "vuex";
-import { formatNumberToSuffix } from "@/untils";
+import { formatNumberToSuffix } from "@/utils";
 import { useUser } from "@/composables/useUser";
 import { useFollow } from "@/composables/useFollow";
 import { useStorage } from "@/composables/useStorage";

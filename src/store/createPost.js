@@ -1,3 +1,5 @@
+import { getImage, drawInitCanvas } from "@/utils";
+
 const createPost = {
   namespaced: true,
   state() {
@@ -8,7 +10,9 @@ const createPost = {
       currentMedia: null,
       currentMediaIndex: 0,
       currentRatio: "1:1",
+      containerSize: {},
       filter: {},
+      caption: "",
     };
   },
   getters: {
@@ -18,7 +22,9 @@ const createPost = {
     currentMedia: (state) => state.currentMedia,
     currentMediaIndex: (state) => state.currentMediaIndex,
     currentRatio: (state) => state.currentRatio,
+    containerSize: (state) => state.containerSize,
     filter: (state) => state.filter,
+    caption: (state) => state.caption,
   },
   mutations: {
     setCurrentTab(state, tabName) {
@@ -50,8 +56,14 @@ const createPost = {
     setCurrentRatio(state, currentRatio) {
       state.currentRatio = currentRatio;
     },
+    setContainerSize(state, containerSize) {
+      state.containerSize = containerSize;
+    },
     setFilter(state, filter) {
       state.filter = filter;
+    },
+    setCaption(state, caption) {
+      state.caption = caption;
     },
   },
   actions: {
@@ -90,6 +102,103 @@ const createPost = {
       if (currentIndex > 0) {
         commit("setCurrentMedia", medias[currentIndex - 1]);
       }
+    },
+    uploadMedias({ getters, commit, dispatch }, files) {
+      const medias = [];
+      const promises = [];
+
+      for (let file of files) {
+        const url = URL.createObjectURL(file);
+
+        const promise = getImage(url).then((img) => {
+          const canvas = document.createElement("canvas");
+
+          drawInitCanvas(canvas, img, getters.containerSize);
+
+          const media = {
+            url,
+            image: img,
+            canvas,
+            size: {
+              width: img.width,
+              height: img.height,
+            },
+            translate: {
+              x: 0,
+              y: 0,
+            },
+            scale: 1,
+            filters: {},
+            adjust: {
+              brightness: 0,
+              contrast: 0,
+              saturate: 0,
+              blur: 0,
+              grayscale: 0,
+              sepia: 0,
+              "hue-rotate": 0,
+              temperature: 0,
+              blurBorder: 0,
+            },
+            filterTemplate: {},
+          };
+          medias.push(media);
+        });
+
+        promises.push(promise);
+      }
+
+      return Promise.all(promises).then(() => {
+        commit("setMedias", medias);
+        commit("setCurrentMedia", medias[0]);
+        dispatch("nextTab");
+      });
+    },
+    addMedias({ getters, commit }, files) {
+      const promises = [];
+
+      for (let file of files) {
+        const url = URL.createObjectURL(file);
+
+        const promise = getImage(url).then((img) => {
+          const canvas = document.createElement("canvas");
+
+          drawInitCanvas(canvas, img, getters.containerSize);
+
+          const media = {
+            url,
+            image: img,
+            canvas,
+            size: {
+              width: img.width,
+              height: img.height,
+            },
+            translate: {
+              x: 0,
+              y: 0,
+            },
+            scale: 1,
+            filters: {},
+            adjust: {
+              brightness: 0,
+              contrast: 0,
+              saturate: 0,
+              blur: 0,
+              grayscale: 0,
+              sepia: 0,
+              "hue-rotate": 0,
+              temperature: 0,
+              blurBorder: 0,
+            },
+            filterTemplate: {},
+          };
+          commit("addMedia", media);
+        });
+
+        promises.push(promise);
+      }
+
+      return Promise.all(promises);
     },
     resetCreatePost({ commit }) {
       commit("setCurrentTab", "UploadPost");

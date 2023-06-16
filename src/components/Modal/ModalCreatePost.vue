@@ -4,16 +4,18 @@
       <div v-if="currentTab != 'UploadPost'" class="back" @click="handleBack">
         <fa size="xl" :icon="['fas', 'arrow-left']" />
       </div>
-      <div class="title">
+      <div class="title" @click="handleUpPost">
         <span>{{ title }}</span>
       </div>
       <div v-if="currentTab != 'UploadPost'" class="next" @click="handleNext">
-        <ui-button variant="text">Tiếp</ui-button>
+        <ui-button variant="text">{{
+          currentTab != "CaptionPost" ? "Tiếp" : "Chia sẻ"
+        }}</ui-button>
       </div>
     </div>
     <div class="content">
       <upload-post v-if="currentTab == 'UploadPost'" />
-      <editor-post v-else />
+      <editor-post v-else ref="editorPost" />
     </div>
   </div>
 
@@ -42,6 +44,11 @@ import EditorPost from "@/components/CreatePost/EditorPost.vue";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
+  data() {
+    return {
+      isClickBackFromEditor: false,
+    };
+  },
   computed: {
     ...mapGetters("createPost", ["currentTab", "currentMediaIndex"]),
     ...mapGetters("modal", ["removeMediaPopupShow", "removePostPopupShow"]),
@@ -73,7 +80,13 @@ export default {
     ...mapMutations("createPost", ["deleteMedia"]),
     ...mapActions("createPost", ["nextTab", "prevTab", "resetCreatePost"]),
     handleBack() {
-      this.prevTab();
+      if (this.currentTab == "EditorPost") {
+        this.isClickBackFromEditor = true;
+        this.setRemovePostPopupShow(true);
+      } else {
+        this.isClickBack = false;
+        this.prevTab();
+      }
     },
     handleNext() {
       this.nextTab();
@@ -83,13 +96,24 @@ export default {
       this.setRemoveMediaPopupShow(false);
     },
     handleRemovePost() {
-      this.setRemovePostPopupShow(false);
-      this.setModalCreatePostShow(false);
+      if (this.isClickBackFromEditor) {
+        this.setRemovePostPopupShow(false);
+        this.prevTab();
+      } else {
+        this.setRemovePostPopupShow(false);
+        this.setModalCreatePostShow(false);
+      }
 
       setTimeout(() => {
         this.resetCreatePost();
       }, 0);
     },
+    handleUpPost() {
+      this.$refs.editorPost.createCanvas1();
+    },
+  },
+  mounted() {
+    document.title = "Tạo bài viết mới • Instagram";
   },
   components: { UploadPost, EditorPost, UiButton, RemovePopup },
 };

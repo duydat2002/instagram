@@ -131,7 +131,7 @@ export const EMOJI = Object.freeze([
     ],
   },
   {
-    label: "Động vật &amp; thiên nhiên",
+    label: "Động vật & thiên nhiên",
     icons: [
       "🙈",
       "🙉",
@@ -631,7 +631,7 @@ export const EMOJI = Object.freeze([
     ],
   },
   {
-    label: "Mặt cười &amp; hình người",
+    label: "Mặt cười & hình người",
     icons: [
       "😀",
       "😃",
@@ -1290,7 +1290,7 @@ export const EMOJI = Object.freeze([
     ],
   },
   {
-    label: "Đi lại &amp; địa điểm",
+    label: "Đi lại & địa điểm",
     icons: [
       "🚣",
       "🗾",

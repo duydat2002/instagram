@@ -53,12 +53,6 @@
             <div class="line"></div>
           </div>
         </div>
-        <canvas
-          v-show="true"
-          ref="canvas"
-          :width="cropperSize.width"
-          :height="cropperSize.height"
-        />
       </div>
       <div v-if="currentTab == 'EditorPost'" class="crop-editor">
         <div class="left">
@@ -71,7 +65,7 @@
               <div class="extend" v-if="aspectRatioActive">
                 <div
                   class="item flex original"
-                  :class="{ active: aspectRatio == 'original' }"
+                  :class="{ active: currentRatio == 'original' }"
                   @click="changeRatio('original')"
                 >
                   <span class="item-text">Gốc</span>
@@ -82,7 +76,7 @@
                 <div class="separator separator-small"></div>
                 <div
                   class="item flex ratio-1-1"
-                  :class="{ active: aspectRatio == '1:1' }"
+                  :class="{ active: currentRatio == '1:1' }"
                   @click="changeRatio('1:1')"
                 >
                   <span class="item-text">1:1</span>
@@ -93,7 +87,7 @@
                 <div class="separator separator-small"></div>
                 <div
                   class="item flex ratio-4-5"
-                  :class="{ active: aspectRatio == '4:5' }"
+                  :class="{ active: currentRatio == '4:5' }"
                   @click="changeRatio('4:5')"
                 >
                   <span class="item-text">4:5</span>
@@ -104,7 +98,7 @@
                 <div class="separator separator-small"></div>
                 <div
                   class="item flex ratio-16-9"
-                  :class="{ active: aspectRatio == '16:9' }"
+                  :class="{ active: currentRatio == '16:9' }"
                   @click="changeRatio('16:9')"
                 >
                   <span class="item-text">16:9</span>
@@ -169,7 +163,10 @@
         v-if="currentTab == 'FilterPost' || currentTab == 'CaptionPost'"
         class="editor-right"
       >
-        <filter-post v-if="currentTab == 'FilterPost'" />
+        <filter-post
+          v-if="currentTab == 'FilterPost'"
+          @drawCanvas="drawCanvas"
+        />
         <caption-post v-if="currentTab == 'CaptionPost'" />
       </div>
     </transition>
@@ -189,6 +186,7 @@ import CaptionPost from "@/components/CreatePost/CaptionPost.vue";
 import ListPost from "@/components/CreatePost/ListPost.vue";
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
+import { getReviewImageSize, getRatioCrop } from "@/utils";
 
 export default {
   data() {
@@ -197,15 +195,10 @@ export default {
       scaleImageActive: false,
       listImageActive: false,
       isDragging: false,
-      aspectRatio: "1:1",
       scaleValue: 1,
       translatePosition: {
         x: 0,
         y: 0,
-      },
-      containerSize: {
-        width: 0,
-        height: 0,
       },
       cropperSize: {
         width: 0,
@@ -223,7 +216,6 @@ export default {
         x: 0,
         y: 0,
       },
-      newCanvas: null,
     };
   },
   computed: {
@@ -233,6 +225,7 @@ export default {
       "currentMedia",
       "currentMediaIndex",
       "currentRatio",
+      "containerSize",
       "currentTab",
     ]),
     imgStyle() {
@@ -266,6 +259,7 @@ export default {
       "setCurrentMedia",
       "updateMedia",
       "setCurrentRatio",
+      "setContainerSize",
     ]),
     ...mapActions("createPost", ["nextMedia", "prevMedia"]),
     changeRatio(ratio) {
@@ -299,32 +293,23 @@ export default {
           break;
       }
 
-      if (
-        this.currentMedia.size.height < this.currentMedia.size.width ||
-        (ratio == "4:5" &&
-          this.currentMedia.size.height == this.currentMedia.size.width)
-      ) {
-        this.reviewImageSize.height = this.cropperSize.height;
-        this.reviewImageSize.width =
-          (this.cropperSize.height * this.currentMedia.size.width) /
-          this.currentMedia.size.height;
-      } else {
-        this.reviewImageSize.width = this.cropperSize.width;
-        this.reviewImageSize.height =
-          (this.reviewImageSize.width * this.currentMedia.size.height) /
-          this.currentMedia.size.width;
-      }
+      this.reviewImageSize = {
+        ...getReviewImageSize(this.currentMedia.image, this.cropperSize),
+      };
 
       this.stick();
     },
     handleChangeScale() {
-      const media = {
-        ...this.currentMedia,
-        scale: this.scaleValue,
-      };
+      this.stick().then(() => {
+        this.drawCanvas();
 
-      this.updateMedia({ index: this.currentMediaIndex, newMedia: media });
-      this.stick();
+        const media = {
+          ...this.currentMedia,
+          scale: this.scaleValue,
+        };
+
+        this.updateMedia({ index: this.currentMediaIndex, newMedia: media });
+      });
     },
     mouseDownImage(event) {
       if (this.currentTab == "EditorPost") {
@@ -350,17 +335,19 @@ export default {
       document.body.style.cursor = "auto";
       this.isDragging = false;
 
-      const media = {
-        ...this.currentMedia,
-        translate: { ...this.translatePosition },
-      };
+      this.stick().then(() => {
+        this.drawCanvas();
 
-      this.updateMedia({ index: this.currentMediaIndex, newMedia: media });
+        const media = {
+          ...this.currentMedia,
+          translate: { ...this.translatePosition },
+        };
 
-      this.stick();
+        this.updateMedia({ index: this.currentMediaIndex, newMedia: media });
+      });
     },
     stick() {
-      setTimeout(() => {
+      return new Promise((resolve) => {
         const cropper = this.$refs.cropper.getBoundingClientRect();
         const image = this.$refs.image.getBoundingClientRect();
 
@@ -376,37 +363,73 @@ export default {
         if (cropper.bottom > image.bottom) {
           this.translatePosition.y += cropper.bottom - image.bottom;
         }
-      }, 0);
+
+        resolve();
+      });
     },
-    cac() {
-      const cropper = this.$refs.cropper.getBoundingClientRect();
-      const image = this.$refs.image.getBoundingClientRect();
-      const img = new Image();
-      img.src = this.currentFileURL;
-      const canvas = document.createElement("canvas");
-      this.newCanvas = canvas;
+    drawCanvas() {
+      const cropperRect = this.$refs.cropper.getBoundingClientRect();
+      const imageRect = this.$refs.image.getBoundingClientRect();
 
-      const ratioCrop = img.width / (this.cropperSize.width * this.scaleValue);
+      const ratioCrop = getRatioCrop(
+        this.currentMedia.image,
+        this.cropperSize,
+        this.scaleValue
+      );
 
-      canvas.width = this.cropperSize.width * ratioCrop;
-      canvas.height = this.cropperSize.height * ratioCrop;
-      console.log(canvas.width, canvas.height);
+      this.currentMedia.canvas.width = this.cropperSize.width * ratioCrop;
+      this.currentMedia.canvas.height = this.cropperSize.height * ratioCrop;
 
-      const ctx = canvas.getContext("2d");
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const ctx = this.currentMedia.canvas.getContext("2d");
+      ctx.clearRect(0, 0, 9999, 9999);
       ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-      img.addEventListener("load", () => {
-        ctx.drawImage(img, 0, 0);
-      });
-
       ctx.translate(
-        (image.x - cropper.x) * ratioCrop,
-        (image.y - cropper.y) * ratioCrop
+        (imageRect.x - cropperRect.x) * ratioCrop,
+        (imageRect.y - cropperRect.y) * ratioCrop
       );
+
+      console.log("drawRatioCrop", ratioCrop);
+      console.log(
+        "drawTranslate",
+        (imageRect.x - cropperRect.x) * ratioCrop,
+        (imageRect.y - cropperRect.y) * ratioCrop
+      );
+
+      ctx.filter = this.currentMedia.filters.filter;
+      ctx.drawImage(this.currentMedia.image, 0, 0);
+
+      if (this.currentMedia.filters.background) {
+        ctx.fillStyle = this.currentMedia.filters.background;
+        ctx.fillRect(0, 0, 9999, 9999);
+      }
     },
-    lon() {
-      const a = this.newCanvas.toDataURL();
+    drawInitCanvases() {
+      const cropperSize = {
+        ...this.containerSize,
+      };
+
+      this.medias.forEach((media) => {
+        const reviewImageSize = {
+          ...getReviewImageSize(media.image, cropperSize),
+        };
+        const ratioCrop = getRatioCrop(media.image, cropperSize, 1);
+
+        media.canvas.width = cropperSize.width * ratioCrop;
+        media.canvas.height = cropperSize.height * ratioCrop;
+
+        const ctx = media.canvas.getContext("2d");
+
+        ctx.translate(
+          -((reviewImageSize.width - cropperSize.width) / 2) * ratioCrop,
+          -((reviewImageSize.height - cropperSize.height) / 2) * ratioCrop
+        );
+
+        ctx.drawImage(media.image, 0, 0);
+      });
+    },
+    createCanvas1() {
+      const a = this.currentMedia.canvas.toDataURL();
       const newTab1 = window.open();
       newTab1.document.write(
         '<html><body><img src="' + a + '"/></body></html>'
@@ -434,12 +457,16 @@ export default {
     },
   },
   async mounted() {
-    this.containerSize.height = this.$refs.container.offsetHeight;
-    this.containerSize.width = this.$refs.container.offsetWidth;
+    this.setContainerSize({
+      width: this.$refs.container.offsetWidth,
+      height: this.$refs.container.offsetHeight,
+    });
 
     this.changeRatio(this.currentRatio);
 
     this.setCurrentMedia(this.medias[0]);
+
+    // this.drawInitCanvases();
   },
   components: {
     RatioIcon,
@@ -488,6 +515,7 @@ export default {
 .image-cropper {
   position: relative;
   overflow: hidden;
+  transition: 0.2s;
 }
 
 .img-show {

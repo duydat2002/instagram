@@ -33,65 +33,14 @@ export default {
   computed: {},
   methods: {
     ...mapMutations("createPost", ["setMedias", "setCurrentMedia"]),
-    ...mapActions("createPost", ["nextTab"]),
-    getImageSize(url) {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.src = url;
-        img.onload = () => {
-          resolve({ width: img.width, height: img.height });
-        };
-      });
-    },
-    filesToMedias(files) {
-      const medias = [];
-      const promises = [];
-
-      for (let file of files) {
-        const url = URL.createObjectURL(file);
-
-        const promise = this.getImageSize(url).then((size) => {
-          const media = {
-            url,
-            size,
-            translate: {
-              x: 0,
-              y: 0,
-            },
-            scale: 1,
-            filters: {},
-            adjust: {
-              brightness: 0,
-              contrast: 0,
-              saturate: 0,
-              blur: 0,
-              grayscale: 0,
-              sepia: 0,
-              "hue-rotate": 0,
-              temperature: 0,
-              blurBorder: 0,
-            },
-            filterTemplate: {},
-          };
-          medias.push(media);
-        });
-
-        promises.push(promise);
-      }
-
-      Promise.all(promises).then(() => {
-        this.setMedias(medias);
-        this.setCurrentMedia(medias[0]);
-        this.nextTab();
-      });
-    },
+    ...mapActions("createPost", ["nextTab", "uploadMedias"]),
     handleClickChooseFile() {
       this.$refs.inputFiles.click();
     },
     getInputFiles(event) {
       const files = event.target.files;
 
-      this.filesToMedias(files);
+      this.uploadMedias(files);
     },
     handleDragOver(event) {
       event.preventDefault();
@@ -100,7 +49,7 @@ export default {
       event.preventDefault();
       const files = event.dataTransfer.files;
 
-      this.filesToMedias(files);
+      this.uploadMedias(files);
     },
   },
   components: { UiButton, MediaFilesIcon },

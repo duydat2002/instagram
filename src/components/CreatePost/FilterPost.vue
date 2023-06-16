@@ -43,12 +43,9 @@
         <adjust-input title="Độ tương phản" v-model:value="adjust.contrast" />
         <adjust-input title="Độ bão hòa" v-model:value="adjust.saturate" />
         <adjust-input title="Nhiệt độ" v-model:value="adjust.temperature" />
+        <adjust-input title="Độ xám" min="0" v-model:value="adjust.grayscale" />
+        <adjust-input title="Độ nâu đỏ" min="0" v-model:value="adjust.sepia" />
         <adjust-input title="Độ mờ" min="0" v-model:value="adjust.blur" />
-        <adjust-input
-          title="Làm mờ viền"
-          min="0"
-          v-model:value="adjust.blurBorder"
-        />
       </div>
     </div>
   </div>
@@ -154,7 +151,6 @@ export default {
         sepia: 0,
         "hue-rotate": 0,
         temperature: 0,
-        blurBorder: 0,
       },
       filterTemplate: {
         brightness: 1,
@@ -165,7 +161,6 @@ export default {
         sepia: 0,
         "hue-rotate": 0,
         temperature: 0,
-        blurBorder: 0,
       },
       adjust: {
         brightness: 0,
@@ -176,7 +171,6 @@ export default {
         sepia: 0,
         "hue-rotate": 0,
         temperature: 0,
-        blurBorder: 0,
       },
     };
   },
@@ -211,11 +205,11 @@ export default {
         },
         {
           name: "grayscale",
-          divid: 1,
+          divid: 100,
         },
         {
           name: "sepia",
-          divid: 1,
+          divid: 100,
         },
         {
           name: "hue-rotate",
@@ -241,14 +235,6 @@ export default {
         backgroundValues.push(`rgba(0,110,255,${-adjust.temperature / 1000})`);
       }
 
-      //Blur Border
-      //radial-gradient(circle at center, transparent 50%, rgba(0,0,0,1) 140%)
-      backgroundValues.push(
-        `radial-gradient(circle at center, transparent 50%, rgba(0,0,0,${
-          adjust.blurBorder / 100
-        }) 140%)`
-      );
-
       const filters = {
         background: backgroundValues.join(" "),
         filter: filter.join(" "),
@@ -267,6 +253,8 @@ export default {
       };
 
       this.updateMedia({ index: this.currentMediaIndex, newMedia: media });
+
+      this.$emit("drawCanvas");
     },
     chooseTemplate(filterTemplate) {
       this.filterTemplate = {
@@ -299,6 +287,14 @@ export default {
       };
       this.adjust = newMedia.adjust;
     },
+  },
+  mounted() {
+    this.curentFilterTemplate = this.currentMedia.filterTemplate.name;
+    this.filterTemplate = {
+      ...this.defaultFilter,
+      ...this.currentMedia.filterTemplate.filter,
+    };
+    this.adjust = this.currentMedia.adjust;
   },
   components: { AdjustInput },
 };

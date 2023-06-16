@@ -9,18 +9,44 @@
     <div class="caption-container flex flex-col">
       <div class="caption-input">
         <textarea
-          v-model="caption"
+          v-model="captionComp"
           class="textarea"
           placeholder="Viết chú thích..."
-          @input="hanldeInputCaption"
         ></textarea>
       </div>
       <div class="caption-features flex">
-        <div class="emoticon-container">
-          <div class="icon">
+        <div
+          class="emoji-container"
+          v-click-outside.short="
+            () => {
+              activeEmojiTooltip = false;
+            }
+          "
+        >
+          <div class="icon" @click="activeEmojiTooltip = !activeEmojiTooltip">
             <emoticon-icon />
           </div>
-          <div v-if="activeEmoticonTooltip" class="extend"></div>
+          <div v-if="activeEmojiTooltip" class="extend">
+            <div class="emoji-box">
+              <div
+                v-for="emojiType in emojis"
+                :key="emojiType.label"
+                class="emoji-type flex flex-col"
+              >
+                <div class="emoji-title">{{ emojiType.label }}</div>
+                <div class="emoji-list flex">
+                  <div
+                    v-for="emoji in emojiType.icons"
+                    :key="emoji"
+                    class="emoji-item"
+                    @click="captionComp += emoji + ''"
+                  >
+                    {{ emoji }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div
           class="maximum-characters"
@@ -50,21 +76,50 @@
         <location-icon v-if="true" />
         <fa v-else :icon="['far', 'circle-xmark']" />
       </div>
-      <div class="extend"></div>
+      <!-- <div class="extend"></div> -->
     </div>
     <div class="accessibility flex tab">
-      <span class="title">Trợ năng</span>
-      <div class="icon">
-        <fa v-if="true" :icon="['fas', 'chevron-down']" />
-        <fa v-else :icon="['fas', 'chevron-up']" />
+      <div
+        class="accessibility-header header flex"
+        @click="activeAccessibility = !activeAccessibility"
+      >
+        <span class="title">Trợ năng</span>
+        <div class="icon">
+          <fa v-if="true" :icon="['fas', 'chevron-down']" />
+          <fa v-else :icon="['fas', 'chevron-up']" />
+        </div>
       </div>
-      <div class="extend"></div>
+      <div v-if="activeAccessibility" class="extend">
+        <div class="accessibility-wrapper">
+          <span class="desc"
+            >Văn bản thay thế mô tả ảnh cho những người suy giảm thị lực. Văn
+            bản thay thế sẽ được tạo tự động cho ảnh của bạn hoặc bạn có thể tự
+            viết.</span
+          >
+          <div class="accessibility-list">
+            <div
+              v-for="media in medias"
+              :key="media.url"
+              class="accessibility-item flex"
+            >
+              <div class="accessibility-image">
+                <img :src="media.url" alt="" />
+              </div>
+              <div class="accessibility-input">
+                <input type="text" placeholder="Viết văn bản thay thế..." />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="setting flex tab">
-      <span class="title">Cài đặt nâng cao</span>
-      <div class="icon">
-        <fa v-if="true" :icon="['fas', 'chevron-down']" />
-        <fa v-else :icon="['fas', 'chevron-up']" />
+      <div class="setting-header header flex">
+        <span class="title">Cài đặt nâng cao</span>
+        <div class="icon">
+          <fa v-if="true" :icon="['fas', 'chevron-down']" />
+          <fa v-else :icon="['fas', 'chevron-up']" />
+        </div>
       </div>
       <div class="extend"></div>
     </div>
@@ -75,26 +130,40 @@
 import EmoticonIcon from "@/components/SVG/EmoticonIcon.vue";
 import LocationIcon from "@/components/SVG/LocationIcon.vue";
 
-import { mapGetters } from "vuex";
+import { EMOJI } from "@/constants/emoji";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   data() {
     return {
-      caption: "",
-      activeEmoticonTooltip: false,
+      emojis: EMOJI,
+      activeEmojiTooltip: false,
       activeCharactersTooltip: false,
+      activeAccessibility: false,
     };
   },
   computed: {
     ...mapGetters("user", ["currentUser"]),
+    ...mapGetters("createPost", ["medias", "caption"]),
+    captionComp: {
+      get() {
+        return this.caption;
+      },
+      set(value) {
+        this.setCaption(value);
+      },
+    },
     characterCount() {
-      return this.caption.length.toLocaleString("en-US").replace(",", ".");
+      return this.captionComp.length.toLocaleString("en-US").replace(",", ".");
     },
   },
   methods: {
-    hanldeInputCaption(event) {
-      if (this.caption.length >= 2200) {
-        this.caption = event.target.value.slice(0, 2200);
+    ...mapMutations("createPost", ["setCaption"]),
+  },
+  watch: {
+    caption(newCaption, oldCaption) {
+      if (newCaption.length >= 2200) {
+        this.caption = newCaption.slice(0, oldCaption.length);
       }
     },
   },
@@ -143,22 +212,91 @@ export default {
 
 .tab,
 .caption-features {
-  height: 44px;
   align-items: center;
   justify-content: space-between;
   padding: 0 8px;
   flex-shrink: 0;
 }
 
-.emoticon-container .icon {
+.emoji-container {
+  position: relative;
+}
+
+.emoji-container .icon {
   padding: 8px;
   cursor: pointer;
 }
 
-.emoticon-container .icon > svg {
+.emoji-container .icon > svg {
   color: var(--secondary-text-color) !important;
   fill: var(--secondary-text-color) !important;
   vertical-align: middle;
+}
+
+.emoji-container .extend,
+.maximum-characters .extend {
+  position: absolute;
+  top: 100%;
+  border-radius: 8px;
+  z-index: 1;
+  filter: drop-shadow(0 0 7px rgba(0, 0, 0, 0.1));
+}
+
+.emoji-container .extend {
+  left: 0;
+  width: 300px;
+  color: var(--secondary-text-color);
+  background: #fff;
+  margin-top: 5px;
+}
+
+.emoji-container .extend::after,
+.maximum-characters .extend::after {
+  content: "";
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: -5px;
+  border-radius: 2px;
+  transform: rotateZ(45deg);
+  z-index: -1;
+}
+
+.emoji-container .extend::after {
+  left: 10px;
+  background: #fff;
+}
+
+.emoji-box {
+  width: 100%;
+  height: 160px;
+  padding: 8px;
+  overflow-y: auto;
+}
+
+.emoji-title {
+  margin: 8px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.emoji-box .emoji-type:not(:first-child) .emoji-title {
+  margin-top: 16px;
+}
+
+.emoji-item {
+  width: 40px;
+  height: 34px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.emoji-item:hover {
+  background: var(--separator-color);
 }
 
 .maximum-characters {
@@ -177,28 +315,17 @@ export default {
 }
 
 .maximum-characters .extend {
-  top: 100%;
   right: 0;
   width: 291px;
   color: #fff;
   background: #000;
-  border-radius: 8px;
-  padding: 12px;
-  z-index: 1;
   margin-top: 10px;
+  padding: 12px;
 }
 
 .maximum-characters .extend::after {
-  content: "";
-  width: 20px;
-  height: 20px;
-  position: absolute;
-  top: -5px;
   right: 10px;
   background: #000;
-  border-radius: 2px;
-  transform: rotateZ(45deg);
-  z-index: -1;
 }
 
 .tab {
@@ -209,16 +336,58 @@ export default {
   font-size: 16px;
 }
 
-.extend {
-  position: absolute;
+.tab .header {
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.tab .title {
+  padding: 12px 0;
+  line-height: 20px;
 }
 
 .location .input {
   font-size: 16px;
+  line-height: 30px;
+  padding: 7px 0;
 }
 
-.accessibility,
-.setting {
-  cursor: pointer;
+.accessibility-wrapper .desc {
+  display: block;
+  font-size: 12px;
+  color: var(--secondary-text-color);
+  text-align: left;
+}
+
+.accessibility-list {
+  margin-top: 12px;
+}
+
+.accessibility-item {
+  margin-bottom: 16px;
+}
+
+.accessibility-image {
+  width: 44px;
+  height: 44px;
+  margin-right: 8px;
+}
+
+.accessibility-input {
+  flex-grow: 1;
+}
+
+.accessibility-input input {
+  width: 100%;
+  height: 100%;
+  padding: 4px 12px;
+  border: 1px solid var(--separator-modal-color);
+  border-radius: 6px;
+}
+
+.accessibility-input input:focus {
+  border-color: var(--border-dark-color);
 }
 </style>

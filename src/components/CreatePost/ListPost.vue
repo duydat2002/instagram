@@ -21,7 +21,7 @@
               class="image"
               :style="{ backgroundImage: `url(${media.url})` }"
             ></div>
-            <div class="image-delete" @click="handleDeleteMedia()">
+            <div class="image-delete" @click="handleDeleteMedia">
               <fa size="sm" style="color: #fff" :icon="['fas', 'xmark']" />
             </div>
           </div>
@@ -53,7 +53,7 @@
 <script>
 import draggable from "vuedraggable";
 
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 
 import { useSlider } from "@/composables/useSlider";
 const { initSlider, reset } = useSlider();
@@ -82,7 +82,8 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("createPost", ["setMedias", "addMedia", "setCurrentMedia"]),
+    ...mapMutations("createPost", ["setMedias", "setCurrentMedia"]),
+    ...mapActions("createPost", ["addMedias"]),
     ...mapMutations("modal", [
       "setRemoveMediaPopupShow",
       "setRemovePostPopupShow",
@@ -90,56 +91,10 @@ export default {
     handleAddMedia() {
       this.$refs.inputFiles.click();
     },
-    getImageSize(url) {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.src = url;
-        img.onload = () => {
-          resolve({ width: img.width, height: img.height });
-        };
-      });
-    },
-    filesToMedias(files) {
-      const promises = [];
-
-      for (let file of files) {
-        const url = URL.createObjectURL(file);
-
-        const promise = this.getImageSize(url).then((size) => {
-          const media = {
-            url,
-            size,
-            translate: {
-              x: 0,
-              y: 0,
-            },
-            scale: 1,
-            filters: {},
-            adjust: {
-              brightness: 0,
-              contrast: 0,
-              saturate: 0,
-              blur: 0,
-              grayscale: 0,
-              sepia: 0,
-              "hue-rotate": 0,
-              temperature: 0,
-              blurBorder: 0,
-            },
-            filterTemplate: {},
-          };
-          this.addMedia(media);
-        });
-
-        promises.push(promise);
-      }
-
-      return Promise.all(promises);
-    },
     getInputFiles(event) {
       const files = event.target.files;
 
-      this.filesToMedias(files).then(() => {
+      this.addMedias(files).then(() => {
         event.target.value = "";
 
         reset();

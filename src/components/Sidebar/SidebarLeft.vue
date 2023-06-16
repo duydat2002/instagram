@@ -1,4 +1,3 @@
-modal-create-post
 <template>
   <div :class="['sidebar-left', { narrow: isNarrow }]">
     <div class="sidebar-nav">
@@ -110,13 +109,9 @@ modal-create-post
             <modal
               hasClose
               :isShow="modalCreatePostShow"
-              :handleClickOutside="
-                () => {
-                  setRemovePostPopupShow(true);
-                }
-              "
+              :handleClickOutside="handleModalCreatePostClOut"
             >
-              <modal-create-post></modal-create-post>
+              <modal-create-post />
             </modal>
           </template>
         </sidebar-left-tab>
@@ -200,6 +195,7 @@ export default {
   computed: {
     ...mapGetters("user", ["currentUser"]),
     ...mapGetters("modal", ["modalCreatePostShow"]),
+    ...mapGetters("createPost", { createPostCurrentTab: "currentTab" }),
   },
   methods: {
     ...mapMutations("modal", [
@@ -239,6 +235,11 @@ export default {
         this.moreActive = false;
         this.themeTabActive = false;
       }
+    },
+    handleModalCreatePostClOut() {
+      if (this.createPostCurrentTab != "UploadPost")
+        this.setRemovePostPopupShow(true);
+      else this.setModalCreatePostShow(false);
     },
     changeTabActive(value) {
       this.themeTabActive = value;
@@ -306,11 +307,11 @@ export default {
   width: var(--nav-narrow-width);
 }
 
-.sidebar-left.narrow >>> .tab__title {
+.sidebar-left.narrow :deep(.tab__title) {
   display: none;
 }
 
-.sidebar-left >>> .tab__tooltip {
+.sidebar-left :deep(.tab__tooltip) {
   opacity: 0;
   transform: scale(0.3);
   visibility: hidden;
@@ -319,7 +320,7 @@ export default {
   z-index: 100;
 }
 
-.sidebar-left.narrow >>> .tab__wrapper:hover .tab__tooltip {
+.sidebar-left.narrow :deep(.tab__wrapper:hover .tab__tooltip) {
   opacity: 1;
   transform: scale(1);
   visibility: visible;
@@ -409,7 +410,7 @@ export default {
     width: var(--nav-narrow-width);
   }
 
-  .sidebar-left >>> .tab__title {
+  .sidebar-left :deep(.tab__title) {
     display: none;
   }
 
