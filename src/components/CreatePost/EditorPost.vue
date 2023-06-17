@@ -292,12 +292,6 @@ export default {
           this.cropperSize.width = this.containerSize.width;
           break;
       }
-
-      this.reviewImageSize = {
-        ...getReviewImageSize(this.currentMedia.image, this.cropperSize),
-      };
-
-      this.stick();
     },
     handleChangeScale() {
       this.stick().then(() => {
@@ -337,7 +331,6 @@ export default {
 
       this.stick().then(() => {
         this.drawCanvas();
-
         const media = {
           ...this.currentMedia,
           translate: { ...this.translatePosition },
@@ -348,23 +341,29 @@ export default {
     },
     stick() {
       return new Promise((resolve) => {
-        const cropper = this.$refs.cropper.getBoundingClientRect();
-        const image = this.$refs.image.getBoundingClientRect();
+        this.reviewImageSize = {
+          ...getReviewImageSize(this.currentMedia.image, this.cropperSize),
+        };
 
-        if (cropper.left < image.left) {
-          this.translatePosition.x += cropper.left - image.left;
-        }
-        if (cropper.top < image.top) {
-          this.translatePosition.y += cropper.top - image.top;
-        }
-        if (cropper.right > image.right) {
-          this.translatePosition.x += cropper.right - image.right;
-        }
-        if (cropper.bottom > image.bottom) {
-          this.translatePosition.y += cropper.bottom - image.bottom;
-        }
+        setTimeout(() => {
+          const cropper = this.$refs.cropper.getBoundingClientRect();
+          const image = this.$refs.image.getBoundingClientRect();
 
-        resolve();
+          if (cropper.left < image.left) {
+            this.translatePosition.x += cropper.left - image.left;
+          }
+          if (cropper.top < image.top) {
+            this.translatePosition.y += cropper.top - image.top;
+          }
+          if (cropper.right > image.right) {
+            this.translatePosition.x += cropper.right - image.right;
+          }
+          if (cropper.bottom > image.bottom) {
+            this.translatePosition.y += cropper.bottom - image.bottom;
+          }
+
+          resolve();
+        }, 0);
       });
     },
     drawCanvas() {
@@ -389,13 +388,6 @@ export default {
         (imageRect.y - cropperRect.y) * ratioCrop
       );
 
-      console.log("drawRatioCrop", ratioCrop);
-      console.log(
-        "drawTranslate",
-        (imageRect.x - cropperRect.x) * ratioCrop,
-        (imageRect.y - cropperRect.y) * ratioCrop
-      );
-
       ctx.filter = this.currentMedia.filters.filter;
       ctx.drawImage(this.currentMedia.image, 0, 0);
 
@@ -403,30 +395,6 @@ export default {
         ctx.fillStyle = this.currentMedia.filters.background;
         ctx.fillRect(0, 0, 9999, 9999);
       }
-    },
-    drawInitCanvases() {
-      const cropperSize = {
-        ...this.containerSize,
-      };
-
-      this.medias.forEach((media) => {
-        const reviewImageSize = {
-          ...getReviewImageSize(media.image, cropperSize),
-        };
-        const ratioCrop = getRatioCrop(media.image, cropperSize, 1);
-
-        media.canvas.width = cropperSize.width * ratioCrop;
-        media.canvas.height = cropperSize.height * ratioCrop;
-
-        const ctx = media.canvas.getContext("2d");
-
-        ctx.translate(
-          -((reviewImageSize.width - cropperSize.width) / 2) * ratioCrop,
-          -((reviewImageSize.height - cropperSize.height) / 2) * ratioCrop
-        );
-
-        ctx.drawImage(media.image, 0, 0);
-      });
     },
     createCanvas1() {
       const a = this.currentMedia.canvas.toDataURL();
@@ -451,9 +419,7 @@ export default {
       this.scaleValue = newMedia.scale;
       this.translatePosition = { ...newMedia.translate };
 
-      setTimeout(() => {
-        this.changeRatio(this.currentRatio);
-      }, 0);
+      this.stick();
     },
   },
   async mounted() {
@@ -464,9 +430,9 @@ export default {
 
     this.changeRatio(this.currentRatio);
 
-    this.setCurrentMedia(this.medias[0]);
+    this.stick();
 
-    // this.drawInitCanvases();
+    this.setCurrentMedia(this.medias[0]);
   },
   components: {
     RatioIcon,
@@ -515,7 +481,7 @@ export default {
 .image-cropper {
   position: relative;
   overflow: hidden;
-  transition: 0.2s;
+  /* transition: 0.2s; */
 }
 
 .img-show {

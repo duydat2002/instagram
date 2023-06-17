@@ -113,6 +113,7 @@ const createPost = {
         const promise = getImage(url).then((img) => {
           const canvas = document.createElement("canvas");
 
+          console.log("getters.containerSize", getters.containerSize);
           drawInitCanvas(canvas, img, getters.containerSize);
 
           const media = {

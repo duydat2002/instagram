@@ -45,7 +45,6 @@ export function getRatioCrop(realImageSize, cropperSize, scale) {
 }
 
 export function drawInitCanvas(canvas, img, cropperSize) {
-  console.log("drawInitCanvas");
   const reviewImageSize = {
     ...getReviewImageSize(img, cropperSize),
   };
