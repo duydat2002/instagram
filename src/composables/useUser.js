@@ -90,15 +90,6 @@ export const useUser = () => {
     await updateDoc(doc(db, "users", userId), {
       avatar: avatar,
     });
-
-    // store.commit("user/updateCurrentUser", {
-    //   avatar: avatar,
-    // });
-
-    // if (userId == auth.currentUser.uid)
-    //   store.commit("user/updateUser", {
-    //     avatar: avatar,
-    //   });
   };
 
   return {

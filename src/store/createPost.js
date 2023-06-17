@@ -4,8 +4,14 @@ const createPost = {
   namespaced: true,
   state() {
     return {
-      tabs: ["UploadPost", "EditorPost", "FilterPost", "CaptionPost"],
-      currentTab: "UploadPost",
+      tabs: [
+        "InitPost",
+        "EditorPost",
+        "FilterPost",
+        "CaptionPost",
+        "UploadPost",
+      ],
+      currentTab: "InitPost",
       medias: [],
       currentMedia: null,
       currentMediaIndex: 0,
@@ -113,7 +119,6 @@ const createPost = {
         const promise = getImage(url).then((img) => {
           const canvas = document.createElement("canvas");
 
-          console.log("getters.containerSize", getters.containerSize);
           drawInitCanvas(canvas, img, getters.containerSize);
 
           const media = {
@@ -202,7 +207,7 @@ const createPost = {
       return Promise.all(promises);
     },
     resetCreatePost({ commit }) {
-      commit("setCurrentTab", "UploadPost");
+      commit("setCurrentTab", "InitPost");
       commit("setMedias", []);
       commit("setCurrentMedia", null);
       commit("setCurrentRatio", "1:1");

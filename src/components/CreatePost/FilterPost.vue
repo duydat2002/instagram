@@ -39,13 +39,44 @@
         </div>
       </div>
       <div v-else class="tab-adjust flex flex-col">
-        <adjust-input title="Độ sáng" v-model:value="adjust.brightness" />
-        <adjust-input title="Độ tương phản" v-model:value="adjust.contrast" />
-        <adjust-input title="Độ bão hòa" v-model:value="adjust.saturate" />
-        <adjust-input title="Nhiệt độ" v-model:value="adjust.temperature" />
-        <adjust-input title="Độ xám" min="0" v-model:value="adjust.grayscale" />
-        <adjust-input title="Độ nâu đỏ" min="0" v-model:value="adjust.sepia" />
-        <adjust-input title="Độ mờ" min="0" v-model:value="adjust.blur" />
+        <adjust-input
+          title="Độ sáng"
+          v-model:value="adjust.brightness"
+          @change="handleChangeAdjust"
+        />
+        <adjust-input
+          title="Độ tương phản"
+          v-model:value="adjust.contrast"
+          @change="handleChangeAdjust"
+        />
+        <adjust-input
+          title="Độ bão hòa"
+          v-model:value="adjust.saturate"
+          @change="handleChangeAdjust"
+        />
+        <adjust-input
+          title="Nhiệt độ"
+          v-model:value="adjust.temperature"
+          @change="handleChangeAdjust"
+        />
+        <adjust-input
+          title="Độ xám"
+          min="0"
+          v-model:value="adjust.grayscale"
+          @change="handleChangeAdjust"
+        />
+        <adjust-input
+          title="Độ nâu đỏ"
+          min="0"
+          v-model:value="adjust.sepia"
+          @change="handleChangeAdjust"
+        />
+        <adjust-input
+          title="Độ mờ"
+          min="0"
+          v-model:value="adjust.blur"
+          @change="handleChangeAdjust"
+        />
       </div>
     </div>
   </div>
@@ -254,7 +285,7 @@ export default {
 
       this.updateMedia({ index: this.currentMediaIndex, newMedia: media });
 
-      this.$emit("drawCanvas");
+      // this.$emit("drawCanvas");
     },
     chooseTemplate(filterTemplate) {
       this.filterTemplate = {
@@ -267,6 +298,10 @@ export default {
       };
       this.curentFilterTemplate = filterTemplate.name;
       this.convertToFilter(this.adjust);
+      this.$emit("drawCanvas");
+    },
+    handleChangeAdjust() {
+      this.$emit("drawCanvas");
     },
   },
   watch: {

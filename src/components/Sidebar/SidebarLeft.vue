@@ -237,7 +237,7 @@ export default {
       }
     },
     handleModalCreatePostClOut() {
-      if (this.createPostCurrentTab != "UploadPost")
+      if (!["InitPost", "UploadPost"].includes(this.createPostCurrentTab))
         this.setRemovePostPopupShow(true);
       else this.setModalCreatePostShow(false);
     },

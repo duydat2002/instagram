@@ -187,6 +187,7 @@ import ListPost from "@/components/CreatePost/ListPost.vue";
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import { getReviewImageSize, getRatioCrop } from "@/utils";
+// import { useStorage } from "@/composables/useStorage";
 
 export default {
   data() {
@@ -397,11 +398,17 @@ export default {
       }
     },
     createCanvas1() {
-      const a = this.currentMedia.canvas.toDataURL();
-      const newTab1 = window.open();
-      newTab1.document.write(
-        '<html><body><img src="' + a + '"/></body></html>'
-      );
+      // const dataUrls = [];
+      // this.medias.forEach((media) => {
+      //   dataUrls.push(media.canvas.toDataURL());
+      // });
+      // const { uploadPosts } = useStorage();
+      // uploadPosts(dataUrls);
+      // const a = this.currentMedia.canvas.toDataURL();
+      // const newTab1 = window.open();
+      // newTab1.document.write(
+      //   '<html><body><img src="' + a + '"/></body></html>'
+      // );
     },
   },
   watch: {

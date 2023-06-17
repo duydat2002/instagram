@@ -1,20 +1,32 @@
 <template>
   <div class="create-post-modal flex flex-col">
     <div class="header">
-      <div v-if="currentTab != 'UploadPost'" class="back" @click="handleBack">
+      <div
+        v-if="!['InitPost', 'UploadPost'].includes(currentTab)"
+        class="back"
+        @click="handleBack"
+      >
         <fa size="xl" :icon="['fas', 'arrow-left']" />
       </div>
       <div class="title" @click="handleUpPost">
         <span>{{ title }}</span>
       </div>
-      <div v-if="currentTab != 'UploadPost'" class="next" @click="handleNext">
+      <div
+        v-if="!['InitPost', 'UploadPost'].includes(currentTab)"
+        class="next"
+        @click="handleNext"
+      >
         <ui-button variant="text">{{
           currentTab != "CaptionPost" ? "Tiếp" : "Chia sẻ"
         }}</ui-button>
       </div>
     </div>
     <div class="content">
-      <upload-post v-if="currentTab == 'UploadPost'" />
+      <init-post v-if="currentTab == 'InitPost'" />
+      <upload-post
+        v-else-if="currentTab == 'UploadPost'"
+        @changeTitle="changeTitle"
+      />
       <editor-post v-else ref="editorPost" />
     </div>
   </div>
@@ -38,6 +50,7 @@
 <script>
 import UiButton from "@/components/UI/UiButton.vue";
 import RemovePopup from "@/components/Popup/RemovePopup.vue";
+import InitPost from "@/components/CreatePost/InitPost.vue";
 import UploadPost from "@/components/CreatePost/UploadPost.vue";
 import EditorPost from "@/components/CreatePost/EditorPost.vue";
 
@@ -46,30 +59,13 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   data() {
     return {
+      title: "Tạo bài viết mới",
       isClickBackFromEditor: false,
     };
   },
   computed: {
     ...mapGetters("createPost", ["currentTab", "currentMediaIndex"]),
     ...mapGetters("modal", ["removeMediaPopupShow", "removePostPopupShow"]),
-    title() {
-      let titleText = "";
-      switch (this.currentTab) {
-        case "UploadPost":
-          titleText = "Tạo bài viết mới";
-          break;
-        case "EditorPost":
-          titleText = "Cắt";
-          break;
-        case "FilterPost":
-          titleText = "Chỉnh sửa";
-          break;
-        case "CaptionPost":
-          titleText = "Tạo bài viết mới";
-          break;
-      }
-      return titleText;
-    },
   },
   methods: {
     ...mapMutations("modal", [
@@ -79,6 +75,9 @@ export default {
     ]),
     ...mapMutations("createPost", ["deleteMedia"]),
     ...mapActions("createPost", ["nextTab", "prevTab", "resetCreatePost"]),
+    changeTitle(title) {
+      this.title = title;
+    },
     handleBack() {
       if (this.currentTab == "EditorPost") {
         this.isClickBackFromEditor = true;
@@ -88,7 +87,7 @@ export default {
         this.prevTab();
       }
     },
-    handleNext() {
+    async handleNext() {
       this.nextTab();
     },
     hanldeRemoveMedia() {
@@ -112,10 +111,33 @@ export default {
       this.$refs.editorPost.createCanvas1();
     },
   },
+  watch: {
+    currentTab(newTab) {
+      let titleText = "";
+      switch (newTab) {
+        case "InitPost":
+          titleText = "Tạo bài viết mới";
+          break;
+        case "EditorPost":
+          titleText = "Cắt";
+          break;
+        case "FilterPost":
+          titleText = "Chỉnh sửa";
+          break;
+        case "CaptionPost":
+          titleText = "Tạo bài viết mới";
+          break;
+        case "UploadPost":
+          titleText = "Đang chia sẻ";
+          break;
+      }
+      this.title = titleText;
+    },
+  },
   mounted() {
     document.title = "Tạo bài viết mới • Instagram";
   },
-  components: { UploadPost, EditorPost, UiButton, RemovePopup },
+  components: { InitPost, UploadPost, EditorPost, UiButton, RemovePopup },
 };
 </script>
 
