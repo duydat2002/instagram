@@ -3,8 +3,8 @@
     <svg
       aria-label="Gợi ý"
       class="x1lliihq x1n2onr6"
-      color="rgb(0, 0, 0)"
-      fill="rgb(0, 0, 0)"
+      color="var(--primary-text-color)"
+      fill="var(--primary-text-color)"
       height="16"
       role="img"
       viewBox="0 0 24 24"

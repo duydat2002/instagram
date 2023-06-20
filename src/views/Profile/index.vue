@@ -11,13 +11,29 @@
       <story-list />
     </div>
     <div class="tabs">
-      <h1>Tabs</h1>
+      <div class="tabs-title flex">
+        <router-link :to="{ name: 'Posts' }" class="tab flex">
+          <div class="icon"><grid-icon /></div>
+          <span class="title">Bài viết</span>
+        </router-link>
+        <router-link :to="{ name: 'Saved' }" class="tab flex">
+          <div class="icon"><bookmark-icon /></div>
+          <span class="title">Đã lưu</span>
+        </router-link>
+        <router-link :to="{ name: 'Tagged' }" class="tab flex">
+          <div class="icon"><tag-icon /></div>
+          <span class="title">Được gắn thẻ</span>
+        </router-link>
+      </div>
       <router-view></router-view>
     </div>
   </div>
 </template>
 
 <script>
+import GridIcon from "@/components/SVG/GridIcon.vue";
+import BookmarkIcon from "@/components/SVG/BookmarkIcon.vue";
+import TagIcon from "@/components/SVG/TagIcon.vue";
 import General from "@/components/Profile/General.vue";
 import StoryList from "@/components/Story/StoryList.vue";
 
@@ -43,6 +59,7 @@ export default {
     },
   },
   async beforeRouteUpdate(to, from) {
+    console.log(to);
     const { getUserWithUsername } = useUser();
     const { isFollowing, getMutualFollowers } = useFollow();
 
@@ -74,13 +91,62 @@ export default {
     const { watchUserChange } = useUser();
     watchUserChange(this.user.id);
   },
-  components: { General, StoryList },
+  components: { General, StoryList, GridIcon, BookmarkIcon, TagIcon },
 };
 </script>
 
 <style scoped>
 .profile-container {
-  margin: 0 65px;
+  margin: 0 auto;
+  width: calc(100% - 40px);
+  max-width: 935px;
   padding: 30px 20px;
+  box-sizing: content-box;
+}
+
+.tabs {
+  margin-top: 44px;
+  border-top: 1px solid var(--border-color);
+}
+
+.tabs-title {
+  justify-content: center;
+}
+
+.tabs-title .tab:not(:last-child) {
+  margin-right: 60px;
+}
+
+.tab {
+  height: 52px;
+  align-items: center;
+  justify-content: center;
+  color: var(--secondary-text-color);
+  border-top: 1px solid transparent;
+  cursor: pointer;
+}
+
+.tab.active {
+  color: var(--primary-text-color);
+  border-color: #000;
+}
+
+.tab .icon svg {
+  width: 12px;
+  height: 12px;
+  color: var(--secondary-text-color);
+  fill: var(--secondary-text-color);
+}
+
+.tab.active .icon svg {
+  color: var(--primary-text-color);
+  fill: var(--primary-text-color);
+}
+
+.tab .title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-left: 6px;
 }
 </style>

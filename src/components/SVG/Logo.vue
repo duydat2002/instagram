@@ -2,8 +2,8 @@
   <svg
     aria-label="Instagram"
     class="_ab6-"
-    :color="colorLogo"
-    :fill="colorLogo"
+    color="var(--primary-text-color)"
+    fill="var(--primary-text-color)"
     role="img"
     viewBox="32 4 113 32"
     width="100%"
@@ -16,13 +16,3 @@
     ></path>
   </svg>
 </template>
-<script>
-export default {
-  props: {
-    colorLogo: {
-      type: String,
-      default: "rgb(245, 245, 245)",
-    },
-  },
-};
-</script>

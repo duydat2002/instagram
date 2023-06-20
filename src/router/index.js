@@ -15,6 +15,25 @@ const routes = [
     meta: { layout: DashboardLayout, requiresAuth: true },
   },
   {
+    path: "/p/:id",
+    name: "Post",
+    component: () => import("../components/Post/Post.vue"),
+    meta: { layout: DashboardLayout, from: "", requiresAuth: true },
+    beforeEnter: (to, from, next) => {
+      // console.log("from", from);
+      // console.log("to", to);
+
+      if (from.name == "Posts") {
+        // to.meta.layout = DashboardLayout;
+        to.meta.from = "Posts";
+      } else if (from.name == "Home") {
+        // to.meta.layout = DashboardLayout;
+        to.meta.from = "Home";
+      }
+      next();
+    },
+  },
+  {
     path: "/explore",
     name: "Explore",
     component: () => import("../views/Explore.vue"),
@@ -41,6 +60,7 @@ const routes = [
   {
     path: "/:username",
     name: "Profile",
+    redirect: { name: "Posts" },
     component: () => import("../views/Profile/index.vue"),
     meta: { layout: DashboardLayout },
     beforeEnter: (to, from, next) => {
@@ -60,6 +80,21 @@ const routes = [
       });
     },
     children: [
+      {
+        path: "",
+        name: "Posts",
+        component: () => import("../views/Profile/posts.vue"),
+      },
+      {
+        path: "saved",
+        name: "Saved",
+        component: () => import("../views/Profile/saved.vue"),
+      },
+      {
+        path: "tagged",
+        name: "Tagged",
+        component: () => import("../views/Profile/tagged.vue"),
+      },
       {
         path: "followers",
         name: "Followers",
@@ -81,21 +116,6 @@ const routes = [
         path: "following",
         name: "Following",
         component: () => import("../components/Popup/FollowsPopup.vue"),
-      },
-      {
-        path: "",
-        name: "Posts",
-        component: () => import("../views/Profile/posts.vue"),
-      },
-      {
-        path: "saved",
-        name: "Saved",
-        component: () => import("../views/Profile/saved.vue"),
-      },
-      {
-        path: "tagged",
-        name: "Tagged",
-        component: () => import("../views/Profile/tagged.vue"),
       },
     ],
   },

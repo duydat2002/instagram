@@ -2,8 +2,8 @@
   <svg
     aria-label="Biểu tượng cảm xúc"
     class="x1lliihq x1n2onr6"
-    color="rgb(115, 115, 115)"
-    fill="rgb(115, 115, 115)"
+    color="var(--primary-text-color)"
+    fill="var(--primary-text-color)"
     height="20"
     role="img"
     viewBox="0 0 24 24"

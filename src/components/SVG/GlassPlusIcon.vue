@@ -2,8 +2,8 @@
   <svg
     aria-label="Chọn mức thu phóng"
     class="_ab6-"
-    color="rgb(255, 255, 255)"
-    fill="rgb(255, 255, 255)"
+    color="var(--primary-text-color)"
+    fill="var(--primary-text-color)"
     height="16"
     role="img"
     viewBox="0 0 24 24"

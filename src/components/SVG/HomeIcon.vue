@@ -1,8 +1,8 @@
 <template>
   <svg
     aria-label="Trang chủ"
-    color="rgb(245, 245, 245)"
-    fill="rgb(245, 245, 245)"
+    color="var(--primary-text-color)"
+    fill="var(--primary-text-color)"
     height="24"
     role="img"
     viewBox="0 0 24 24"

@@ -3,8 +3,8 @@
     <svg
       aria-label="Thông báo"
       class="_ab6-"
-      color="rgb(245, 245, 245)"
-      fill="rgb(245, 245, 245)"
+      color="var(--primary-text-color)"
+      fill="var(--primary-text-color)"
       height="24"
       role="img"
       viewBox="0 0 24 24"
@@ -19,8 +19,8 @@
     <svg
       aria-label="Thông báo"
       class="_ab6-"
-      color="rgb(245, 245, 245)"
-      fill="rgb(245, 245, 245)"
+      color="var(--primary-text-color)"
+      fill="var(--primary-text-color)"
       height="24"
       role="img"
       viewBox="0 0 48 48"

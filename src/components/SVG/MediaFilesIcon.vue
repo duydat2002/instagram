@@ -2,8 +2,8 @@
   <svg
     aria-label="Biểu tượng thể hiện file phương tiện, chẳng hạn như hình ảnh hoặc video"
     class="x1lliihq x1n2onr6"
-    color="rgb(0, 0, 0)"
-    fill="rgb(0, 0, 0)"
+    color="var(--primary-text-color)"
+    fill="var(--primary-text-color)"
     height="77"
     role="img"
     viewBox="0 0 97.6 77.3"

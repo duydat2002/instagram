@@ -171,7 +171,7 @@ import HeartIcon from "../SVG/HeartIcon.vue";
 import PlusIcon from "../SVG/PlusIcon.vue";
 import BarIcon from "../SVG/BarIcon.vue";
 import InstagramIcon from "../SVG/InstagramIcon.vue";
-import logo from "../SVG/Logo.vue";
+import Logo from "../SVG/Logo.vue";
 
 import SidebarLeftTab from "./SidebarLeftTab.vue";
 import Search from "../Search.vue";
@@ -264,7 +264,7 @@ export default {
     window.removeEventListener("resize", this.handleResizeWindow);
   },
   components: {
-    logo,
+    Logo,
     InstagramIcon,
     SidebarLeftTab,
     HomeIcon,
@@ -284,6 +284,11 @@ export default {
 </script>
 
 <style scoped>
+/* svg {
+  color: var(--primary-text-color);
+  fill: var(--primary-text-color);
+} */
+
 .sidebar-left {
   position: fixed;
   top: 0;
@@ -291,19 +296,20 @@ export default {
   width: var(--nav-medium-width);
   height: 100vh;
   background: var(--primary-bg-color);
-  border-right: 1px solid var(--border-color);
   transition: all 0.3s;
   z-index: 100;
+  box-sizing: content-box;
 }
 
 .sidebar-nav {
   position: relative;
   padding: 8px 12px 20px;
   background: var(--primary-bg-color);
+  border-right: 1px solid var(--border-color);
   z-index: 100;
 }
 
-.sidebar-left.narrow .sidebar-nav {
+.sidebar-left.narrow {
   width: var(--nav-narrow-width);
 }
 

@@ -106,7 +106,7 @@ import ClockIcon from "@/components/SVG/ClockIcon.vue";
 import BookmarkIcon from "@/components/SVG/BookmarkIcon.vue";
 import MoonIcon from "@/components/SVG/MoonIcon.vue";
 import SunIcon from "@/components/SVG/SunIcon.vue";
-import ReportIcon from "@/components/SVG/BookmarkIcon.vue";
+import ReportIcon from "@/components/SVG/ReportIcon.vue";
 import Modal from "@/components/Modal/Modal.vue";
 import ModalLogout from "@/components/Modal/ModalLogout.vue";
 import UiSwitchButton from "./UI/UiSwitchButton.vue";

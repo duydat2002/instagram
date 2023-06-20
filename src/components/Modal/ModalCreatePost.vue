@@ -137,6 +137,9 @@ export default {
   mounted() {
     document.title = "Tạo bài viết mới • Instagram";
   },
+  beforeUnmount() {
+    this.resetCreatePost();
+  },
   components: { InitPost, UploadPost, EditorPost, UiButton, RemovePopup },
 };
 </script>

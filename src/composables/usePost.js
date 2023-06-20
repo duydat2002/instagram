@@ -4,6 +4,10 @@ import {
   doc,
   addDoc,
   setDoc,
+  getDoc,
+  getDocs,
+  query,
+  where,
   serverTimestamp,
 } from "firebase/firestore";
 import store from "@/store";
@@ -23,11 +27,23 @@ export const usePost = () => {
       });
       const urls = await uploadPosts(postId, dataUrls);
 
+      let type = "image";
+      if (urls.length > 1) {
+        type = "multiple";
+      } else {
+        // store.getters["createPost/medias"][0]
+        type = "image";
+      }
+
       const post = {
         userId: auth.currentUser.uid,
-        tags: [],
         caption: store.getters["createPost/caption"],
         contents: urls,
+        type,
+        likeCount: 0,
+        commentCount: 0,
+        tags: [],
+        comments: [],
         createAt: serverTimestamp(),
       };
 
@@ -37,7 +53,47 @@ export const usePost = () => {
     }
   };
 
+  const getPosts = async (userId) => {
+    try {
+      const posts = [];
+
+      const querySnapshot = await getDocs(
+        query(collection(db, "posts"), where("userId", "==", userId))
+      );
+
+      querySnapshot.forEach((doc) => {
+        posts.push({
+          id: doc.id,
+          ...doc.data(),
+        });
+      });
+
+      return posts;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getPost = async (postId) => {
+    try {
+      const docSnap = await getDoc(doc(db, "posts", postId));
+
+      if (docSnap.exists()) {
+        return {
+          id: postId,
+          ...docSnap.data(),
+        };
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return {
     setPost,
+    getPosts,
+    getPost,
   };
 };

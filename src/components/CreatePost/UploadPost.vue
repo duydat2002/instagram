@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import { usePost } from "@/composables/usePost";
 
 export default {
@@ -23,6 +24,9 @@ export default {
       };
     },
   },
+  methods: {
+    ...mapActions("createPost", ["resetCreatePost"]),
+  },
   watch: {
     isUploadding(newValue) {
       this.$emit(
@@ -35,6 +39,9 @@ export default {
     const { setPost } = usePost();
     await setPost();
     this.isUploadding = false;
+  },
+  beforeUnmount() {
+    this.resetCreatePost();
   },
 };
 </script>

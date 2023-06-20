@@ -11,6 +11,7 @@
         <textarea
           v-model="captionComp"
           class="textarea"
+          ref="captionInput"
           placeholder="Viết chú thích..."
         ></textarea>
       </div>
@@ -39,7 +40,7 @@
                     v-for="emoji in emojiType.icons"
                     :key="emoji"
                     class="emoji-item"
-                    @click="captionComp += emoji + ''"
+                    @click="handleChooseIcon(emoji)"
                   >
                     {{ emoji }}
                   </div>
@@ -159,6 +160,10 @@ export default {
   },
   methods: {
     ...mapMutations("createPost", ["setCaption"]),
+    handleChooseIcon(emoji) {
+      this.captionComp += emoji + "";
+      this.$refs.captionInput.focus();
+    },
   },
   watch: {
     caption(newCaption, oldCaption) {

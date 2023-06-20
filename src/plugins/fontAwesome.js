@@ -13,6 +13,8 @@ import {
   faXmark,
   faArrowLeft,
   faPlus,
+  faHeart,
+  faComment,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { faSquareFacebook } from "@fortawesome/free-brands-svg-icons";
@@ -20,6 +22,9 @@ import { faSquareFacebook } from "@fortawesome/free-brands-svg-icons";
 import {
   faCircleCheck,
   faCircleXmark,
+  faHeart as farHeart,
+  faComment as farComment,
+  faBookmark,
 } from "@fortawesome/free-regular-svg-icons";
 
 library.add(
@@ -36,7 +41,12 @@ library.add(
   faEllipsis,
   faXmark,
   faArrowLeft,
-  faPlus
+  faPlus,
+  faHeart,
+  farHeart,
+  faComment,
+  farComment,
+  faBookmark
 );
 
 export { FontAwesomeIcon };

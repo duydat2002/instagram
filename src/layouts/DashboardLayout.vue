@@ -22,11 +22,11 @@ export default {
   background: var(--primary-bg-color);
   height: 1000px;
   width: calc(100% - var(--nav-medium-width));
+  transition: width 0.3s, color 0.1s, background 0.1s;
 }
 
 @media (min-width: 768px) and (max-width: 1263px) {
   #main {
-    transition: all 0.3s;
     width: calc(100% - var(--nav-narrow-width));
   }
 }

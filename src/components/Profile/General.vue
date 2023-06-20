@@ -296,6 +296,8 @@ export default {
   width: 40px;
   height: 40px;
   margin-left: 5px;
+  color: var(--primary-text-color);
+  fill: var(--primary-text-color);
 }
 .setting-icon svg {
   width: 100%;

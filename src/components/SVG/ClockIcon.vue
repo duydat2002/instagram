@@ -2,8 +2,8 @@
   <svg
     aria-label="Hoạt động của bạn"
     class="x1lliihq x1n2onr6"
-    color="rgb(245, 245, 245)"
-    fill="rgb(245, 245, 245)"
+    color="var(--primary-text-color)"
+    fill="var(--primary-text-color)"
     height="18"
     role="img"
     viewBox="0 0 24 24"
