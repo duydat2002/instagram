@@ -44,7 +44,7 @@ export const usePost = () => {
         commentCount: 0,
         tags: [],
         comments: [],
-        createAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
       };
 
       await setDoc(doc(db, "posts", postId), post);

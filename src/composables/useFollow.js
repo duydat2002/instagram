@@ -144,7 +144,7 @@ export const useFollow = () => {
       await setDoc(doc(db, "followers", `${followerId}-${followingId}`), {
         followerId,
         followingId,
-        createAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
       });
       await updateFollowCount(followerId, followingId);
     } catch (error) {

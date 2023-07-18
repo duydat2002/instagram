@@ -186,7 +186,7 @@ export default {
   },
   computed: {
     dateCreate() {
-      return formatDateTime(this.post.createAt.toDate());
+      return formatDateTime(this.post.createdAt.toDate());
     },
   },
   async beforeMount() {
